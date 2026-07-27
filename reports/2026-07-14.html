@@ -198,6 +198,12 @@
   }
   .hero-row--type, .hero-row--fleet{
     grid-template-columns:1fr 1fr;
+    /* Without this, CSS Grid's default align-items:stretch makes every card
+       in the row match the tallest one — so expanding one card's Details
+       panel visibly grows its neighbor too, even though nothing in the
+       neighbor actually opened. align-items:start lets each card keep its
+       own natural height instead. */
+    align-items:start;
   }
   @media (max-width:520px){
     .hero-row--type, .hero-row--fleet{grid-template-columns:1fr;}
@@ -912,30 +918,87 @@ const TRAILER_META = {
   dryvan:   { label:"Dry Van",  color:"var(--dryvan)",   icon:"<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;\"><path d=\"M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z\"/><path d=\"M12 22V12\"/><polyline points=\"3.29 7 12 12 20.71 7\"/><path d=\"m7.5 4.27 9 5.15\"/></svg>", labelColor:"#0c1420" },
 };
 
-// WEEK DEFINITION (explicit rule, do not deviate): a driver's "week" is whatever
-// date range their own settlement statement actually covers — read it directly
-// off each statement (its own date range and the loads listed on it), never
-// calculate or assume a fixed day-of-week boundary. Do not infer "the report
-// week" independently and then fit statements to it — the statement itself is
-// the source of truth for what counts as that driver's week, full stop.
+// ============================================================================
+// METHODOLOGY — the full formula for every number in this section. This is
+// the canonical reference: re-read this before touching any weekly figure
+// instead of re-deriving or asking. Every rule below was explicitly confirmed
+// with the fleet owner; do not deviate without a new explicit instruction.
+// ============================================================================
 //
-// Week of Jul 14-20, 2026. miles = Loaded miles (confirmed against settlement PDFs, "Loaded" column).
-// gross = load Subtotal Amount (pre-deduction); for Victor & Jonas (percentage-only drivers, no
-// separate "Deduction %" line in their settlement) the settlement's own Amount is already their
-// pay, so gross here = Amount / pay_rate to recover the true load value.
-// includeRpm — RPM is a normalized rate, fair to compare regardless of how many days a driver
-// worked, so everyone with a real completed load this week stays in. includeGross — a raw weekly
-// $ total is NOT normalized (fewer active days -> lower Gross, independent of efficiency), so
-// each driver was asked individually whether their week's Gross is representative; only Aleh,
-// Dan, and Jonas were approved for Gross this week, everyone else kept out of Gross-based stats
-// (Best Weekly Gross, By Trailer Type avg Gross) while remaining fully in RPM-based stats.
-// Artur (partial/relay leg) and Andrii (did not drive) are excluded from both — their data isn't
+// WEEK DEFINITION: a driver's "week" is whatever date range their own
+// settlement statement actually covers — read it directly off each statement
+// (its own date range and the loads listed on it). Never calculate or assume
+// a fixed day-of-week boundary (not Tue-Mon, not any formula) and never infer
+// "the report week" independently and then fit statements to it — the
+// statement itself is the source of truth for what counts as that driver's
+// week, full stop.
+//
+// MILES (loaded) = sum of the "Loaded" column across that driver's load rows
+// for the week, straight from the settlement PDF.
+//
+// EMPTY (deadhead) = sum of the "Empty" column across the same load rows,
+// MINUS any outlier legs explicitly excluded per-driver (noted inline below,
+// e.g. a cancelled load's miles, or a single abnormally-large deadhead leg).
+// When a load is cancelled: its loaded/empty miles never happened and are
+// excluded, but its cancellation payout is real and stays IN gross.
+//
+// GROSS = that driver's total load Subtotal Amount for the week (pre-
+// deduction freight value), taken straight from the settlement UNLESS the
+// driver is a "percentage-only" type (no separate "Deduction %" line in
+// their settlement — meaning the settlement's own Amount is already their
+// post-cut pay, not the freight value). For percentage-only drivers:
+//     gross = Amount / pay_rate   (recovers the true pre-cut load value)
+// Currently percentage-only: Driver H and Driver E. Everyone else has an
+// explicit "Deduction X%" line further down their settlement, so their
+// Subtotal Amount IS the gross already — use it directly, do not divide.
+//
+// RPM (loaded) = gross / miles(loaded). This is a BLENDED weekly average rate
+// across every one of that driver's loads that week — never any single
+// load's individual per-load rate. This is both the "trucks[].rpm" field and
+// the headline "Best Weekly RPM" value; its caption ("loaded miles only,
+// empty miles not counted") reflects that empty miles are excluded from this
+// figure entirely.
+//
+// RPM (total) [Gross Details panel only, not a stored field] =
+//     gross / (miles + empty)
+// Same gross, but divided by ALL driving miles (loaded + empty combined) —
+// shown alongside RPM (loaded) so a driver can see the gap deadhead creates.
+//
+// includeRpm — RPM is a normalized rate, fair to compare regardless of how
+// many days a driver worked, so everyone with a real completed load this
+// week stays in. includeGross — a raw weekly $ total is NOT normalized
+// (fewer active days -> lower Gross, independent of efficiency), so each
+// driver was asked individually whether their week's Gross is representative;
+// only Driver A, Driver C, and Driver E were approved for Gross this week,
+// everyone else kept out of Gross-based stats (Best Weekly Gross, By Trailer
+// Type avg Gross) while remaining fully in RPM-based stats. Driver B
+// (partial/relay leg) and Driver J (did not drive) are excluded from both — their data isn't
 // comparable to a normal load at all, not just a short week.
-// empty = Empty (deadhead) miles from the same settlements. Ilgar's raw loaded/empty/gross also
-// exclude load #4202 (Romeoville-Grand Prairie): it was cancelled, so its 911 loaded + 219 empty
-// miles never happened, but its $150 cancellation payout is real and stays in gross. Ilgar's
-// remaining load #4203 (1024mi empty vs 597 loaded) had its empty miles excluded as an outlier
-// leg. Victor's raw empty (636, his only load this week) excluded the same way.
+//
+// PER-LOAD DETAIL OBJECTS (bestGrossLoadDetail / bestRpmLoadDetail, defined
+// below trucks): only ever captured for whichever driver ACTUALLY WINS that
+// metric for that trailer type, found out AFTER the aggregate numbers above
+// are computed — never pre-collected for every driver. Each load is recorded
+// straight from its settlement row as { states:"XX-YY", empty, loaded } —
+// states-only (2-letter pickup/delivery state codes, no cities, per explicit
+// instruction to keep lanes compact and not identify anyone by exact route).
+// MANDATORY before shipping any update to these objects: the sum of a
+// driver's loads[].loaded must equal their trucks[].miles, and the sum of
+// loads[].empty must equal their trucks[].empty (if trucks[].empty was
+// itself outlier-adjusted down, e.g. Driver H's 636mi exclusion, the raw
+// per-load empty can legitimately exceed the trucks total — note that
+// explicitly in a comment when it happens, don't silently let it look like a
+// math error). If a metric's winner changes week to week and this data isn't
+// updated in sync, the driverId guard in renderComputedRecords() hides the
+// Details toggle entirely rather than ever show stale/mismatched loads.
+//
+// This week (Jul 14-20, 2026) — driver-specific exceptions to the rules above:
+// Driver D's raw loaded/empty/gross exclude load #4202 (Romeoville-Grand
+// Prairie): it was cancelled, so its 911 loaded + 219 empty miles never
+// happened, but its $150 cancellation payout is real and stays in gross.
+// Driver D's remaining load #4203 (1024mi empty vs 597 loaded) had its empty
+// miles excluded as an outlier leg. Driver H's raw empty (636mi, his only
+// load this week) was excluded the same way as an outlier leg.
 const trucks = [
   {id:"A", trailer:"reefer",   miles:2915, rpm:3.47, gross:10100, includeGross:true,  includeRpm:true,  empty:256, days:6}, // Driver A (6 active days, approved)
   {id:"B", trailer:"dryvan",   miles:1232, rpm:1.22, gross:1500,  includeGross:false, includeRpm:false, empty:0,   days:0}, // Driver B (partial/relay load)
@@ -949,14 +1012,15 @@ const trucks = [
   {id:"J", trailer:"dryvan",   miles:0,    rpm:0,    gross:0,     includeGross:false, includeRpm:false, empty:0,   days:0, didNotWork:true}, // Driver J (did not drive this week)
 ];
 
-// Per-load lane detail for the "Best Weekly Gross" card's Details panel — only
-// collected for whichever driver actually wins Gross that week (found out
-// AFTER the weekly totals above are computed, then their settlement is
-// re-checked for its individual load rows), not for every driver. States only
-// (no cities), per explicit instruction. Update this each week once the
-// Gross winner is known: driverId must match, and states/empty/loaded must
-// sum to that driver's own miles/empty/gross above (sanity-check before
-// shipping — states themselves don't have a computed cross-check).
+// Per-load lane detail for the Best Weekly Gross Details panel, one entry per
+// trailer type — see the "PER-LOAD DETAIL OBJECTS" rule in the METHODOLOGY
+// block above for the full capture/update/sanity-check rule. Sources this week:
+// reefer = Driver C, settlement #1875 (3 loads, sums exactly to trucks miles
+// 3650 / empty 338 / gross 14900). dryvan = Driver H, settlement #1880 (single
+// load, La Junta CO -> Fort Wayne IN; its raw empty here is 636mi, higher than
+// trucks[].empty:0 for Driver H — that's expected, not an error: this driver's
+// one deadhead leg was excluded from his aggregate as an outlier per the
+// METHODOLOGY rule, but the Details panel still shows the real per-load number).
 const bestGrossLoadDetail = {
   reefer: {
     driverId: "C",
@@ -967,7 +1031,6 @@ const bestGrossLoadDetail = {
     ],
   },
   dryvan: {
-    // Driver H, settlement #1880: single load, La Junta CO -> Fort Wayne IN.
     driverId: "H",
     loads: [
       { states:"CO-IN", empty:636, loaded:1167 },
@@ -975,11 +1038,12 @@ const bestGrossLoadDetail = {
   },
 };
 
-// Same idea as bestGrossLoadDetail above, but for whichever driver wins Best
-// Weekly RPM per trailer type. Reefer: Driver F, settlement #1877 — 3 loads,
-// summing exactly to the trucks entry's miles:1205/empty:206/gross:5500. Dry
-// Van: Driver H happens to also be this week's RPM winner (only eligible Dry
-// Van truck), so it reuses the same single load as bestGrossLoadDetail.dryvan.
+// Same as bestGrossLoadDetail above, but for whichever driver wins Best Weekly
+// RPM per trailer type (see METHODOLOGY block for the capture/sanity-check
+// rule). Sources this week: reefer = Driver F, settlement #1877 (3 loads,
+// sums exactly to trucks miles:1205/empty:206/gross:5500). dryvan = Driver H
+// happens to also be this week's RPM winner (only eligible Dry Van truck this
+// week), so it reuses the same single load as bestGrossLoadDetail.dryvan.
 const bestRpmLoadDetail = {
   reefer: {
     driverId: "F",
