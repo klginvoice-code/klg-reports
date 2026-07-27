@@ -271,12 +271,12 @@
   @media (max-width:480px){
     /* keep brand text + QR side by side in one row even on phones,
        just scale everything down so it all fits without wrapping/overflow */
-    .footer-tier-brand{flex-direction:row;align-items:center;}
-    .thanks-brand-text b{font-size:var(--fs-body);}
-    .thanks-subtitle{font-size:var(--fs-caption);}
+    .footer-tier-brand{flex-direction:row;align-items:center;flex-wrap:nowrap;}
+    .thanks-brand-text b{font-size:18px;}
+    .thanks-subtitle{font-size:12px;}
     .contact-rows{margin-top:8px;gap:6px;}
-    .contact-row .c-icon{width:13px;height:13px;}
-    .contact-row .c-text{font-size:var(--fs-caption);}
+    .contact-row .c-icon{width:16px;height:16px;}
+    .contact-row .c-text{font-size:13px;}
     .thanks-qr{width:92px;height:92px;}
   }
 </style>
