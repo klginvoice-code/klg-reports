@@ -921,7 +921,7 @@ const trucks = [
   {id:"E", trailer:"reefer",   miles:2398, rpm:3.75, gross:9000,  includeGross:true,  includeRpm:true,  empty:254, days:4}, // Driver E (4 active days, approved)
   {id:"F", trailer:"reefer",   miles:1205, rpm:4.56, gross:5500,  includeGross:false, includeRpm:true,  empty:206, days:4}, // Driver F (4 active days, not approved for Gross)
   {id:"G", trailer:"reefer",   miles:1669, rpm:3.66, gross:6100,  includeGross:false, includeRpm:true,  empty:230, days:5}, // Driver G (5 active days, not approved for Gross)
-  {id:"H", trailer:"dryvan",   miles:1167, rpm:3.35, gross:9100,  includeGross:true,  includeRpm:true,  empty:0,   days:4}, // Driver H (4 active days; 636mi empty outlier excluded)
+  {id:"H", trailer:"dryvan",   miles:1167, rpm:2.61, gross:3050,  includeGross:true,  includeRpm:true,  empty:0,   days:4}, // Driver H (4 active days; 636mi empty outlier excluded; corrected 2026-07-27 — gross recovered from settlement #1880's single load, Amount $1,067.50 / 0.35 pay rate = $3,050; miles/rpm recomputed to match; a prior placeholder figure had been left in from before this week's settlement was checked)
   {id:"I", trailer:"reefer",   miles:1799, rpm:3.89, gross:6995,  includeGross:false, includeRpm:true,  empty:401, days:5}, // Driver I (5 active days, not approved for Gross)
   {id:"J", trailer:"dryvan",   miles:0,    rpm:0,    gross:0,     includeGross:false, includeRpm:false, empty:0,   days:0, didNotWork:true}, // Driver J (did not drive this week)
 ];
@@ -935,12 +935,21 @@ const trucks = [
 // sum to that driver's own miles/empty/gross above (sanity-check before
 // shipping — states themselves don't have a computed cross-check).
 const bestGrossLoadDetail = {
-  driverId: "C",
-  loads: [
-    { states:"GA-TX", empty:146, loaded:1430 },
-    { states:"TX-IL", empty:33,  loaded:1472 },
-    { states:"MI-NC", empty:159, loaded:748  },
-  ],
+  reefer: {
+    driverId: "C",
+    loads: [
+      { states:"GA-TX", empty:146, loaded:1430 },
+      { states:"TX-IL", empty:33,  loaded:1472 },
+      { states:"MI-NC", empty:159, loaded:748  },
+    ],
+  },
+  dryvan: {
+    // Driver H, settlement #1880: single load, La Junta CO -> Fort Wayne IN.
+    driverId: "H",
+    loads: [
+      { states:"CO-IN", empty:636, loaded:1167 },
+    ],
+  },
 };
 
 function trailerGroups(){
@@ -1096,14 +1105,16 @@ function renderComputedRecords(){
     } else {
       grossValueEl.textContent = "$" + byGross.gross.toLocaleString('en-US');
 
-      // "Details" panel: only wired up if bestGrossLoadDetail actually matches
-      // this type's Gross winner (it's hand-updated per driver, see its own
-      // comment) — if the winner changes and the detail data isn't updated
-      // yet, hide the toggle entirely rather than show stale/mismatched loads.
-      if (bestGrossLoadDetail.driverId === byGross.id) {
+      // "Details" panel: only wired up if this type's bestGrossLoadDetail entry
+      // actually matches this type's Gross winner (it's hand-updated per
+      // driver, see its own comment) — if the winner changes and the detail
+      // data isn't updated yet, hide the toggle entirely rather than show
+      // stale/mismatched loads.
+      const detail = bestGrossLoadDetail[type];
+      if (detail && detail.driverId === byGross.id) {
         const totalRpm = byGross.gross / (byGross.miles + byGross.empty);
         document.getElementById("gd-stats-" + suffix).innerHTML = [
-          ["Loads", bestGrossLoadDetail.loads.length, true],
+          ["Loads", detail.loads.length, true],
           ["Loaded mi", byGross.miles.toLocaleString('en-US')],
           ["Deadhead mi", byGross.empty.toLocaleString('en-US')],
           ["RPM (loaded)", "$" + byGross.rpm.toFixed(2)],
@@ -1111,7 +1122,7 @@ function renderComputedRecords(){
         ].map(([label, value, full]) =>
           `<div class="gd-stat"${full ? ' style="grid-column:1/-1;"' : ''}><span class="gd-label">${label}</span><span class="gd-value">${value}</span></div>`
         ).join("");
-        document.getElementById("gd-lanes-" + suffix).innerHTML = bestGrossLoadDetail.loads.map(l =>
+        document.getElementById("gd-lanes-" + suffix).innerHTML = detail.loads.map(l =>
           `<span class="gd-lane">${l.states}</span>`
         ).join("");
         grossToggle.addEventListener("click", () => {
@@ -1490,7 +1501,7 @@ function renderTrend(){
   const grossWeeks = ["4wk ago","3wk ago","2wk ago","1wk ago","Current"];
   const trailerTrends = [
     { key:"reefer", color:"#2a78d6", rpm:[3.84,3.84,5.41,4.08,3.80], gross:[9769,7786,10133,9900,11333] },
-    { key:"dryvan", color:"#1baf7a", rpm:[3.95,3.07,4.90,3.75,3.35], gross:[8675,9200,8900,5875,9100] },
+    { key:"dryvan", color:"#1baf7a", rpm:[3.95,3.07,4.90,3.75,2.61], gross:[8675,9200,8900,5875,3050] },
   ];
   trailerTrends.forEach(t=>{
     const meta = TRAILER_META[t.key];
