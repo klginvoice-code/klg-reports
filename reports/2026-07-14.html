@@ -319,6 +319,15 @@
     background:#E3EFE8;border-radius:6px;padding:4px 8px;
     letter-spacing:0.2px;
   }
+  /* Same compact-pill pattern as .gd-lane, tinted to this card's own amber
+     family (see .hero-card--fuel) instead of Gross's green. */
+  .fuel-networks-label{font-size:var(--fs-micro);color:var(--text-muted);font-weight:600;margin-top:10px;}
+  .fuel-networks{margin-top:6px;display:flex;flex-wrap:wrap;gap:6px;}
+  .fuel-chip{
+    font-size:var(--fs-micro);font-weight:700;color:#8A5A1E;
+    background:#F3E7D2;border-radius:6px;padding:4px 8px;
+    letter-spacing:0.2px;
+  }
 
   /* ---------- Section shell ---------- */
   .section{
@@ -830,6 +839,24 @@ document.documentElement.classList.add("js-anim-ready");
       <div class="hero-value">$0.66<span style="font-size:var(--fs-body);font-weight:600;">/gal saved</span></div>
       <div class="hero-tag">TA Rogers &mdash; Rogers, MN</div>
       <div class="hero-tag" style="font-size:var(--fs-micro);color:var(--text-muted);font-weight:500;margin-top:2px;">Best discount our fleet received this week &mdash; not the best rate available nationwide</div>
+      <div class="fuel-networks-label">Accepted at:</div>
+      <div class="fuel-networks">
+        <span class="fuel-chip">TA</span>
+        <span class="fuel-chip">Petro</span>
+        <span class="fuel-chip">TA Express</span>
+        <span class="fuel-chip">AmBest Fuel Stops</span>
+        <span class="fuel-chip">7-Eleven</span>
+        <span class="fuel-chip">Speedway</span>
+        <span class="fuel-chip">Stripes</span>
+        <span class="fuel-chip">Maverik</span>
+        <span class="fuel-chip">Casey's</span>
+        <span class="fuel-chip">Kwik Trip</span>
+        <span class="fuel-chip">Kwik Star</span>
+        <span class="fuel-chip">Sapp Bros</span>
+        <span class="fuel-chip">Road Ranger</span>
+        <span class="fuel-chip">Roady's</span>
+        <span class="fuel-chip">Irving</span>
+      </div>
     </div>
     <div class="hero-card hero-card--deadhead hero-rv">
       <div class="hero-top">
