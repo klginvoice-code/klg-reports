@@ -240,7 +240,7 @@
      applied above the single-column mobile breakpoint, where cards stack and
      side-by-side height-matching isn't visible anyway. */
   @media (min-width:521px){
-    .hero-card--gross, .hero-card--rpm{min-height:160px;}
+    .hero-card--gross, .hero-card--rpm{min-height:166px;}
   }
   .hero-card--fuel{background:#FFFBF5;border-color:rgba(183,122,42,0.15);}
   .hero-card--fuel:hover{border-color:rgba(183,122,42,0.30);}
@@ -280,11 +280,18 @@
   .hero-card--gross, .hero-card--rpm{transition:transform .4s cubic-bezier(.22,1,.36,1), box-shadow .4s cubic-bezier(.22,1,.36,1);}
   .hero-card--gross.details-open{transform:translateY(-3px);box-shadow:0 10px 28px rgba(47,111,78,0.14);}
   .hero-card--rpm.details-open{transform:translateY(-3px);box-shadow:0 10px 28px rgba(61,90,153,0.16);}
+  /* These two cards toggle their Details panel from a tap anywhere in the
+     card header (see wireDetailsToggle in JS) — cursor:pointer signals that.
+     The toggle button itself still gets extra padding so it also works as a
+     comfortably-sized standalone target (keyboard/screen-reader users, or
+     anyone tapping precisely on it). */
+  .hero-card--gross, .hero-card--rpm{cursor:pointer;}
+  .hero-details-panel{cursor:default;}
   .hero-details-toggle{
-    margin-top:10px;
+    margin:6px -8px -6px;
     display:inline-flex;align-items:center;gap:4px;
     font-size:var(--fs-label);font-weight:700;color:var(--text-secondary);
-    background:none;border:none;padding:0;cursor:pointer;
+    background:none;border:none;padding:8px;border-radius:8px;cursor:pointer;
     -webkit-tap-highlight-color:transparent;
   }
   .hero-details-toggle:hover{color:var(--good);}
@@ -1200,6 +1207,23 @@ function renderTrailerTable(){
   });
 }
 
+// Toggles a card's Details panel from a tap ANYWHERE in the card's header
+// area, not just the small "Details" button — the button alone is too small
+// a target for comfortable one-handed mobile use (below the ~44px minimum
+// touch-target guideline). Listens on the whole card, but ignores taps that
+// land inside the already-open panel itself (.hero-details-panel), so
+// reading/tapping around the revealed stats/lanes doesn't accidentally
+// re-collapse it — only the header (icon/label/value/tag/toggle) responds.
+function wireDetailsToggle(cardEl, toggleEl, panelEl){
+  cardEl.addEventListener("click", (e) => {
+    if (e.target.closest(".hero-details-panel")) return;
+    const isOpen = toggleEl.getAttribute("aria-expanded") === "true";
+    toggleEl.setAttribute("aria-expanded", String(!isOpen));
+    panelEl.classList.toggle("open", !isOpen);
+    cardEl.classList.toggle("details-open", !isOpen);
+  });
+}
+
 // ---------- Best of the Week: computed from truck data, per trailer type ----------
 // Gross and RPM are each awarded separately within Reefer and within Dry Van
 // (not one fleet-wide winner) — the two trailer types are different rate
@@ -1251,12 +1275,7 @@ function renderComputedRecords(){
         document.getElementById("gd-lanes-" + suffix).innerHTML = detail.loads.map(l =>
           `<span class="gd-lane">${l.states}</span>`
         ).join("");
-        grossToggle.addEventListener("click", () => {
-          const isOpen = grossToggle.getAttribute("aria-expanded") === "true";
-          grossToggle.setAttribute("aria-expanded", String(!isOpen));
-          grossPanel.classList.toggle("open", !isOpen);
-          grossCard.classList.toggle("details-open", !isOpen);
-        });
+        wireDetailsToggle(grossCard, grossToggle, grossPanel);
       } else {
         grossToggle.style.display = "none";
       }
@@ -1298,12 +1317,7 @@ function renderComputedRecords(){
         document.getElementById("rd-lanes-" + suffix).innerHTML = rDetail.loads.map(l =>
           `<span class="gd-lane">${l.states}</span>`
         ).join("");
-        rpmToggle.addEventListener("click", () => {
-          const isOpen = rpmToggle.getAttribute("aria-expanded") === "true";
-          rpmToggle.setAttribute("aria-expanded", String(!isOpen));
-          rpmPanel.classList.toggle("open", !isOpen);
-          rpmCard.classList.toggle("details-open", !isOpen);
-        });
+        wireDetailsToggle(rpmCard, rpmToggle, rpmPanel);
       } else {
         rpmToggle.style.display = "none";
       }
