@@ -204,30 +204,27 @@
     text-align:center;
   }
 
-  /* ---------- Footer bar (ported verbatim from the weekly report for identical branding) ---------- */
+  /* ---------- Footer bar: business-card layout (2026-07-27, per reference mockup) ---------- */
   .thanks-brand{display:flex;align-items:center;gap:12px;min-width:0;}
   .thanks-brand-logo{height:70px;width:auto;flex:none;}
   .thanks-brand-text{min-width:0;}
-  .thanks-brand-text b{font-size:var(--fs-title);font-weight:800;display:block;color:#fff;}
-  .thanks-subtitle{font-size:var(--fs-label);font-weight:600;letter-spacing:0.4px;color:var(--dark-text-secondary);text-transform:uppercase;margin-top:2px;}
-  .thanks-contact{
-    margin-top:6px;font-size:var(--fs-body);color:var(--dark-text-secondary);
-    display:flex;align-items:center;gap:6px;flex-wrap:wrap;
-  }
-  .thanks-contact a{color:var(--dark-accent);text-decoration:none;font-weight:700;}
-  .thanks-contact .phone-text{color:var(--dark-accent);font-weight:700;}
-  .thanks-contact a.ig-link{display:inline-flex;align-items:center;gap:4px;}
-  .thanks-contact .sep{color:rgba(255,255,255,0.25);}
+  .thanks-brand-text b{font-size:var(--fs-display);font-weight:800;display:block;color:#fff;line-height:1.1;}
+  .thanks-subtitle{font-size:var(--fs-label);font-weight:600;letter-spacing:1px;color:var(--dark-text-secondary);text-transform:uppercase;margin-top:4px;}
+  .contact-rows{margin-top:16px;display:flex;flex-direction:column;gap:10px;}
+  .contact-row{display:flex;align-items:center;gap:12px;}
+  .contact-row .c-icon{flex:none;width:18px;height:18px;color:var(--dark-accent);}
+  .contact-row .c-divider{flex:none;width:1px;align-self:stretch;background:rgba(255,255,255,0.16);}
+  .contact-row .c-text{font-size:var(--fs-subtitle);font-weight:700;color:var(--dark-accent);text-decoration:none;}
   .thanks-qr{
     flex:none;
-    width:70px;height:70px;
+    width:96px;height:96px;
     box-sizing:border-box;
     background:#ffffff;
-    border-radius:8px;
-    padding:2px;
+    border-radius:10px;
+    padding:3px;
     line-height:0;
   }
-  .thanks-qr img{width:100%;height:100%;display:block;object-fit:cover;border-radius:4px;}
+  .thanks-qr img{width:100%;height:100%;display:block;object-fit:cover;border-radius:6px;}
   .footer-bar{
     background:var(--dark-bg);
     border-radius:var(--radius-md);
@@ -302,10 +299,22 @@
         <div class="thanks-brand-text">
           <b>Karo Lara Group</b>
           <div class="thanks-subtitle">Transportation Company</div>
-          <div class="thanks-contact">
-            <span class="phone-text">(786) 281-9343</span>
-            <span class="sep">&middot;</span>
-            <a href="https://www.instagram.com/karolaragroup?igsh=MWt4OWpla2R4N2g2aw%3D%3D&utm_source=qr" class="ig-link" target="_blank" rel="noopener noreferrer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg> @karolaragroup</a>
+          <div class="contact-rows">
+            <div class="contact-row">
+              <svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              <span class="c-divider"></span>
+              <span class="c-text">(786) 281-9343</span>
+            </div>
+            <div class="contact-row">
+              <svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              <span class="c-divider"></span>
+              <a class="c-text" href="mailto:karolaragroup@gmail.com">karolaragroup@gmail.com</a>
+            </div>
+            <div class="contact-row">
+              <svg class="c-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+              <span class="c-divider"></span>
+              <a class="c-text" href="https://www.instagram.com/karolaragroup?igsh=MWt4OWpla2R4N2g2aw%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer">@karolaragroup</a>
+            </div>
           </div>
         </div>
       </div>
