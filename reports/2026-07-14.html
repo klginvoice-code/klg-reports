@@ -1077,9 +1077,22 @@ function lightenHex(hex, pct){
 // Same 560x170 canvas as trendChart so swapping between the two views never
 // changes the trend-card's height. Rounded-top-only bars are drawn as a path
 // (an SVG rect's rx rounds all four corners, which isn't what we want here).
-function grossBarChart(values, weeks, fmt, tooltipFmt, color){
+// `renderWidth` — same fixed-viewBox-vs-real-width fix as trendChart() above:
+// font sizes are computed backwards from a fixed real-pixel target instead of
+// a fixed viewBox-unit number, so labels stay legible regardless of how many
+// grid columns are active when this chart renders.
+function grossBarChart(values, weeks, fmt, tooltipFmt, color, renderWidth){
   const w = 560, h = 170;
-  const padL = 44, padR = 14, padT = 22, padB = 24;
+  const scale = renderWidth ? renderWidth / w : 1;
+  const axisFs = (11 / scale).toFixed(2);
+  const dataFs = (13 / scale).toFixed(2);
+  // padL scales inversely with the same factor as axisFs (both target a fixed
+  // real-pixel size) — without this, gross dollar figures like "$12,693" widen
+  // enough at the corrected font size to overflow past the chart's left edge
+  // on narrow screens, where scale is smallest and axisFs (in user units) is
+  // largest. Confirmed via measured text bbox at scale=0.511: label width grew
+  // to ~79 user units, well past the old fixed 44-unit padL.
+  const padL = 44 / scale, padR = 14, padT = 22, padB = 24;
   const plotW = w - padL - padR, plotH = h - padT - padB;
   const baseline = padT + plotH;
   const max = Math.max(...values);
@@ -1103,7 +1116,7 @@ function grossBarChart(values, weeks, fmt, tooltipFmt, color){
   const gridlines = gridVals.map(v=>{
     const y = baseline - (v / hi) * plotH;
     return `<line x1="${padL}" y1="${y.toFixed(1)}" x2="${w-padR}" y2="${y.toFixed(1)}" stroke="#8993a1" stroke-opacity="0.22" stroke-width="1"/>
-      <text x="${padL-8}" y="${(y+3).toFixed(1)}" text-anchor="end" font-size="10" fill="#5c636f">${tooltipFmt(v)}</text>`;
+      <text x="${padL-8}" y="${(y+3).toFixed(1)}" text-anchor="end" font-size="${axisFs}" fill="#5c636f">${tooltipFmt(v)}</text>`;
   }).join("");
 
   const bars = values.map((v,i)=>{
@@ -1131,11 +1144,11 @@ function grossBarChart(values, weeks, fmt, tooltipFmt, color){
   ).join("");
 
   const valueLabels = bars.map(b=>
-    `<text class="gbar-label" style="opacity:0;transform:translateY(6px);transform-box:fill-box;transform-origin:center;" x="${(b.bx+b.barW/2).toFixed(1)}" y="${(b.barTop-10).toFixed(1)}" text-anchor="middle" font-size="12" font-weight="800" fill="${b.isCurrent?color:'#3d4552'}">${fmt(b.v)}</text>`
+    `<text class="gbar-label" style="opacity:0;transform:translateY(6px);transform-box:fill-box;transform-origin:center;" x="${(b.bx+b.barW/2).toFixed(1)}" y="${(b.barTop-10).toFixed(1)}" text-anchor="middle" font-size="${dataFs}" font-weight="800" fill="${b.isCurrent?color:'#3d4552'}">${fmt(b.v)}</text>`
   ).join("");
 
   const weekLabels = bars.map((b,i)=>
-    `<text x="${(b.bx+b.barW/2).toFixed(1)}" y="${h-6}" text-anchor="middle" font-size="10" fill="#5c636f">${weeks[i]}</text>`
+    `<text x="${(b.bx+b.barW/2).toFixed(1)}" y="${h-6}" text-anchor="middle" font-size="${axisFs}" fill="#5c636f">${weeks[i]}</text>`
   ).join("");
 
   const hits = bars.map((b,i)=>
@@ -1377,7 +1390,7 @@ function renderTrend(){
           }
         } else {
           titleEl.textContent = "Gross Trend (5 Weeks)";
-          chartWrap.innerHTML = grossBarChart(t.gross, grossWeeks, fmtGrossK, fmtGross, t.color);
+          chartWrap.innerHTML = grossBarChart(t.gross, grossWeeks, fmtGrossK, fmtGross, t.color, chartWrap.getBoundingClientRect().width);
           attachGrossBarTooltip(chartWrap, t.gross, grossWeeks, fmtGross);
           const bars = chartWrap.querySelectorAll(".gbar-grow");
           const labels = chartWrap.querySelectorAll(".gbar-label");
