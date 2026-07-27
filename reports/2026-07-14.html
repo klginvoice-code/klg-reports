@@ -1034,13 +1034,13 @@ function renderComputedRecords(){
   if (bestGrossLoadDetail.driverId === byGross.id) {
     const totalRpm = byGross.gross / (byGross.miles + byGross.empty);
     document.getElementById("gd-stats").innerHTML = [
-      ["Loads", bestGrossLoadDetail.loads.length],
+      ["Loads", bestGrossLoadDetail.loads.length, true],
       ["Loaded mi", byGross.miles.toLocaleString('en-US')],
       ["Deadhead mi", byGross.empty.toLocaleString('en-US')],
       ["RPM (loaded)", "$" + byGross.rpm.toFixed(2)],
       ["RPM (total)", "$" + totalRpm.toFixed(2)],
-    ].map(([label, value]) =>
-      `<div class="gd-stat"><span class="gd-label">${label}</span><span class="gd-value">${value}</span></div>`
+    ].map(([label, value, full]) =>
+      `<div class="gd-stat"${full ? ' style="grid-column:1/-1;"' : ''}><span class="gd-label">${label}</span><span class="gd-value">${value}</span></div>`
     ).join("");
     document.getElementById("gd-lanes").innerHTML = bestGrossLoadDetail.loads.map(l =>
       `<span class="gd-lane">${l.states}</span>`
