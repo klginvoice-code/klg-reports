@@ -692,11 +692,11 @@ document.documentElement.classList.add("js-anim-ready");
     <div class="hero-card hero-card--deadhead hero-rv">
       <div class="hero-top">
         <div class="hero-icon deadhead"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg></div>
-        <div class="hero-label">Avg Deadhead %</div>
+        <div class="hero-label">Avg Deadhead</div>
       </div>
       <div class="hero-value" id="deadhead-value">&mdash;</div>
-      <div class="market-delta" id="deadhead-delta"></div>
       <div class="hero-tag">Across all reefer + dry van</div>
+      <div class="hero-tag" style="font-size:var(--fs-micro);color:var(--text-muted);font-weight:500;margin-top:2px;">Average of each driver's total empty (deadhead) miles this week</div>
     </div>
   </div>
 
@@ -962,25 +962,20 @@ function renderComputedRecords(){
   document.getElementById("rec-rpm-value").textContent = "$" + byRpm.rpm.toFixed(2) + "/mi";
   document.getElementById("rec-rpm-tag").innerHTML = TRAILER_META[byRpm.trailer].icon + " " + TRAILER_META[byRpm.trailer].label;
 
-  // Fleet Avg Deadhead % = total empty miles / total miles (loaded+empty), across
-  // the same includeRpm-eligible truck set already used for RPM (excludes
-  // partial/relay loads and no-drive weeks) — not split by trailer type, see
-  // project memory for why (small per-type sample size, and deadhead is driven
-  // more by dispatch/lane-planning than by trailer type itself).
+  // Avg Deadhead, in miles (changed from % on 2026-07-27, per explicit request):
+  // average of each eligible driver's own total empty (deadhead) miles this
+  // week — total empty miles / number of drivers, across the same
+  // includeRpm-eligible truck set already used for RPM (excludes partial/relay
+  // loads and no-drive weeks) — not split by trailer type, see project memory
+  // for why (small per-type sample size, and deadhead is driven more by
+  // dispatch/lane-planning than by trailer type itself).
   const totalEmpty = rpmEligible.reduce((s,t)=>s+t.empty, 0);
-  const totalMiles = rpmEligible.reduce((s,t)=>s+t.miles, 0);
-  const deadheadPct = totalEmpty / (totalEmpty + totalMiles) * 100;
-  document.getElementById("deadhead-value").textContent = deadheadPct.toFixed(1) + "%";
+  const avgDeadheadMiles = totalEmpty / rpmEligible.length;
+  document.getElementById("deadhead-value").textContent = Math.round(avgDeadheadMiles) + " mi";
 
-  // Last week's fleet deadhead % (Jul 7-13, same reefer+dryvan settlement-PDF
-  // methodology, Driver G's one outlier week excluded elsewhere doesn't
-  // apply here — this is the full fleet, not a per-trailer-type slice) — lower
-  // deadhead is the improvement direction, so goodDirection is "down" (same
-  // convention as the fuel-price market card).
-  const lastWeekDeadheadPct = 9.59;
-  const dDead = deltaInfo([lastWeekDeadheadPct, deadheadPct], "down");
-  document.getElementById("deadhead-delta").innerHTML =
-    `<span class="arrow" style="color:${dDead.arrowColor};">${dDead.arrowChar}</span> ${dDead.pct.toFixed(1)}%<span class="sub">vs last week</span>`;
+  // No "vs last week" delta for now: the prior comparison (lastWeekDeadheadPct)
+  // was in %, a different unit than this mile-based value, so it can't be
+  // reused — needs a real last-week avg-miles figure before this can come back.
 }
 
 // ---------- 6-week trend: bigger line chart with gridlines + direct labels ----------
