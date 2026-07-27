@@ -208,13 +208,13 @@
   .thanks-brand{display:flex;align-items:center;gap:12px;min-width:0;}
   .thanks-brand-logo{height:70px;width:auto;flex:none;}
   .thanks-brand-text{min-width:0;}
-  .thanks-brand-text b{font-size:var(--fs-display);font-weight:800;display:block;color:#fff;line-height:1.1;}
-  .thanks-subtitle{font-size:var(--fs-label);font-weight:600;letter-spacing:1px;color:var(--dark-text-secondary);text-transform:uppercase;margin-top:4px;}
-  .contact-rows{margin-top:16px;display:flex;flex-direction:column;gap:10px;}
-  .contact-row{display:flex;align-items:center;gap:12px;}
-  .contact-row .c-icon{flex:none;width:18px;height:18px;color:var(--dark-accent);}
+  .thanks-brand-text b{font-size:var(--fs-stat);font-weight:800;display:block;color:#fff;line-height:1.1;}
+  .thanks-subtitle{font-size:var(--fs-micro);font-weight:600;letter-spacing:0.8px;color:var(--dark-text-secondary);text-transform:uppercase;margin-top:3px;}
+  .contact-rows{margin-top:12px;display:flex;flex-direction:column;gap:8px;}
+  .contact-row{display:flex;align-items:center;gap:10px;}
+  .contact-row .c-icon{flex:none;width:15px;height:15px;color:var(--dark-accent);}
   .contact-row .c-divider{flex:none;width:1px;align-self:stretch;background:rgba(255,255,255,0.16);}
-  .contact-row .c-text{font-size:var(--fs-subtitle);font-weight:700;color:var(--dark-accent);text-decoration:none;}
+  .contact-row .c-text{font-size:var(--fs-body);font-weight:700;color:var(--dark-accent);text-decoration:none;}
   .thanks-qr{
     flex:none;
     width:96px;height:96px;
@@ -256,11 +256,11 @@
     /* keep brand text + QR side by side in one row even on phones,
        just scale everything down so it all fits without wrapping/overflow */
     .footer-tier-brand{flex-direction:row;align-items:center;}
-    .thanks-brand-text b{font-size:var(--fs-title);}
-    .thanks-subtitle{font-size:var(--fs-micro);}
+    .thanks-brand-text b{font-size:var(--fs-body);}
+    .thanks-subtitle{font-size:var(--fs-caption);}
     .contact-rows{margin-top:8px;gap:6px;}
-    .contact-row .c-icon{width:14px;height:14px;}
-    .contact-row .c-text{font-size:var(--fs-micro);}
+    .contact-row .c-icon{width:13px;height:13px;}
+    .contact-row .c-text{font-size:var(--fs-caption);}
     .thanks-qr{width:92px;height:92px;}
   }
 </style>
