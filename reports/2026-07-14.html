@@ -1053,13 +1053,14 @@ const bestGrossLoadDetail = {
 // happens to also be this week's RPM winner (only eligible Dry Van truck this
 // week), so it reuses the same single load as bestGrossLoadDetail.dryvan.
 //
-// GROSS-DISCLOSURE RULE (renderComputedRecords()): the RPM Details panel only
-// shows this driver's $ gross when the RPM winner is the SAME driver as that
-// trailer type's Gross winner — their earnings are already public via the
-// Gross card in that case, so repeating it adds no new exposure. When the RPM
-// and Gross winners are different drivers (e.g. reefer this week: Gross=C,
-// RPM=F), the RPM winner's gross stays hidden — they never opted into having
-// their earnings shown by winning a rate-based award, only Gross winners did.
+// GROSS-DISCLOSURE RULE (renderComputedRecords()): the RPM Details panel never
+// shows $ gross, for both trailer types, even when the RPM winner happens to
+// be the same driver as the Gross winner — the RPM and Gross Details panels
+// each have one fixed stat structure across both trailer types (Reefer and
+// Dry Van look identical to each other within their own panel type), and the
+// RPM winner is often a different driver than the Gross winner, whose weekly
+// earnings aren't shown anywhere else in the report and shouldn't be newly
+// disclosed just to illustrate the RPM math.
 const bestRpmLoadDetail = {
   reefer: {
     driverId: "F",
@@ -1277,26 +1278,20 @@ function renderComputedRecords(){
       // RPM winner.
       const rDetail = bestRpmLoadDetail[type];
       if (rDetail && rDetail.driverId === byRpm.id) {
-        // Gross $ is only revealed here when this type's RPM winner is the
-        // SAME driver as this type's Gross winner — in that case their gross
-        // is already public via the Gross card, so showing it again here adds
-        // no new exposure. If the RPM winner is a different driver than the
-        // Gross winner, their own weekly earnings aren't shown anywhere else
-        // in the report, so we don't newly reveal them just to illustrate the
-        // RPM math — the rate + miles already convey how the result was
-        // achieved without needing the raw dollar figure. See METHODOLOGY.
-        const showGross = byGross && byGross.id === byRpm.id;
+        // Gross $ is deliberately never shown here, for two reasons: (1) the
+        // RPM winner is often a different driver than the Gross winner (e.g.
+        // reefer this week), and their own weekly earnings aren't shown
+        // anywhere else in the report — winning a rate-based award was never
+        // their opt-in to have pay disclosed; (2) structural consistency —
+        // the RPM Details panel has the same stat set (Loads/Loaded mi/
+        // Deadhead mi/RPM loaded) across both trailer types, matching how the
+        // Gross Details panel is also identical in structure across types.
         const rpmStatRows = [
           ["Loads", rDetail.loads.length, true],
           ["Loaded mi", byRpm.miles.toLocaleString('en-US')],
           ["Deadhead mi", byRpm.empty.toLocaleString('en-US')],
+          ["RPM (loaded)", "$" + byRpm.rpm.toFixed(2), true],
         ];
-        if (showGross) {
-          rpmStatRows.push(["Gross", "$" + byRpm.gross.toLocaleString('en-US')]);
-          rpmStatRows.push(["RPM (loaded)", "$" + byRpm.rpm.toFixed(2)]);
-        } else {
-          rpmStatRows.push(["RPM (loaded)", "$" + byRpm.rpm.toFixed(2), true]);
-        }
         document.getElementById("rd-stats-" + suffix).innerHTML = rpmStatRows.map(([label, value, full]) =>
           `<div class="gd-stat"${full ? ' style="grid-column:1/-1;"' : ''}><span class="gd-label">${label}</span><span class="gd-value">${value}</span></div>`
         ).join("");
