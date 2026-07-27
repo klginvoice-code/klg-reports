@@ -1437,7 +1437,7 @@ function sparkbarSvg(bars, color, fmt, labels, textColor, pillTextColor){
   const w = 100, h = 70;
   const pillH = 13, pillMargin = 3;
   const barEls = bars.map((b,i)=>
-    `<rect class="spark-bar bar-grow" data-i="${i}" x="${b.x.toFixed(1)}" y="${b.y.toFixed(1)}" width="${b.w.toFixed(1)}" height="${b.h.toFixed(1)}" rx="3" style="fill:${color};fill-opacity:${b.isLast?1:0.55};transform:scaleY(0);"/>`
+    `<rect class="spark-bar bar-grow" data-i="${i}" x="${b.x.toFixed(1)}" y="${b.y.toFixed(1)}" width="${b.w.toFixed(1)}" height="${b.h.toFixed(1)}" rx="3" style="fill:${color};fill-opacity:${b.isLast?0.85:0.55};transform:scaleY(0);"/>`
   ).join("");
   // Label only the first and last bar (same convention as the main
   // trendChart()) — bars are too narrow to fit a value label over every one
@@ -1451,7 +1451,7 @@ function sparkbarSvg(bars, color, fmt, labels, textColor, pillTextColor){
   }).join("");
   const pillEls = bars.map((b,i)=>{
     const py = b.y + b.h - pillH - pillMargin;
-    return `<rect x="${(b.x+1).toFixed(1)}" y="${py.toFixed(1)}" width="${(b.w-2).toFixed(1)}" height="${pillH}" rx="3" style="fill:${color};fill-opacity:${b.isLast?1:0.85};"/>
+    return `<rect x="${(b.x+1).toFixed(1)}" y="${py.toFixed(1)}" width="${(b.w-2).toFixed(1)}" height="${pillH}" rx="3" style="fill:${color};fill-opacity:${b.isLast?0.9:0.75};"/>
     <text x="${(b.x+b.w/2).toFixed(1)}" y="${(py+pillH-3.4).toFixed(1)}" text-anchor="middle" font-size="6.2" style="font-weight:800;fill:${pillTextColor};letter-spacing:0.2px;">${labels[i]}</text>`;
   }).join("");
   const hitEls = bars.map((b,i)=>
@@ -1542,8 +1542,8 @@ const FUEL_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" s
 const MARKET_DATA = [
   { key:"dryvan",  label:"Dry Van",     icon:TRAILER_META.dryvan.icon, color:"var(--dryvan)", textColor:"#14835c", pillTextColor:"#0c1420", unit:"/mi", current:3.03, weekPct:4.8,  goodDirection:"up",   history:[2.67,2.89,3.00,3.03], historyLabels:["Apr","May","Jun","Jul"] },
   { key:"reefer",  label:"Reefer",      icon:TRAILER_META.reefer.icon, color:"var(--reefer)", textColor:"#2872cb", pillTextColor:"#ffffff", unit:"/mi", current:3.44, weekPct:-8.4, goodDirection:"up",   history:[3.12,3.36,3.40,3.44], historyLabels:["Apr","May","Jun","Jul"] },
-  { key:"flatbed", label:"Flatbed",     icon:FLATBED_ICON,             color:"#7c3aed",       textColor:"#7c3aed", pillTextColor:"#ffffff", unit:"/mi", current:3.65, weekPct:1.9,  goodDirection:"up",   history:[3.43,3.66,3.70,3.65], historyLabels:["Apr","May","Jun","Jul"] },
-  { key:"fuel",    label:"Fuel Prices", icon:FUEL_ICON,                 color:"#c9820a",       textColor:"#976208", pillTextColor:"#0c1420", unit:"/gal", current:5.13, weekPct:6.9, goodDirection:"down", history:[4.578,4.796,5.134],   historyLabels:["7/6","7/13","7/20"] },
+  { key:"flatbed", label:"Flatbed",     icon:FLATBED_ICON,             color:"#6731c4",       textColor:"#6731c4", pillTextColor:"#ffffff", unit:"/mi", current:3.65, weekPct:1.9,  goodDirection:"up",   history:[3.43,3.66,3.70,3.65], historyLabels:["Apr","May","Jun","Jul"] },
+  { key:"fuel",    label:"Fuel Prices", icon:FUEL_ICON,                 color:"#a87824",       textColor:"#7e5a1b", pillTextColor:"#ffffff", unit:"/gal", current:5.13, weekPct:6.9, goodDirection:"down", history:[4.578,4.796,5.134],   historyLabels:["7/6","7/13","7/20"] },
 ];
 
 function renderMarketSnapshot(){
