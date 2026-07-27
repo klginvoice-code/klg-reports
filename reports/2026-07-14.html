@@ -1470,7 +1470,7 @@ function attachBarTooltip(container, values, labels, fmt){
   container.style.position = "relative";
   container.appendChild(tooltip);
   function setActive(idx){
-    bars.forEach((b,i)=>{ b.style.fillOpacity = (i === (idx===null? n-1 : idx)) ? 1 : 0.32; });
+    bars.forEach((b,i)=>{ b.style.fillOpacity = (i === (idx===null? n-1 : idx)) ? 0.85 : 0.32; });
   }
   function show(i){
     setActive(i);
