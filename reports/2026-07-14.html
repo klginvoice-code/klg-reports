@@ -695,6 +695,7 @@ document.documentElement.classList.add("js-anim-ready");
         <div class="hero-label">Avg Deadhead</div>
       </div>
       <div class="hero-value" id="deadhead-value">&mdash;</div>
+      <div class="market-delta" id="deadhead-delta"></div>
       <div class="hero-tag">Across all reefer + dry van</div>
       <div class="hero-tag" style="font-size:var(--fs-micro);color:var(--text-muted);font-weight:500;margin-top:2px;">Average of each driver's total empty (deadhead) miles this week</div>
     </div>
@@ -973,9 +974,17 @@ function renderComputedRecords(){
   const avgDeadheadMiles = totalEmpty / rpmEligible.length;
   document.getElementById("deadhead-value").textContent = Math.round(avgDeadheadMiles) + " mi";
 
-  // No "vs last week" delta for now: the prior comparison (lastWeekDeadheadPct)
-  // was in %, a different unit than this mile-based value, so it can't be
-  // reused — needs a real last-week avg-miles figure before this can come back.
+  // Last week's (Jul 7-13) avg deadhead miles, recomputed from real settlement
+  // PDFs for 5 of this week's 8 RPM-eligible drivers (Driver C: 161, Driver E:
+  // 198, Driver F: 706, Driver H: 154, Driver I: 240 — avg 291.8). Drivers A, D,
+  // and G's Jul 7-13 statements weren't found in any local folder, so they're
+  // excluded from this one comparison figure per explicit instruction (use
+  // what's available, expected to be a complete 8-driver set again from next
+  // week on).
+  const lastWeekAvgDeadheadMiles = 291.8;
+  const dDead = deltaInfo([lastWeekAvgDeadheadMiles, avgDeadheadMiles], "down");
+  document.getElementById("deadhead-delta").innerHTML =
+    `<span class="arrow" style="color:${dDead.arrowColor};">${dDead.arrowChar}</span> ${dDead.pct.toFixed(1)}%<span class="sub">vs last week</span>`;
 }
 
 // ---------- 6-week trend: bigger line chart with gridlines + direct labels ----------
