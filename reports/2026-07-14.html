@@ -1745,6 +1745,11 @@ try {
     // Hidden state is applied purely by CSS now (gated on the early js-anim-ready
     // class, see <style>) — nothing to do here to hide sections, only to reveal them.
 
+    // Footer is excluded from this observer — see the dedicated footerObserver
+    // below (a -15% bottom rootMargin can never be satisfied by the very last
+    // element on the page, since there's no document left below it to scroll into).
+    const midSections = document.querySelectorAll(".section");
+
     let observer;
     if (window.IntersectionObserver) {
       observer = new IntersectionObserver((entries)=>{
@@ -1766,8 +1771,28 @@ try {
       // reveals itself before the header above it is even done animating in —
       // visually out of order, like the page reveal is racing itself.
       setTimeout(()=>{
-        sections.forEach(el=> observer.observe(el));
+        midSections.forEach(el=> observer.observe(el));
       }, 950);
+    }
+
+    // Dedicated, lenient observer for the footer bar. Confirmed via a real scroll
+    // test (max-scroll on a 1440x900 desktop viewport) that the general observer's
+    // -15% bottom rootMargin structurally can't be satisfied here: at maximum
+    // scroll the footer is fully on-screen, but the shrunk "sensitive" root only
+    // overlaps ~18% of its height, permanently under the 0.35 threshold — so it
+    // was always falling through to the 9s unconditional fallback instead of
+    // revealing as soon as it actually came into view. No negative margin here.
+    let footerObserver;
+    const footerEl = document.querySelector(".footer-bar");
+    if (window.IntersectionObserver && footerEl) {
+      footerObserver = new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{
+          if (!entry.isIntersecting) return;
+          revealSection(entry.target);
+          footerObserver.unobserve(entry.target);
+        });
+      }, {threshold:0.15});
+      setTimeout(()=>{ footerObserver.observe(footerEl); }, 950);
     }
 
     // Separate, lighter observer for "Best of the Week" — its own reveal logic
@@ -1797,6 +1822,7 @@ try {
       try {
         if (observer) observer.disconnect();
         if (heroObserver) heroObserver.disconnect();
+        if (footerObserver) footerObserver.disconnect();
         revealHeroRow();
         sections.forEach(el=>{ if (!el.classList.contains("rv-scroll-go")) revealSection(el); });
       } catch(e){}
