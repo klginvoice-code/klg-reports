@@ -234,6 +234,14 @@
   .hero-card--gross:hover{border-color:rgba(47,111,78,0.30);}
   .hero-card--rpm{background:#F7F8FC;border-color:rgba(61,90,153,0.16);}
   .hero-card--rpm:hover{border-color:rgba(61,90,153,0.30);}
+  /* RPM's extra caption line makes it naturally taller than Gross when both
+     are collapsed — with align-items:start (see .hero-row--type) they no
+     longer auto-match, so give both an explicit shared floor instead. Only
+     applied above the single-column mobile breakpoint, where cards stack and
+     side-by-side height-matching isn't visible anyway. */
+  @media (min-width:521px){
+    .hero-card--gross, .hero-card--rpm{min-height:160px;}
+  }
   .hero-card--fuel{background:#FFFBF5;border-color:rgba(183,122,42,0.15);}
   .hero-card--fuel:hover{border-color:rgba(183,122,42,0.30);}
   .hero-card--deadhead{background:#FAF8FD;border-color:rgba(115,87,166,0.14);}
@@ -1044,6 +1052,14 @@ const bestGrossLoadDetail = {
 // sums exactly to trucks miles:1205/empty:206/gross:5500). dryvan = Driver H
 // happens to also be this week's RPM winner (only eligible Dry Van truck this
 // week), so it reuses the same single load as bestGrossLoadDetail.dryvan.
+//
+// GROSS-DISCLOSURE RULE (renderComputedRecords()): the RPM Details panel only
+// shows this driver's $ gross when the RPM winner is the SAME driver as that
+// trailer type's Gross winner — their earnings are already public via the
+// Gross card in that case, so repeating it adds no new exposure. When the RPM
+// and Gross winners are different drivers (e.g. reefer this week: Gross=C,
+// RPM=F), the RPM winner's gross stays hidden — they never opted into having
+// their earnings shown by winning a rate-based award, only Gross winners did.
 const bestRpmLoadDetail = {
   reefer: {
     driverId: "F",
@@ -1261,12 +1277,27 @@ function renderComputedRecords(){
       // RPM winner.
       const rDetail = bestRpmLoadDetail[type];
       if (rDetail && rDetail.driverId === byRpm.id) {
-        document.getElementById("rd-stats-" + suffix).innerHTML = [
+        // Gross $ is only revealed here when this type's RPM winner is the
+        // SAME driver as this type's Gross winner — in that case their gross
+        // is already public via the Gross card, so showing it again here adds
+        // no new exposure. If the RPM winner is a different driver than the
+        // Gross winner, their own weekly earnings aren't shown anywhere else
+        // in the report, so we don't newly reveal them just to illustrate the
+        // RPM math — the rate + miles already convey how the result was
+        // achieved without needing the raw dollar figure. See METHODOLOGY.
+        const showGross = byGross && byGross.id === byRpm.id;
+        const rpmStatRows = [
           ["Loads", rDetail.loads.length, true],
           ["Loaded mi", byRpm.miles.toLocaleString('en-US')],
           ["Deadhead mi", byRpm.empty.toLocaleString('en-US')],
-          ["RPM (loaded)", "$" + byRpm.rpm.toFixed(2), true],
-        ].map(([label, value, full]) =>
+        ];
+        if (showGross) {
+          rpmStatRows.push(["Gross", "$" + byRpm.gross.toLocaleString('en-US')]);
+          rpmStatRows.push(["RPM (loaded)", "$" + byRpm.rpm.toFixed(2)]);
+        } else {
+          rpmStatRows.push(["RPM (loaded)", "$" + byRpm.rpm.toFixed(2), true]);
+        }
+        document.getElementById("rd-stats-" + suffix).innerHTML = rpmStatRows.map(([label, value, full]) =>
           `<div class="gd-stat"${full ? ' style="grid-column:1/-1;"' : ''}><span class="gd-label">${label}</span><span class="gd-value">${value}</span></div>`
         ).join("");
         document.getElementById("rd-lanes-" + suffix).innerHTML = rDetail.loads.map(l =>
