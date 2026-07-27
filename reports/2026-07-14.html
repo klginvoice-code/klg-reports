@@ -196,6 +196,19 @@
   @media (max-width:520px){
     .hero-row{grid-template-columns:1fr;}
   }
+  .hero-row--type, .hero-row--fleet{
+    grid-template-columns:1fr 1fr;
+  }
+  @media (max-width:520px){
+    .hero-row--type, .hero-row--fleet{grid-template-columns:1fr;}
+  }
+  .hero-type-label{
+    display:flex;align-items:center;gap:7px;
+    font-size:var(--fs-label);font-weight:700;letter-spacing:0.4px;
+    margin:18px 0 10px;
+  }
+  .hero-row--type + .hero-type-label{margin-top:16px;}
+  .hero-row--fleet{margin-top:20px;}
   .hero-card{
     background:var(--surface);
     border:1px solid var(--border);
@@ -690,34 +703,72 @@ document.documentElement.classList.add("js-anim-ready");
     <svg class="trophy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978"/><path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978"/><path d="M18 9h1.5a1 1 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z"/><path d="M6 9H4.5a1 1 0 0 1 0-5H6"/></svg>
     Best of the Week
   </div>
-  <div class="hero-row">
-    <div class="hero-card hero-card--gross hero-rv" id="best-gross-card">
+  <!-- Best Gross/RPM are now grouped by trailer type, not one fleet-wide
+       winner — Reefer and Dry Van are genuinely different rate markets (see
+       National Market Snapshot), so a single cross-type "best" always favored
+       whichever type happens to pay more nationally, not who actually drove
+       best relative to their own market. Each type gets its own fair
+       comparison. Fuel Discount + Deadhead stay fleet-wide (they're not
+       trailer-type-specific) in their own row below. -->
+  <div class="hero-type-label" id="hero-type-label-reefer" style="color:var(--reefer);"></div>
+  <div class="hero-row hero-row--type">
+    <div class="hero-card hero-card--gross hero-rv" id="best-gross-card-reefer">
       <div class="hero-top">
         <div class="hero-icon gross"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></div>
         <div class="hero-label">Best Weekly Gross</div>
       </div>
-      <div class="hero-value" id="rec-gross-value">&mdash;</div>
-      <div class="hero-tag" id="rec-gross-tag">&mdash;</div>
-      <button class="hero-details-toggle" id="gross-details-toggle" aria-expanded="false" aria-controls="gross-details-panel" type="button">
+      <div class="hero-value" id="rec-gross-value-reefer">&mdash;</div>
+      <button class="hero-details-toggle" id="gross-details-toggle-reefer" aria-expanded="false" aria-controls="gross-details-panel-reefer" type="button">
         <span>Details</span>
         <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
       </button>
-      <div class="hero-details-panel" id="gross-details-panel">
+      <div class="hero-details-panel" id="gross-details-panel-reefer">
         <div class="hero-details-inner">
-          <div class="gd-stats" id="gd-stats"></div>
-          <div class="gd-lanes" id="gd-lanes"></div>
+          <div class="gd-stats" id="gd-stats-reefer"></div>
+          <div class="gd-lanes" id="gd-lanes-reefer"></div>
         </div>
       </div>
     </div>
-    <div class="hero-card hero-card--rpm hero-rv">
+    <div class="hero-card hero-card--rpm hero-rv" id="best-rpm-card-reefer">
       <div class="hero-top">
         <div class="hero-icon rpm"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z"/></svg></div>
         <div class="hero-label">Best Weekly RPM</div>
       </div>
-      <div class="hero-value accent" id="rec-rpm-value">&mdash;</div>
-      <div class="hero-tag" id="rec-rpm-tag">&mdash;</div>
-      <div class="hero-tag" style="font-size:var(--fs-micro);color:var(--text-muted);font-weight:500;margin-top:2px;">This week's rate, loaded miles only (empty miles not counted)</div>
+      <div class="hero-value accent" id="rec-rpm-value-reefer">&mdash;</div>
+      <div class="hero-tag" style="font-size:var(--fs-micro);color:var(--text-muted);font-weight:500;">This week's rate, loaded miles only (empty miles not counted)</div>
     </div>
+  </div>
+
+  <div class="hero-type-label" id="hero-type-label-dryvan" style="color:var(--dryvan);"></div>
+  <div class="hero-row hero-row--type">
+    <div class="hero-card hero-card--gross hero-rv" id="best-gross-card-dryvan">
+      <div class="hero-top">
+        <div class="hero-icon gross"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></div>
+        <div class="hero-label">Best Weekly Gross</div>
+      </div>
+      <div class="hero-value" id="rec-gross-value-dryvan">&mdash;</div>
+      <button class="hero-details-toggle" id="gross-details-toggle-dryvan" aria-expanded="false" aria-controls="gross-details-panel-dryvan" type="button">
+        <span>Details</span>
+        <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="hero-details-panel" id="gross-details-panel-dryvan">
+        <div class="hero-details-inner">
+          <div class="gd-stats" id="gd-stats-dryvan"></div>
+          <div class="gd-lanes" id="gd-lanes-dryvan"></div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-card hero-card--rpm hero-rv" id="best-rpm-card-dryvan">
+      <div class="hero-top">
+        <div class="hero-icon rpm"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z"/></svg></div>
+        <div class="hero-label">Best Weekly RPM</div>
+      </div>
+      <div class="hero-value accent" id="rec-rpm-value-dryvan">&mdash;</div>
+      <div class="hero-tag" style="font-size:var(--fs-micro);color:var(--text-muted);font-weight:500;">This week's rate, loaded miles only (empty miles not counted)</div>
+    </div>
+  </div>
+
+  <div class="hero-row hero-row--fleet">
     <!-- Best Fuel Discount: hand-curated each week from the same TCS fuel-card
          report used for Avg Fuel Discount Trend below. Value = the single
          HIGHEST per-gallon discount (Disc Amt / gal) actually posted on any
@@ -1014,49 +1065,69 @@ function renderTrailerTable(){
   });
 }
 
-// ---------- Best of the Week: computed from truck data ----------
+// ---------- Best of the Week: computed from truck data, per trailer type ----------
+// Gross and RPM are each awarded separately within Reefer and within Dry Van
+// (not one fleet-wide winner) — the two trailer types are different rate
+// markets (see National Market Snapshot / Trailer Type Comparison below), so a
+// single cross-type winner always favored whichever type pays more nationally
+// rather than who actually did best relative to their own market.
 function renderComputedRecords(){
   const grossEligible = trucks.filter(t=>t.includeGross);
   const rpmEligible = trucks.filter(t=>t.includeRpm);
-  const byGross = [...grossEligible].sort((a,b)=>b.gross-a.gross)[0];
-  const byRpm   = [...rpmEligible].sort((a,b)=>b.rpm-a.rpm)[0];
 
-  document.getElementById("rec-gross-value").textContent = "$" + byGross.gross.toLocaleString('en-US');
-  document.getElementById("rec-gross-tag").innerHTML = TRAILER_META[byGross.trailer].icon + " " + TRAILER_META[byGross.trailer].label;
+  ["reefer","dryvan"].forEach(type => {
+    const suffix = type === "reefer" ? "reefer" : "dryvan";
+    const meta = TRAILER_META[type];
+    document.getElementById("hero-type-label-" + suffix).innerHTML = meta.icon + " " + meta.label;
 
-  // "Details" panel: only wired up if bestGrossLoadDetail actually matches
-  // this week's Gross winner (it's hand-updated per driver, see its own
-  // comment) — if the winner changes and the detail data isn't updated yet,
-  // hide the toggle entirely rather than show stale/mismatched loads.
-  const grossToggle = document.getElementById("gross-details-toggle");
-  const grossPanel = document.getElementById("gross-details-panel");
-  const grossCard = document.getElementById("best-gross-card");
-  if (bestGrossLoadDetail.driverId === byGross.id) {
-    const totalRpm = byGross.gross / (byGross.miles + byGross.empty);
-    document.getElementById("gd-stats").innerHTML = [
-      ["Loads", bestGrossLoadDetail.loads.length, true],
-      ["Loaded mi", byGross.miles.toLocaleString('en-US')],
-      ["Deadhead mi", byGross.empty.toLocaleString('en-US')],
-      ["RPM (loaded)", "$" + byGross.rpm.toFixed(2)],
-      ["RPM (total)", "$" + totalRpm.toFixed(2)],
-    ].map(([label, value, full]) =>
-      `<div class="gd-stat"${full ? ' style="grid-column:1/-1;"' : ''}><span class="gd-label">${label}</span><span class="gd-value">${value}</span></div>`
-    ).join("");
-    document.getElementById("gd-lanes").innerHTML = bestGrossLoadDetail.loads.map(l =>
-      `<span class="gd-lane">${l.states}</span>`
-    ).join("");
-    grossToggle.addEventListener("click", () => {
-      const isOpen = grossToggle.getAttribute("aria-expanded") === "true";
-      grossToggle.setAttribute("aria-expanded", String(!isOpen));
-      grossPanel.classList.toggle("open", !isOpen);
-      grossCard.classList.toggle("details-open", !isOpen);
-    });
-  } else {
-    grossToggle.style.display = "none";
-  }
+    const grossPool = grossEligible.filter(t=>t.trailer===type);
+    const rpmPool = rpmEligible.filter(t=>t.trailer===type);
+    const byGross = [...grossPool].sort((a,b)=>b.gross-a.gross)[0];
+    const byRpm   = [...rpmPool].sort((a,b)=>b.rpm-a.rpm)[0];
 
-  document.getElementById("rec-rpm-value").textContent = "$" + byRpm.rpm.toFixed(2) + "/mi";
-  document.getElementById("rec-rpm-tag").innerHTML = TRAILER_META[byRpm.trailer].icon + " " + TRAILER_META[byRpm.trailer].label;
+    const grossValueEl = document.getElementById("rec-gross-value-" + suffix);
+    const grossToggle = document.getElementById("gross-details-toggle-" + suffix);
+    const grossPanel = document.getElementById("gross-details-panel-" + suffix);
+    const grossCard = document.getElementById("best-gross-card-" + suffix);
+
+    if (!byGross) {
+      grossValueEl.textContent = "—";
+      grossToggle.style.display = "none";
+    } else {
+      grossValueEl.textContent = "$" + byGross.gross.toLocaleString('en-US');
+
+      // "Details" panel: only wired up if bestGrossLoadDetail actually matches
+      // this type's Gross winner (it's hand-updated per driver, see its own
+      // comment) — if the winner changes and the detail data isn't updated
+      // yet, hide the toggle entirely rather than show stale/mismatched loads.
+      if (bestGrossLoadDetail.driverId === byGross.id) {
+        const totalRpm = byGross.gross / (byGross.miles + byGross.empty);
+        document.getElementById("gd-stats-" + suffix).innerHTML = [
+          ["Loads", bestGrossLoadDetail.loads.length, true],
+          ["Loaded mi", byGross.miles.toLocaleString('en-US')],
+          ["Deadhead mi", byGross.empty.toLocaleString('en-US')],
+          ["RPM (loaded)", "$" + byGross.rpm.toFixed(2)],
+          ["RPM (total)", "$" + totalRpm.toFixed(2)],
+        ].map(([label, value, full]) =>
+          `<div class="gd-stat"${full ? ' style="grid-column:1/-1;"' : ''}><span class="gd-label">${label}</span><span class="gd-value">${value}</span></div>`
+        ).join("");
+        document.getElementById("gd-lanes-" + suffix).innerHTML = bestGrossLoadDetail.loads.map(l =>
+          `<span class="gd-lane">${l.states}</span>`
+        ).join("");
+        grossToggle.addEventListener("click", () => {
+          const isOpen = grossToggle.getAttribute("aria-expanded") === "true";
+          grossToggle.setAttribute("aria-expanded", String(!isOpen));
+          grossPanel.classList.toggle("open", !isOpen);
+          grossCard.classList.toggle("details-open", !isOpen);
+        });
+      } else {
+        grossToggle.style.display = "none";
+      }
+    }
+
+    const rpmValueEl = document.getElementById("rec-rpm-value-" + suffix);
+    rpmValueEl.textContent = byRpm ? "$" + byRpm.rpm.toFixed(2) + "/mi" : "—";
+  });
 
   // Avg Deadhead, in miles (changed from % on 2026-07-27, per explicit request):
   // average of each eligible driver's own total empty (deadhead) miles this
