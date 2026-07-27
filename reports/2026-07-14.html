@@ -53,6 +53,20 @@
   }
   .wrap{max-width:1000px;margin:0 auto;padding:16px;}
 
+  .archive-back{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    margin:0 0 12px 2px;
+    font-size:var(--fs-caption);
+    font-weight:600;
+    letter-spacing:0.2px;
+    color:var(--text-secondary);
+    text-decoration:none;
+  }
+  .archive-back:hover{color:var(--reefer);}
+  .archive-back svg{width:14px;height:14px;flex:none;}
+
   /* ---------- Header ---------- */
   .header{
     background:linear-gradient(135deg,#0a1420 0%,#0f2038 55%,#123055 100%);
@@ -588,6 +602,11 @@ document.documentElement.classList.add("js-anim-ready");
 </script>
 
 <div class="wrap">
+
+  <a class="archive-back" href="../index.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Fleet Reports Archive
+  </a>
 
   <!-- HEADER -->
   <div class="header">
