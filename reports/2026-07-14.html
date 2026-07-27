@@ -790,6 +790,13 @@ const TRAILER_META = {
   dryvan:   { label:"Dry Van",  color:"var(--dryvan)",   icon:"<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;\"><path d=\"M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z\"/><path d=\"M12 22V12\"/><polyline points=\"3.29 7 12 12 20.71 7\"/><path d=\"m7.5 4.27 9 5.15\"/></svg>", labelColor:"#0c1420" },
 };
 
+// WEEK DEFINITION (explicit rule, do not deviate): a driver's "week" is whatever
+// date range their own settlement statement actually covers — read it directly
+// off each statement (its own date range and the loads listed on it), never
+// calculate or assume a fixed day-of-week boundary. Do not infer "the report
+// week" independently and then fit statements to it — the statement itself is
+// the source of truth for what counts as that driver's week, full stop.
+//
 // Week of Jul 14-20, 2026. miles = Loaded miles (confirmed against settlement PDFs, "Loaded" column).
 // gross = load Subtotal Amount (pre-deduction); for Victor & Jonas (percentage-only drivers, no
 // separate "Deduction %" line in their settlement) the settlement's own Amount is already their
