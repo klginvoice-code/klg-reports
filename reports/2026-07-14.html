@@ -260,9 +260,12 @@
   .hero-delta.up{color:var(--good);}
   .hero-delta .note{color:var(--text-muted);font-weight:500;margin-left:2px;}
 
-  /* ---------- Best Weekly Gross: expandable "Details" panel ---------- */
-  #best-gross-card{transition:transform .4s cubic-bezier(.22,1,.36,1), box-shadow .4s cubic-bezier(.22,1,.36,1);}
-  #best-gross-card.details-open{transform:translateY(-3px);box-shadow:0 10px 28px rgba(47,111,78,0.14);}
+  /* ---------- Best Weekly Gross / RPM: expandable "Details" panel ---------- */
+  /* Class-based (not ID-based) so the lift effect applies to every Gross/RPM
+     card across both trailer-type groups, not just one hardcoded card. */
+  .hero-card--gross, .hero-card--rpm{transition:transform .4s cubic-bezier(.22,1,.36,1), box-shadow .4s cubic-bezier(.22,1,.36,1);}
+  .hero-card--gross.details-open{transform:translateY(-3px);box-shadow:0 10px 28px rgba(47,111,78,0.14);}
+  .hero-card--rpm.details-open{transform:translateY(-3px);box-shadow:0 10px 28px rgba(61,90,153,0.16);}
   .hero-details-toggle{
     margin-top:10px;
     display:inline-flex;align-items:center;gap:4px;
@@ -736,6 +739,16 @@ document.documentElement.classList.add("js-anim-ready");
       </div>
       <div class="hero-value accent" id="rec-rpm-value-reefer">&mdash;</div>
       <div class="hero-tag" style="font-size:var(--fs-micro);color:var(--text-muted);font-weight:500;">Best driver's average rate across all their loads this week (loaded miles only)</div>
+      <button class="hero-details-toggle" id="rpm-details-toggle-reefer" aria-expanded="false" aria-controls="rpm-details-panel-reefer" type="button">
+        <span>Details</span>
+        <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="hero-details-panel" id="rpm-details-panel-reefer">
+        <div class="hero-details-inner">
+          <div class="gd-stats" id="rd-stats-reefer"></div>
+          <div class="gd-lanes" id="rd-lanes-reefer"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -765,6 +778,16 @@ document.documentElement.classList.add("js-anim-ready");
       </div>
       <div class="hero-value accent" id="rec-rpm-value-dryvan">&mdash;</div>
       <div class="hero-tag" style="font-size:var(--fs-micro);color:var(--text-muted);font-weight:500;">Best driver's average rate across all their loads this week (loaded miles only)</div>
+      <button class="hero-details-toggle" id="rpm-details-toggle-dryvan" aria-expanded="false" aria-controls="rpm-details-panel-dryvan" type="button">
+        <span>Details</span>
+        <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="hero-details-panel" id="rpm-details-panel-dryvan">
+        <div class="hero-details-inner">
+          <div class="gd-stats" id="rd-stats-dryvan"></div>
+          <div class="gd-lanes" id="rd-lanes-dryvan"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -945,6 +968,28 @@ const bestGrossLoadDetail = {
   },
   dryvan: {
     // Driver H, settlement #1880: single load, La Junta CO -> Fort Wayne IN.
+    driverId: "H",
+    loads: [
+      { states:"CO-IN", empty:636, loaded:1167 },
+    ],
+  },
+};
+
+// Same idea as bestGrossLoadDetail above, but for whichever driver wins Best
+// Weekly RPM per trailer type. Reefer: Driver F, settlement #1877 — 3 loads,
+// summing exactly to the trucks entry's miles:1205/empty:206/gross:5500. Dry
+// Van: Driver H happens to also be this week's RPM winner (only eligible Dry
+// Van truck), so it reuses the same single load as bestGrossLoadDetail.dryvan.
+const bestRpmLoadDetail = {
+  reefer: {
+    driverId: "F",
+    loads: [
+      { states:"IA-WI", empty:152, loaded:382 },
+      { states:"WI-MO", empty:15,  loaded:498 },
+      { states:"IL-WI", empty:39,  loaded:325 },
+    ],
+  },
+  dryvan: {
     driverId: "H",
     loads: [
       { states:"CO-IN", empty:636, loaded:1167 },
@@ -1137,7 +1182,42 @@ function renderComputedRecords(){
     }
 
     const rpmValueEl = document.getElementById("rec-rpm-value-" + suffix);
-    rpmValueEl.textContent = byRpm ? "$" + byRpm.rpm.toFixed(2) + "/mi" : "—";
+    const rpmToggle = document.getElementById("rpm-details-toggle-" + suffix);
+    const rpmPanel = document.getElementById("rpm-details-panel-" + suffix);
+    const rpmCard = document.getElementById("best-rpm-card-" + suffix);
+
+    if (!byRpm) {
+      rpmValueEl.textContent = "—";
+      rpmToggle.style.display = "none";
+    } else {
+      rpmValueEl.textContent = "$" + byRpm.rpm.toFixed(2) + "/mi";
+
+      // Same driverId-match guard as the Gross Details panel: only show if
+      // bestRpmLoadDetail's entry for this type still matches the computed
+      // RPM winner.
+      const rDetail = bestRpmLoadDetail[type];
+      if (rDetail && rDetail.driverId === byRpm.id) {
+        document.getElementById("rd-stats-" + suffix).innerHTML = [
+          ["Loads", rDetail.loads.length, true],
+          ["Loaded mi", byRpm.miles.toLocaleString('en-US')],
+          ["Deadhead mi", byRpm.empty.toLocaleString('en-US')],
+          ["RPM (loaded)", "$" + byRpm.rpm.toFixed(2), true],
+        ].map(([label, value, full]) =>
+          `<div class="gd-stat"${full ? ' style="grid-column:1/-1;"' : ''}><span class="gd-label">${label}</span><span class="gd-value">${value}</span></div>`
+        ).join("");
+        document.getElementById("rd-lanes-" + suffix).innerHTML = rDetail.loads.map(l =>
+          `<span class="gd-lane">${l.states}</span>`
+        ).join("");
+        rpmToggle.addEventListener("click", () => {
+          const isOpen = rpmToggle.getAttribute("aria-expanded") === "true";
+          rpmToggle.setAttribute("aria-expanded", String(!isOpen));
+          rpmPanel.classList.toggle("open", !isOpen);
+          rpmCard.classList.toggle("details-open", !isOpen);
+        });
+      } else {
+        rpmToggle.style.display = "none";
+      }
+    }
   });
 
   // Avg Deadhead, in miles (changed from % on 2026-07-27, per explicit request):
