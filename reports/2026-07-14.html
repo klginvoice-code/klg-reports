@@ -111,6 +111,17 @@
     line-height:1.15;
     letter-spacing:0.5px;
   }
+  /* Logo + title were sized for a wide header with room to spare — on a narrow
+     phone the two together outgrow the available width and "SNAPSHOT" gets
+     silently clipped by .header's overflow:hidden. Same fix already used on
+     the archive page's own header logo, just missing here. Placed after the
+     base .header-title h1 rule above so it actually wins the cascade (equal
+     specificity, later wins — a media query alone doesn't add any). */
+  @media (max-width:480px){
+    .header-left{gap:14px;}
+    .header-left img{height:56px;}
+    .header-title h1{font-size:26px;}
+  }
   .header-title h1 .accent{color:var(--dark-accent);}
   .header-title .report-label{
     margin-top:2px;
@@ -966,10 +977,21 @@ function renderComputedRecords(){
 }
 
 // ---------- 6-week trend: bigger line chart with gridlines + direct labels ----------
-function trendChart(values, weeks, fmt, color, tooltipWeeks){
+// `renderWidth` is the chart's actual on-screen pixel width (measured by the
+// caller via getBoundingClientRect, after the container is in the DOM). Since
+// this SVG has a fixed viewBox, its whole coordinate system — text included —
+// gets scaled by (renderWidth / w) at display time. Without accounting for
+// that, a narrow mobile column (~271px real vs. the 560-unit viewBox) shrinks
+// font-size="10" down to an unreadable ~5px on screen. Font sizes here are
+// computed backwards from a fixed *real* pixel target so labels stay legible
+// at any container width instead of shrinking with the chart's geometry.
+function trendChart(values, weeks, fmt, color, tooltipWeeks, renderWidth){
   color = color || "#2a78d6";
   tooltipWeeks = tooltipWeeks || weeks;
   const w = 560, h = 170;
+  const scale = renderWidth ? renderWidth / w : 1;
+  const axisFs = (11 / scale).toFixed(2);
+  const dataFs = (13 / scale).toFixed(2);
   const padL = 44, padR = 14, padT = 22, padB = 24;
   const plotW = w - padL - padR, plotH = h - padT - padB;
   const min = Math.min(...values), max = Math.max(...values);
@@ -990,12 +1012,12 @@ function trendChart(values, weeks, fmt, color, tooltipWeeks){
   const gridlines = gridVals.map(v=>{
     const y = yOf(v);
     return `<line x1="${padL}" y1="${y.toFixed(1)}" x2="${w-padR}" y2="${y.toFixed(1)}" stroke="#e4e8ec" stroke-width="1"/>
-      <text x="${padL-8}" y="${(y+3).toFixed(1)}" text-anchor="end" font-size="10" fill="#5c636f">${fmt(v)}</text>`;
+      <text x="${padL-8}" y="${(y+3).toFixed(1)}" text-anchor="end" font-size="${axisFs}" fill="#5c636f">${fmt(v)}</text>`;
   }).join("");
 
   const weekLabels = weeks.map((wk,i)=>{
     const anchor = i===0 ? "start" : (i===weeks.length-1 ? "end" : "middle");
-    return `<text x="${pts[i][0].toFixed(1)}" y="${h-6}" text-anchor="${anchor}" font-size="10" fill="#5c636f">${wk}</text>`;
+    return `<text x="${pts[i][0].toFixed(1)}" y="${h-6}" text-anchor="${anchor}" font-size="${axisFs}" fill="#5c636f">${wk}</text>`;
   }).join("");
 
   const dots = pts.map((p,i)=>{
@@ -1015,11 +1037,11 @@ function trendChart(values, weeks, fmt, color, tooltipWeeks){
   // Same bold/size/color convention as the Gross bar chart's value labels: every
   // point gets the same weight, only the current (last) point picks up the accent
   // color, everything else uses the same neutral dark ink.
-  const firstLabel = `<text x="${pts[0][0].toFixed(1)}" y="${(pts[0][1]-10).toFixed(1)}" text-anchor="start" font-size="12" font-weight="800" fill="#3d4552">${fmt(values[0])}</text>`;
-  const lastLabel  = `<text x="${pts[pts.length-1][0].toFixed(1)}" y="${(pts[pts.length-1][1]-10).toFixed(1)}" text-anchor="end" font-size="12" font-weight="800" fill="${color}">${fmt(values[values.length-1])}</text>`;
+  const firstLabel = `<text x="${pts[0][0].toFixed(1)}" y="${(pts[0][1]-10).toFixed(1)}" text-anchor="start" font-size="${dataFs}" font-weight="800" fill="#3d4552">${fmt(values[0])}</text>`;
+  const lastLabel  = `<text x="${pts[pts.length-1][0].toFixed(1)}" y="${(pts[pts.length-1][1]-10).toFixed(1)}" text-anchor="end" font-size="${dataFs}" font-weight="800" fill="${color}">${fmt(values[values.length-1])}</text>`;
   const midLabels = pts.slice(1,-1).map((p,idx)=>{
     const i = idx+1;
-    return `<text x="${p[0].toFixed(1)}" y="${(p[1]-9).toFixed(1)}" text-anchor="middle" font-size="12" font-weight="800" fill="#3d4552">${fmt(values[i])}</text>`;
+    return `<text x="${p[0].toFixed(1)}" y="${(p[1]-9).toFixed(1)}" text-anchor="middle" font-size="${dataFs}" font-weight="800" fill="#3d4552">${fmt(values[i])}</text>`;
   }).join("");
   const gradId = "area-" + Math.random().toString(36).slice(2,9);
 
@@ -1305,10 +1327,14 @@ function renderTrend(){
         </div>
       </div>
       <div class="trend-chart-title">RPM Trend (5 Weeks)</div>
-      <div class="chart-wrap">${trendChart(t.rpm, rpmWeeks, fmtRpm, t.color, rpmTooltipWeeks)}</div>
+      <div class="chart-wrap"></div>
     `;
     grid.appendChild(div);
     const chartWrap = div.querySelector(".chart-wrap");
+    // Filled in after appendChild (not inline above) so the chart's real on-screen
+    // width is measurable — needed for trendChart()'s font-size math, see its
+    // own comment above.
+    chartWrap.innerHTML = trendChart(t.rpm, rpmWeeks, fmtRpm, t.color, rpmTooltipWeeks, chartWrap.getBoundingClientRect().width);
     const titleEl = div.querySelector(".trend-chart-title");
     const tabRpm = div.querySelector('.trend-stat-mini[data-metric="rpm"]');
     const tabGross = div.querySelector('.trend-stat-mini[data-metric="gross"]');
@@ -1333,7 +1359,7 @@ function renderTrend(){
       setTimeout(()=>{
         if (metric === "rpm") {
           titleEl.textContent = "RPM Trend (5 Weeks)";
-          chartWrap.innerHTML = trendChart(t.rpm, rpmWeeks, fmtRpm, t.color, rpmTooltipWeeks);
+          chartWrap.innerHTML = trendChart(t.rpm, rpmWeeks, fmtRpm, t.color, rpmTooltipWeeks, chartWrap.getBoundingClientRect().width);
           attachChartTooltip(chartWrap, t.rpm, rpmTooltipWeeks, fmtRpm);
           // Draw the line in on switch, same spirit as the Gross bars growing —
           // otherwise this direction just pops in fully-formed while the other
@@ -1385,7 +1411,7 @@ function renderFuelTrend(){
   const d = deltaInfo([FUEL_DISCOUNT_VALUES[FUEL_DISCOUNT_VALUES.length-2], FUEL_DISCOUNT_VALUES[FUEL_DISCOUNT_VALUES.length-1]], "up");
   const fmt = v=>"$"+v.toFixed(2);
   const chartEl = document.getElementById("fuel-trend-chart");
-  chartEl.innerHTML = trendChart(FUEL_DISCOUNT_VALUES, weeks, fmt, "#B77A2A", FUEL_DISCOUNT_WEEKS);
+  chartEl.innerHTML = trendChart(FUEL_DISCOUNT_VALUES, weeks, fmt, "#B77A2A", FUEL_DISCOUNT_WEEKS, chartEl.getBoundingClientRect().width);
   attachChartTooltip(chartEl, FUEL_DISCOUNT_VALUES, FUEL_DISCOUNT_WEEKS, fmt);
   document.getElementById("fuel-trend-current").innerHTML =
     "$" + FUEL_DISCOUNT_VALUES[FUEL_DISCOUNT_VALUES.length-1].toFixed(2) + "<span>/gal</span>";
