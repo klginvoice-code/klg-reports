@@ -897,7 +897,7 @@ document.documentElement.classList.add("js-anim-ready");
     </div>
   </div>
 
-  <div class="methodology-note">Weekly averages are calculated using full operational weeks only to ensure representative statistics.</div>
+  <div class="methodology-note">Avg Revenue/Day = total gross &divide; total active driver-days (pickup-to-delivery days, not calendar days).</div>
 
   <!-- 6-WEEK RPM TRENDS -->
   <div class="section">
@@ -1034,6 +1034,38 @@ const TRAILER_META = {
 // (partial/relay leg) and Driver J (did not drive) are excluded from both — their data isn't
 // comparable to a normal load at all, not just a short week.
 //
+// DAYS (active driver-days) = the count of distinct calendar days covered by
+// the UNION of that driver's own loads' [pickup date, delivery date] spans
+// (inclusive) for the week — not a flat 7, and not eyeballed. Overlapping or
+// back-to-back loads don't double-count a shared day. Gap days between one
+// load's delivery and the next load's pickup are simply not covered by any
+// span, so they're automatically excluded — no separate "ignore gaps of N+
+// days" rule is needed, it falls out of the union itself. Confirmed
+// 2026-07-27 by recomputing all 8 drivers' real settlement dates: this
+// produces the exact `days` values already in this array for every driver
+// except the two below.
+// IMPORTANT — do NOT clip a load's span to the report's displayed date
+// range. If a load's pickup falls one calendar day before the header's start
+// date but that load's full $ amount is still counted in this week's gross
+// (which it is, per the GROSS rule above), then that earlier pickup day must
+// also count as an active day — the money and the day it took to earn it
+// have to move together, or the $/day figure gets inflated by including
+// revenue without its matching day. Driver C's load #4184 and Driver E's
+// load #4182 both pick up on 07/13, one day before the Jul 14-20 header —
+// their `days` (8 and 5) include that day for exactly this reason.
+//
+// AVG REVENUE/DAY (By Trailer Type card) = (sum of gross across that type's
+// includeGross-eligible drivers) / (sum of their DAYS, as defined above) —
+// pooled totals, NOT an average of each driver's own gross/days rate.
+// Dividing the pooled gross by a single driver's average day-count instead
+// of the summed total would scale the result up with headcount (more
+// drivers -> bigger number, with nobody working any harder), which isn't a
+// real per-day rate at all. Pooling total-over-total is also more robust
+// than averaging individual rates: a driver with very few active days can
+// swing a per-driver average hard on a noisy single-day figure, whereas
+// pooling naturally gives more weight to days with more actual evidence
+// behind them.
+//
 // PER-LOAD DETAIL OBJECTS (bestGrossLoadDetail / bestRpmLoadDetail, defined
 // below trucks): only ever captured for whichever driver ACTUALLY WINS that
 // metric for that trailer type, found out AFTER the aggregate numbers above
@@ -1061,9 +1093,9 @@ const TRAILER_META = {
 const trucks = [
   {id:"A", trailer:"reefer",   miles:2915, rpm:3.47, gross:10100, includeGross:true,  includeRpm:true,  empty:256, days:6}, // Driver A (6 active days, approved)
   {id:"B", trailer:"dryvan",   miles:1232, rpm:1.22, gross:1500,  includeGross:false, includeRpm:false, empty:0,   days:0}, // Driver B (partial/relay load)
-  {id:"C", trailer:"reefer",   miles:3650, rpm:4.08, gross:14900, includeGross:true,  includeRpm:true,  empty:338, days:7}, // Driver C (7 active days, full week)
+  {id:"C", trailer:"reefer",   miles:3650, rpm:4.08, gross:14900, includeGross:true,  includeRpm:true,  empty:338, days:8}, // Driver C (8 active days — first load's pickup 07/13 is a day before the report window, but its full amount counts toward this week's gross, so its pickup day counts too; corrected 2026-07-27, see METHODOLOGY)
   {id:"D", trailer:"reefer",   miles:1505, rpm:3.16, gross:4750,  includeGross:false, includeRpm:true,  empty:114, days:5}, // Driver D (5 active days, not approved for Gross; load #4202 was cancelled: its $150 payout counts, its 911 loaded/219 empty miles don't; load #4203's 1024mi empty leg also excluded as an outlier)
-  {id:"E", trailer:"reefer",   miles:2398, rpm:3.75, gross:9000,  includeGross:true,  includeRpm:true,  empty:254, days:4}, // Driver E (4 active days, approved)
+  {id:"E", trailer:"reefer",   miles:2398, rpm:3.75, gross:9000,  includeGross:true,  includeRpm:true,  empty:254, days:5}, // Driver E (5 active days — same 07/13-pickup situation as Driver C; corrected 2026-07-27, see METHODOLOGY)
   {id:"F", trailer:"reefer",   miles:1205, rpm:4.56, gross:5500,  includeGross:false, includeRpm:true,  empty:206, days:4}, // Driver F (4 active days, not approved for Gross)
   {id:"G", trailer:"reefer",   miles:1669, rpm:3.66, gross:6100,  includeGross:false, includeRpm:true,  empty:230, days:5}, // Driver G (5 active days, not approved for Gross)
   {id:"H", trailer:"dryvan",   miles:1167, rpm:2.61, gross:3050,  includeGross:true,  includeRpm:true,  empty:0,   days:4}, // Driver H (4 active days; 636mi empty outlier excluded; corrected 2026-07-27 — gross recovered from settlement #1880's single load, Amount $1,067.50 / 0.35 pay rate = $3,050; miles/rpm recomputed to match; a prior placeholder figure had been left in from before this week's settlement was checked)
@@ -1140,21 +1172,11 @@ function trailerGroups(){
       rpmGroups[t.trailer].rpm += t.rpm;
     }
     if(t.includeGross){
-      grossGroups[t.trailer] = grossGroups[t.trailer] || {n:0, gross:0, miles:0, revPerDaySum:0};
+      grossGroups[t.trailer] = grossGroups[t.trailer] || {n:0, gross:0, miles:0, days:0};
       grossGroups[t.trailer].n++;
       grossGroups[t.trailer].gross += t.gross;
       grossGroups[t.trailer].miles += t.miles;
-      // Each truck's own gross/days rate, summed here so the card can average
-      // them (equal weight per driver) rather than pooling gross/days across
-      // drivers — pooling produced a "days" total that was really a sum of
-      // different drivers' active-day counts, not a real calendar span, which
-      // made the resulting $/day figure impossible to sanity-check against the
-      // 7-day report week. See project memory for the full reasoning.
-      // STAND-IN METHODOLOGY (2026-07-26) — Avg Miles (uses this same
-      // includeGross driver set) and this Avg Revenue/Day formula are both
-      // marked by the user as interim, not a fully audited final approach.
-      // Re-verify from scratch before trusting either for the next report.
-      grossGroups[t.trailer].revPerDaySum += t.gross / t.days;
+      grossGroups[t.trailer].days += t.days;
     }
   });
   return {rpmGroups, grossGroups};
@@ -1184,7 +1206,11 @@ function renderTrailerTable(){
         avgRpm: rg.rpm/rg.n,
         avgMiles: gg ? gg.miles/gg.n : null,
         avgGross: gg ? gg.gross/gg.n : null,
-        revenuePerDay: gg ? gg.revPerDaySum/gg.n : null,
+        // Total gross ÷ total active driver-days (not an average of each
+        // driver's own rate) — see METHODOLOGY for why this pooled form is
+        // the correct one: dividing by mean(days) instead of sum(days) would
+        // scale with headcount, not represent a real per-day rate.
+        revenuePerDay: gg ? gg.gross/gg.days : null,
       };
     });
 
