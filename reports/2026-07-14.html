@@ -641,7 +641,37 @@
     gap:14px;
   }
   .footer-tier-brand{padding-bottom:14px;}
-  .footer-divider{height:1px;background:rgba(255,255,255,0.12);}
+  .footer-divider{height:1px;background:rgba(255,255,255,0.12);position:relative;}
+
+  /* ---------- Footer-divider "firefly" (2026-07-28, matches archive page) ---------- */
+  /* Two small glowing dots depart from the center of the divider line
+     between the slogan and contact rows — one drifts left, one right —
+     first 5s after the footer scrolls into view, then repeating every 10s
+     for as long as the page stays open. */
+  .firefly{
+    position:absolute;
+    top:50%; left:50%;
+    width:5px; height:5px;
+    border-radius:50%;
+    background:#eaf4ff;
+    box-shadow:0 0 6px 2px rgba(120,180,255,.85), 0 0 16px 6px rgba(90,162,239,.45);
+    pointer-events:none;
+  }
+  .firefly.fly-left{animation:firefly-fly-left 1.7s cubic-bezier(.22,1,.36,1) forwards;}
+  .firefly.fly-right{animation:firefly-fly-right 1.7s cubic-bezier(.22,1,.36,1) forwards;}
+  @keyframes firefly-fly-left{
+    0%{opacity:0;transform:translate(-50%,-50%) scale(.5);}
+    12%{opacity:1;transform:translate(-50%,-50%) scale(1);}
+    100%{opacity:0;transform:translate(calc(-50% - 160px),-50%) scale(.7);}
+  }
+  @keyframes firefly-fly-right{
+    0%{opacity:0;transform:translate(-50%,-50%) scale(.5);}
+    12%{opacity:1;transform:translate(-50%,-50%) scale(1);}
+    100%{opacity:0;transform:translate(calc(-50% + 160px),-50%) scale(.7);}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .firefly{display:none;}
+  }
   .footer-tier-meta{padding-top:14px;}
   .footer-slogan{font-size:var(--fs-stat);font-weight:800;letter-spacing:0.5px;}
   .footer-slogan .l1{color:#ffffff;}
@@ -2392,4 +2422,38 @@ try {
     }, 9000);
   }
 } catch(e){ /* animation layer only — content above is already correct without it */ }
+
+// Footer-divider firefly: first fires 5s after the footer scrolls into view,
+// then repeats every 10s for as long as the page stays open. Independent of
+// the reveal system above — kept in its own try/catch for the same reason.
+try {
+  (function(){
+    var divider = document.querySelector(".footer-divider");
+    if (!divider || !("IntersectionObserver" in window)) return;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    function spawnFireflies(){
+      var l = document.createElement("div");
+      l.className = "firefly fly-left";
+      var r = document.createElement("div");
+      r.className = "firefly fly-right";
+      divider.appendChild(l);
+      divider.appendChild(r);
+      setTimeout(function(){ l.remove(); r.remove(); }, 1800);
+    }
+
+    var fireflyObs = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting) {
+          fireflyObs.unobserve(entry.target);
+          setTimeout(function(){
+            spawnFireflies();
+            setInterval(spawnFireflies, 10000);
+          }, 5000);
+        }
+      });
+    }, {threshold:0.3});
+    fireflyObs.observe(divider);
+  })();
+} catch(e){}
 </script>
