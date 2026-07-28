@@ -88,6 +88,15 @@
     line-height:1.15;
     letter-spacing:0.3px;
     font-weight:800;
+    transform-origin:left center;
+    animation:title-pulse 8s ease-in-out infinite;
+  }
+  @keyframes title-pulse{
+    0%, 82%, 100%{transform:scale(1);}
+    90%{transform:scale(1.1);}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .header-title h1{animation:none;}
   }
   .header-title .archive-word{color:var(--dark-accent);}
   .header-title .sub{
@@ -255,13 +264,13 @@
      — same soft cubic-bezier easing used throughout this whole project. */
   .rv{
     opacity:0;
-    transform:translateY(16px);
-    transition:opacity .6s cubic-bezier(.22,1,.36,1), transform .6s cubic-bezier(.22,1,.36,1);
+    transform:translateY(24px);
+    transition:opacity .9s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1);
   }
   .rv.rv-visible{opacity:1;transform:translateY(0);}
-  .rv-d1{transition-delay:.12s;}
-  .rv-d2{transition-delay:.24s;}
-  .rv-d3{transition-delay:.36s;}
+  .rv-d1{transition-delay:.2s;}
+  .rv-d2{transition-delay:.4s;}
+  .rv-d3{transition-delay:.6s;}
   @media (prefers-reduced-motion:reduce){
     .rv{opacity:1;transform:none;transition:none;}
   }
@@ -410,8 +419,8 @@
         </div>
         <div class="report-dates">July 14 &ndash; July 20, 2026</div>
         <div class="report-stats">
-          <div class="report-stat"><div class="label">Best Gross</div><div class="value">$14,900</div></div>
-          <div class="report-stat"><div class="label">Best RPM</div><div class="value">$4.56/mi</div></div>
+          <div class="report-stat"><div class="label">Avg Gross</div><div class="value">$9,263</div></div>
+          <div class="report-stat"><div class="label">Avg RPM</div><div class="value">$3.65/mi</div></div>
           <div class="report-stat"><div class="label">Deadhead</div><div class="value">9.9%</div></div>
         </div>
       </div>
