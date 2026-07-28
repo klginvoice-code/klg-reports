@@ -652,11 +652,33 @@
   /* QR now lives here (moved 2026-07-28 from the brand tier, where it sat
      centered alone on mobile with a lot of dead space either side) — paired
      directly with the meta text so it reads as one right-hand unit instead
-     of an orphaned floating box. */
+     of an orphaned floating box. On desktop this group (meta text + QR)
+     sits together as .footer-tier's right-hand flex item, opposite the
+     slogan — see the mobile override below for why the pairing changes on
+     narrow screens. */
   .footer-meta-group{display:flex;align-items:center;gap:12px;}
   @media (max-width:720px){
     .footer-tier{flex-direction:column;align-items:flex-start;}
     .footer-meta{text-align:left;}
+    /* On mobile the QR reads better paired with the bold slogan (comparable
+       visual weight) than with the small meta text (11-12px) — pairing it
+       with the tiny text made the QR visually dominate over text that's
+       actually more important. .footer-meta-group is unwrapped via
+       display:contents so .footer-meta and .thanks-qr become direct flex
+       items of .footer-tier-meta alongside .footer-slogan; explicit order
+       puts slogan+QR on row 1 (space-between) and pushes the meta text onto
+       its own full-width row 2 via flex-basis:100%. */
+    .footer-tier-meta{
+      display:flex;
+      flex-direction:row;
+      flex-wrap:wrap;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .footer-meta-group{display:contents;}
+    .footer-slogan{order:1;}
+    .thanks-qr{order:2;}
+    .footer-meta{order:3;flex-basis:100%;}
   }
   .methodology-note{
     text-align:center;
