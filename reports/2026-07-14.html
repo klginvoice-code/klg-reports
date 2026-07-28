@@ -1914,8 +1914,19 @@ function sparkbar(values){
   });
 }
 
-function sparkbarSvg(bars, color, fmt, labels, textColor, pillTextColor){
+function sparkbarSvg(bars, color, fmt, labels, textColor, pillTextColor, renderWidth){
   const w = 100, h = 70;
+  // Same fixed-viewBox font-scaling issue already fixed in trendChart() and
+  // grossBarChart() (see their own comments) — without this, the exact same
+  // SVG renders far bigger/bolder on mobile than desktop purely because the
+  // National Market Snapshot grid goes from 4 narrow columns to 1 full-width
+  // column, and a fixed viewBox stretches font size right along with the
+  // bars. Font sizes are computed backwards from a fixed real-pixel target
+  // (8.5px value labels / 6.2px month-pill labels) so text stays the same
+  // apparent size regardless of how wide the card ends up.
+  const scale = renderWidth ? renderWidth / w : 1;
+  const dataFs = (8.5 / scale).toFixed(2);
+  const pillFs = (6.2 / scale).toFixed(2);
   const pillH = 13, pillMargin = 3;
   const barEls = bars.map((b,i)=>
     `<rect class="spark-bar bar-grow" data-i="${i}" x="${b.x.toFixed(1)}" y="${b.y.toFixed(1)}" width="${b.w.toFixed(1)}" height="${b.h.toFixed(1)}" rx="3" style="fill:${color};fill-opacity:${b.isLast?0.85:0.55};transform:scaleY(0);"/>`
@@ -1928,12 +1939,12 @@ function sparkbarSvg(bars, color, fmt, labels, textColor, pillTextColor){
   // to the point of being unreadable in a Telegram screenshot.
   const valueLabelEls = bars.map((b,i)=>{
     if(i !== 0 && !b.isLast) return "";
-    return `<text x="${(b.x+b.w/2).toFixed(1)}" y="${(b.y-4).toFixed(1)}" text-anchor="middle" font-size="8.5" style="font-weight:${b.isLast?800:700};fill:${b.isLast?textColor:'#5b6472'};">${fmt(b.value)}</text>`;
+    return `<text x="${(b.x+b.w/2).toFixed(1)}" y="${(b.y-4).toFixed(1)}" text-anchor="middle" font-size="${dataFs}" style="font-weight:${b.isLast?800:700};fill:${b.isLast?textColor:'#5b6472'};">${fmt(b.value)}</text>`;
   }).join("");
   const pillEls = bars.map((b,i)=>{
     const py = b.y + b.h - pillH - pillMargin;
     return `<rect x="${(b.x+1).toFixed(1)}" y="${py.toFixed(1)}" width="${(b.w-2).toFixed(1)}" height="${pillH}" rx="3" style="fill:${color};fill-opacity:${b.isLast?0.9:0.75};"/>
-    <text x="${(b.x+b.w/2).toFixed(1)}" y="${(py+pillH-3.4).toFixed(1)}" text-anchor="middle" font-size="6.2" style="font-weight:800;fill:${pillTextColor};letter-spacing:0.2px;">${labels[i]}</text>`;
+    <text x="${(b.x+b.w/2).toFixed(1)}" y="${(py+pillH-3.4).toFixed(1)}" text-anchor="middle" font-size="${pillFs}" style="font-weight:800;fill:${pillTextColor};letter-spacing:0.2px;">${labels[i]}</text>`;
   }).join("");
   const hitEls = bars.map((b,i)=>
     `<rect class="spark-bar-hit" data-i="${i}" x="${b.x.toFixed(1)}" y="0" width="${b.w.toFixed(1)}" height="${h}" fill="transparent"/>`
@@ -2041,10 +2052,15 @@ function renderMarketSnapshot(){
       <div class="market-sub">${m.key==="fuel" ? "National Avg (EIA)" : "DAT Spot Rate"}</div>
       <div class="market-value">$${m.current.toFixed(2)}<span style="font-size:var(--fs-label);font-weight:600;color:var(--text-secondary);">${m.unit}</span></div>
       <div class="market-delta"><span class="arrow" style="color:${arrowColor};">${arrowChar}</span> ${Math.abs(m.weekPct).toFixed(1)}%<span class="sub">vs last week</span></div>
-      <div class="market-spark">${sparkbarSvg(sparkbar(m.history), m.color, v=>"$"+v.toFixed(2), m.historyLabels, m.textColor, m.pillTextColor)}</div>
+      <div class="market-spark"></div>
     `;
     grid.appendChild(div);
-    attachBarTooltip(div.querySelector(".market-spark"), m.history, m.historyLabels, v=>"$"+v.toFixed(2));
+    // Filled in after appendChild (not inline above) so the chart's real
+    // on-screen width is measurable — same reason trendChart()'s call site
+    // does this, see its own comment.
+    const sparkWrap = div.querySelector(".market-spark");
+    sparkWrap.innerHTML = sparkbarSvg(sparkbar(m.history), m.color, v=>"$"+v.toFixed(2), m.historyLabels, m.textColor, m.pillTextColor, sparkWrap.getBoundingClientRect().width);
+    attachBarTooltip(sparkWrap, m.history, m.historyLabels, v=>"$"+v.toFixed(2));
   });
 }
 
