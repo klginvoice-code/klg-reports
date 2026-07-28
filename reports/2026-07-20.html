@@ -1166,11 +1166,25 @@ const TRAILER_META = {
 // Driver B and Driver H both had partial/thin weeks in the prior report
 // (excluded from Gross/RPM); this week both had full, normal weeks and Roman
 // confirmed (2026-07-28) they're back in for Gross/RPM.
+// EXCEPTION — Driver B's load #4200 (ID-TN, pickup 07/17, delivery 07/21,
+// real settlement value $5,568): this load's 5-day span only truly overlaps
+// this report's window (Jul 20-27) on ONE day, 07/21 (07/20 was the prior
+// report's own closing day, already covered by that report, so isn't counted
+// again here; 07/17-19 are before either window). Roman asked, as a one-off
+// exception for this week only (methodology for handling window-straddling
+// loads in general is still TBD, revisit before the next occurrence), to
+// prorate this load's gross by 1/5 of its span: $5,568 * (1/5) = $1,113.60.
+// Driver B's trucks[].gross is adjusted 13568 -> 9114 to reflect this (real
+// settlement sum $13,568, minus the original $5,568, plus the prorated
+// $1,113.60, rounded to the nearest dollar); rpm recomputed from the new
+// gross (9114/4124 miles = $2.21/mi, was $3.29/mi). Miles/empty/days are
+// UNCHANGED (still the full real settlement figures) — only gross/rpm were
+// touched, per Roman's explicit scope for this exception.
 // No settlement was found this week for Driver E, Driver F, or Driver I —
 // gap flagged to Roman, not assumed to be zero.
 const trucks = [
   {id:"A", trailer:"reefer",   miles:3262, rpm:2.98, gross:9730,  includeGross:true,  includeRpm:true,  empty:616, days:7},  // Driver A (7 active days, approved)
-  {id:"B", trailer:"dryvan",   miles:4124, rpm:3.29, gross:13568, includeGross:true,  includeRpm:true,  empty:247, days:11}, // Driver B (11 active days — full 5-load week; load #4200 picks up 07/17 before the window but its $5,568 counts in gross, so its days count too; back in Gross/RPM this week, see METHODOLOGY)
+  {id:"B", trailer:"dryvan",   miles:4124, rpm:2.21, gross:9114,  includeGross:true,  includeRpm:true,  empty:247, days:11}, // Driver B (11 active days; gross/rpm adjusted for the load #4200 window-straddling exception, see METHODOLOGY — real settlement total is $13,568)
   {id:"C", trailer:"reefer",   miles:2938, rpm:3.74, gross:11000, includeGross:true,  includeRpm:true,  empty:284, days:8},  // Driver C (8 active days, approved)
   {id:"D", trailer:"reefer",   miles:2992, rpm:3.08, gross:9200,  includeGross:true,  includeRpm:true,  empty:761, days:7},  // Driver D (7 active days; load #4186's miles excluded from RPM/days per Roman's file note, $ kept in gross, see METHODOLOGY)
   {id:"G", trailer:"reefer",   miles:2362, rpm:3.79, gross:8950,  includeGross:true,  includeRpm:true,  empty:356, days:6},  // Driver G (6 active days, approved)
@@ -1186,7 +1200,10 @@ const trucks = [
 // block above for the full capture/update/sanity-check rule. Sources this week:
 // reefer = Driver C, settlement #1887 (4 loads, sums exactly to trucks miles
 // 2938 / empty 284 / gross 11000). dryvan = Driver B, settlement #1886 (5
-// loads, sums exactly to trucks miles 4124 / empty 247 / gross 13568).
+// loads, sums to trucks miles 4124 / empty 247, but NOT to trucks[].gross
+// this week — gross is intentionally adjusted to $9,114 per the load #4200
+// window-straddling exception documented in METHODOLOGY; the real settlement
+// sum shown by these loads is still $13,568).
 const bestGrossLoadDetail = {
   reefer: {
     driverId: "C",
@@ -1844,7 +1861,7 @@ function renderTrend(){
   const grossWeeks = ["4wk ago","3wk ago","2wk ago","1wk ago","Current"];
   const trailerTrends = [
     { key:"reefer", color:"#2a78d6", rpm:[3.84,5.41,4.08,3.80,3.40], gross:[7786,10133,9900,11333,9720] },
-    { key:"dryvan", color:"#1baf7a", rpm:[3.07,4.90,3.75,2.61,3.52], gross:[9200,8900,5875,3050,10364] },
+    { key:"dryvan", color:"#1baf7a", rpm:[3.07,4.90,3.75,2.61,3.16], gross:[9200,8900,5875,3050,8880] },
   ];
   trailerTrends.forEach(t=>{
     const meta = TRAILER_META[t.key];
