@@ -1189,11 +1189,13 @@ const trucks = [
 // trailer type — see the "PER-LOAD DETAIL OBJECTS" rule in the METHODOLOGY
 // block above for the full capture/update/sanity-check rule. Sources this week:
 // reefer = Driver C, settlement #1875 (3 loads, sums exactly to trucks miles
-// 3650 / empty 338 / gross 14900). dryvan = Driver H, settlement #1880 (single
-// load, La Junta CO -> Fort Wayne IN; its raw empty here is 636mi, higher than
-// trucks[].empty:0 for Driver H — that's expected, not an error: this driver's
-// one deadhead leg was excluded from his aggregate as an outlier per the
-// METHODOLOGY rule, but the Details panel still shows the real per-load number).
+// 3650 / empty 338 / gross 14900). dryvan = Driver B (new winner as of
+// 2026-07-28, see METHODOLOGY) — only load #4200 (ID-TN) is listed here;
+// its 1852 loaded miles match trucks[B].miles exactly. Driver B's other
+// $1,500 (the original partial/relay-leg money) has no captured lane/mileage
+// of its own — it was never recorded with per-load lane detail when it was
+// excluded from Gross/RPM, so it can't be shown as a separate load line here;
+// this is why "Loads: 1" undercounts the 2 real contributions to his gross.
 const bestGrossLoadDetail = {
   reefer: {
     driverId: "C",
@@ -1204,9 +1206,9 @@ const bestGrossLoadDetail = {
     ],
   },
   dryvan: {
-    driverId: "H",
+    driverId: "B",
     loads: [
-      { states:"CO-IN", empty:636, loaded:1167 },
+      { states:"ID-TN", empty:0, loaded:1852 },
     ],
   },
 };
@@ -1214,9 +1216,9 @@ const bestGrossLoadDetail = {
 // Same as bestGrossLoadDetail above, but for whichever driver wins Best Weekly
 // RPM per trailer type (see METHODOLOGY block for the capture/sanity-check
 // rule). Sources this week: reefer = Driver F, settlement #1877 (3 loads,
-// sums exactly to trucks miles:1205/empty:206/gross:5500). dryvan = Driver H
-// happens to also be this week's RPM winner (only eligible Dry Van truck this
-// week), so it reuses the same single load as bestGrossLoadDetail.dryvan.
+// sums exactly to trucks miles:1205/empty:206/gross:5500). dryvan = Driver B
+// is also this week's RPM winner (see METHODOLOGY), so it reuses the same
+// single load as bestGrossLoadDetail.dryvan.
 //
 // GROSS-DISCLOSURE RULE (renderComputedRecords()): the RPM Details panel never
 // shows $ gross, for both trailer types, even when the RPM winner happens to
@@ -1236,9 +1238,9 @@ const bestRpmLoadDetail = {
     ],
   },
   dryvan: {
-    driverId: "H",
+    driverId: "B",
     loads: [
-      { states:"CO-IN", empty:636, loaded:1167 },
+      { states:"ID-TN", empty:0, loaded:1852 },
     ],
   },
 };
@@ -1382,18 +1384,14 @@ function wireDetailsToggle(cardEl, toggleEl, panelEl){
 // markets (see National Market Snapshot / Trailer Type Comparison below), so a
 // single cross-type winner always favored whichever type pays more nationally
 // rather than who actually did best relative to their own market.
-// MANUAL WINNER OVERRIDE (one-off exception, added 2026-07-28 retroactively
-// to this already-published report): Driver B's trucks[] entry now includes
-// load #4200 (moved here in full from the Jul 20-27 report, see METHODOLOGY
-// and the trucks[B] comment), which makes his Gross ($7,068) and RPM
-// ($3.82/mi) both numerically higher than Driver H's. Roman asked to smooth
-// the By Trailer Type averages / 5-Week Trends using this real data WITHOUT
-// changing which driver is shown as this report's "Best Weekly Gross/RPM"
-// winner for Dry Van — Driver H stays the displayed winner, matching what
-// was already live before this retroactive adjustment.
-const FORCED_GROSS_WINNER = { dryvan: "H" };
-const FORCED_RPM_WINNER = { dryvan: "H" };
-
+// NOTE (2026-07-28): Driver B's trucks[] entry now includes load #4200
+// (moved here in full from the Jul 20-27 report, see METHODOLOGY and the
+// trucks[B] comment), making his real Gross ($7,068) and RPM ($3.82/mi) both
+// higher than Driver H's ($3,050 / $2.61/mi). An earlier forced override had
+// kept Driver H as the displayed Dry Van winner while this was being
+// smoothed in; Roman then asked to let the real numbers decide instead, so
+// Driver B is now Dry Van's genuine Best Weekly Gross AND RPM winner here —
+// no override, straight natural sort.
 function renderComputedRecords(){
   const grossEligible = trucks.filter(t=>t.includeGross);
   const rpmEligible = trucks.filter(t=>t.includeRpm);
@@ -1405,12 +1403,8 @@ function renderComputedRecords(){
 
     const grossPool = grossEligible.filter(t=>t.trailer===type);
     const rpmPool = rpmEligible.filter(t=>t.trailer===type);
-    const byGross = FORCED_GROSS_WINNER[type]
-      ? grossPool.find(t=>t.id===FORCED_GROSS_WINNER[type])
-      : [...grossPool].sort((a,b)=>b.gross-a.gross)[0];
-    const byRpm = FORCED_RPM_WINNER[type]
-      ? rpmPool.find(t=>t.id===FORCED_RPM_WINNER[type])
-      : [...rpmPool].sort((a,b)=>b.rpm-a.rpm)[0];
+    const byGross = [...grossPool].sort((a,b)=>b.gross-a.gross)[0];
+    const byRpm   = [...rpmPool].sort((a,b)=>b.rpm-a.rpm)[0];
 
     const grossValueEl = document.getElementById("rec-gross-value-" + suffix);
     const grossToggle = document.getElementById("gross-details-toggle-" + suffix);
