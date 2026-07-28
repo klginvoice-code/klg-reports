@@ -1180,13 +1180,21 @@ const TRAILER_META = {
 // gross (9114/4124 miles = $2.21/mi, was $3.29/mi). Miles/empty/days are
 // UNCHANGED (still the full real settlement figures) — only gross/rpm were
 // touched, per Roman's explicit scope for this exception.
+// Driver D's load #4230 (Mcallen TX - Lanham MD) had a 522mi empty leg —
+// nearly double any other single load's deadhead this week and the main
+// driver of an unusually high Avg Weekly Deadhead figure (415mi, +84.5% vs
+// last week). Roman confirmed (2026-07-28) to exclude it as an outlier, same
+// precedent as prior weeks' single abnormal deadhead legs — Driver D's empty
+// drops 761 -> 239 (loaded miles/gross/RPM unaffected, deadhead-only
+// exclusion). This brings Avg Weekly Deadhead down to 340mi (+51.4% vs last
+// week) — still elevated, but no longer dominated by one leg.
 // No settlement was found this week for Driver E, Driver F, or Driver I —
 // gap flagged to Roman, not assumed to be zero.
 const trucks = [
   {id:"A", trailer:"reefer",   miles:3262, rpm:2.98, gross:9730,  includeGross:true,  includeRpm:true,  empty:616, days:7},  // Driver A (7 active days, approved)
   {id:"B", trailer:"dryvan",   miles:4124, rpm:2.21, gross:9114,  includeGross:true,  includeRpm:true,  empty:247, days:11}, // Driver B (11 active days; gross/rpm adjusted for the load #4200 window-straddling exception, see METHODOLOGY — real settlement total is $13,568)
   {id:"C", trailer:"reefer",   miles:2938, rpm:3.74, gross:11000, includeGross:true,  includeRpm:true,  empty:284, days:8},  // Driver C (8 active days, approved)
-  {id:"D", trailer:"reefer",   miles:2992, rpm:3.08, gross:9200,  includeGross:true,  includeRpm:true,  empty:761, days:7},  // Driver D (7 active days; load #4186's miles excluded from RPM/days per Roman's file note, $ kept in gross, see METHODOLOGY)
+  {id:"D", trailer:"reefer",   miles:2992, rpm:3.08, gross:9200,  includeGross:true,  includeRpm:true,  empty:239, days:7},  // Driver D (7 active days; load #4186's miles excluded from RPM/days per Roman's file note, $ kept in gross; load #4230's 522mi empty leg (Mcallen TX-Lanham MD) also excluded as an outlier deadhead leg, same precedent as prior weeks — see METHODOLOGY)
   {id:"G", trailer:"reefer",   miles:2362, rpm:3.79, gross:8950,  includeGross:true,  includeRpm:true,  empty:356, days:6},  // Driver G (6 active days, approved)
   {id:"H", trailer:"dryvan",   miles:2550, rpm:3.38, gross:8625,  includeGross:true,  includeRpm:true,  empty:257, days:6},  // Driver H (6 active days; gross recovered from settlement #1890, $3,018.75 / 0.35 pay rate = $8,625; back in Gross/RPM this week, see METHODOLOGY)
   {id:"J", trailer:"dryvan",   miles:2283, rpm:3.90, gross:8900,  includeGross:true,  includeRpm:true,  empty:384, days:8},  // Driver J (8 active days; load #4208's 185mi deadhead excluded per Roman's file note, see METHODOLOGY)
