@@ -234,13 +234,17 @@
   .hero-card--gross:hover{border-color:rgba(47,111,78,0.30);}
   .hero-card--rpm{background:#F7F8FC;border-color:rgba(61,90,153,0.16);}
   .hero-card--rpm:hover{border-color:rgba(61,90,153,0.30);}
-  /* RPM's extra caption line makes it naturally taller than Gross when both
-     are collapsed — with align-items:start (see .hero-row--type) they no
-     longer auto-match, so give both an explicit shared floor instead. Only
-     applied above the single-column mobile breakpoint, where cards stack and
-     side-by-side height-matching isn't visible anyway. */
+  /* Standing rule: every "Best of the Week" hero card (Gross, RPM, Fuel,
+     Deadhead) shares one collapsed-height floor, regardless of how much
+     content each one naturally has (extra caption lines, a Details button,
+     etc.) — with align-items:start (see .hero-row--type/--fleet) cards no
+     longer auto-match by stretch, so this floor is what keeps them visually
+     uniform. Recalculate this value (tallest card's natural height) any time
+     content is added to any of the four cards. Only applied above the
+     single-column mobile breakpoint, where cards stack and side-by-side
+     height-matching isn't visible anyway. */
   @media (min-width:521px){
-    .hero-card--gross, .hero-card--rpm{min-height:166px;}
+    .hero-card--gross, .hero-card--rpm, .hero-card--fuel, .hero-card--deadhead{min-height:182px;}
   }
   .hero-card--fuel{background:#FFFBF5;border-color:rgba(183,122,42,0.15);}
   .hero-card--fuel:hover{border-color:rgba(183,122,42,0.30);}
@@ -897,7 +901,7 @@ document.documentElement.classList.add("js-anim-ready");
 
   <!-- 6-WEEK RPM TRENDS -->
   <div class="section">
-    <div class="section-title">5-Week Trends <span class="own-data-flag">KLG Fleet Data</span></div>
+    <div class="section-title">5-Week Avg Trends <span class="own-data-flag">KLG Fleet Data</span></div>
     <div class="section-body">
       <div class="market-subtitle">Company-wide average RPM and Gross per trailer type, tracked week by week over the last 5 weeks (this week included).</div>
       <div class="trend-grid" id="trend-grid"></div>
