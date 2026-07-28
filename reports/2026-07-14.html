@@ -138,6 +138,15 @@
     letter-spacing:0.3px;
     color:var(--dark-good);
   }
+  /* At the 22px base size, "JULY 14 – JULY 20, 2026" doesn't fit the width
+     left after the shrunk mobile logo/title (see the h1 rule's own comment
+     for the same cascade-order gotcha) and wraps right before the year —
+     16px fits on one line down to ~375px-wide phones (measured via CDP, not
+     guessed). Its own @media block, placed after the base .dates rule above,
+     so it actually wins. */
+  @media (max-width:480px){
+    .header-title .dates{font-size:16px;}
+  }
   .header-title .sub{
     margin-top:6px;
     font-size:var(--fs-label);
