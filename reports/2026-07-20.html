@@ -1546,7 +1546,7 @@ function renderComputedRecords(){
   // dispatch/lane-planning than by trailer type itself).
   const totalEmpty = rpmEligible.reduce((s,t)=>s+t.empty, 0);
   const avgDeadheadMiles = totalEmpty / rpmEligible.length;
-  document.getElementById("deadhead-value").textContent = Math.round(avgDeadheadMiles) + " mi";
+  document.getElementById("deadhead-value").textContent = Math.round(avgDeadheadMiles) + " miles";
 
   // Last week's (Jul 14-20) avg deadhead miles, recomputed from that week's
   // full 8-driver includeRpm set (A:256, C:338, D:114, E:254, F:206, G:230,
