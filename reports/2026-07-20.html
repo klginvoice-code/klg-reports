@@ -1104,25 +1104,48 @@ const TRAILER_META = {
 // (partial/relay leg) and Driver J (did not drive) are excluded from both — their data isn't
 // comparable to a normal load at all, not just a short week.
 //
-// DAYS (active driver-days) = the count of distinct calendar days covered by
-// the UNION of that driver's own loads' [pickup date, delivery date] spans
-// (inclusive) for the week — not a flat 7, and not eyeballed. Overlapping or
-// back-to-back loads don't double-count a shared day. Gap days between one
-// load's delivery and the next load's pickup are simply not covered by any
-// span, so they're automatically excluded — no separate "ignore gaps of N+
-// days" rule is needed, it falls out of the union itself. Confirmed
-// 2026-07-27 by recomputing all 8 drivers' real settlement dates: this
-// produces the exact `days` values already in this array for every driver
-// except the two below.
+// DAYS (active driver-days) — REDEFINED 2026-07-28, supersedes the union-
+// of-calendar-days formula used through the Jul 14-20 report. Now: SUM,
+// across a driver's own loads for the week, of max(1, delivery_date -
+// pickup_date) per load. Each load contributes (delivery-pickup) days, with
+// a floor of 1 — a load picked up AND delivered on the same calendar day
+// still counts as 1 real working day (real work happened that day), never 0.
+// Loads are summed independently, not unioned by calendar date — a load's
+// own contribution isn't reduced just because a neighboring load's span
+// touches the same boundary date. Gap days between one load's delivery and
+// the next load's pickup are simply never covered by any load's own delta,
+// so they're automatically excluded with no separate rule needed.
+// Why this replaced the old union method: the union approach counted every
+// calendar day a load's span touched inclusive of both endpoints, which
+// over-counts by 1 day per load relative to real transit time UNLESS loads
+// chain with zero gap (in which case the union quietly "borrows" the saved
+// day from the adjacent load). The two methods can coincide by coincidence
+// for some drivers but are not equivalent in general — recompute fresh each
+// week under the per-load formula, don't assume an old union-based `days`
+// value still applies.
 // IMPORTANT — do NOT clip a load's span to the report's displayed date
-// range. If a load's pickup falls one calendar day before the header's start
-// date but that load's full $ amount is still counted in this week's gross
-// (which it is, per the GROSS rule above), then that earlier pickup day must
-// also count as an active day — the money and the day it took to earn it
-// have to move together, or the $/day figure gets inflated by including
-// revenue without its matching day. Driver C's load #4184 and Driver E's
-// load #4182 both pick up on 07/13, one day before the Jul 14-20 header —
-// their `days` (8 and 5) include that day for exactly this reason.
+// range (unchanged from before). If a load's pickup falls before the
+// header's start date but its full $ amount is still counted in this week's
+// gross, its full (delivery-pickup) delta still counts in DAYS too.
+//
+// This week (Jul 20-27, 2026), recomputed under the new formula:
+// Driver A: #4213(21->23)=2 + #4229(24->27)=3 = 5.
+// Driver B: #4200(17->21)=4 + #4211(21->22)=1 + #4218(22->23)=1 +
+//   #4220(23->24)=1 + #4226(24->27)=3 = 10.
+// Driver C: #4207(20->21)=1 + #4217(21->23)=2 + #4222(23->24)=1 +
+//   #4228(24->27)=3 = 7.
+// Driver D: #4212(21->22)=1 + #4219(22->23)=1 + #4230(24->27)=3 = 5
+//   (load #4186 excluded entirely, both miles and days, per the filename-
+//   flagged exception above).
+// Driver G: #4210(21->22)=1 + #4216(21->24)=3 + #4231(25->26)=1 = 5.
+// Driver H: #4206(20->22)=2 + #4221(22->24)=2 + #4227(24->25)=1 = 5.
+// Driver J: #4208(20->21)=1 + #4209(21->22)=1 + #4214(22->22)=1(floor) +
+//   #4215(22->23)=1 + #4224(23->23)=1(floor) + #4225(24->27)=3 = 8 —
+//   coincidentally identical to the old union-method total for J only,
+//   because the two same-day loads' floor-bumps (0->1 each) happened to
+//   exactly offset the "one fewer day per multi-day load" effect elsewhere
+//   in his chain. Every other driver's days dropped by 1-2 under the new
+//   formula vs. the old union method — expected, not an error.
 //
 // AVG REVENUE/DAY (By Trailer Type card) = (sum of gross across that type's
 // includeGross-eligible drivers) / (sum of their DAYS, as defined above) —
@@ -1168,19 +1191,15 @@ const TRAILER_META = {
 // (excluded from Gross/RPM); this week both had full, normal weeks and Roman
 // confirmed (2026-07-28) they're back in for Gross/RPM.
 // EXCEPTION — Driver B's load #4200 (ID-TN, pickup 07/17, delivery 07/21,
-// real settlement value $5,568): this load's 5-day span only truly overlaps
-// this report's window (Jul 20-27) on ONE day, 07/21 (07/20 was the prior
-// report's own closing day, already covered by that report, so isn't counted
-// again here; 07/17-19 are before either window). Roman asked, as a one-off
-// exception for this week only (methodology for handling window-straddling
-// loads in general is still TBD, revisit before the next occurrence), to
-// prorate this load's gross by 1/5 of its span: $5,568 * (1/5) = $1,113.60.
-// Driver B's trucks[].gross is adjusted 13568 -> 9114 to reflect this (real
-// settlement sum $13,568, minus the original $5,568, plus the prorated
-// $1,113.60, rounded to the nearest dollar); rpm recomputed from the new
-// gross (9114/4124 miles = $2.21/mi, was $3.29/mi). Miles/empty/days are
-// UNCHANGED (still the full real settlement figures) — only gross/rpm were
-// touched, per Roman's explicit scope for this exception.
+// real settlement value $5,568): its 5-day span mostly falls in the PRIOR
+// report's window (Jul 14-20), overlapping this report's window on only one
+// day (07/21). An initial attempt to prorate this load 1/5 into this report
+// (2026-07-28, superseded same day) proved too uncertain to stand behind, so
+// Roman decided instead to move it IN FULL to the Jul 14-20 report — see
+// that report's trucks[B] comment and METHODOLOGY. Driver B's trucks[].gross
+// here is now $8,000 (real, un-prorated, from his remaining 4 loads this
+// week only) — down from the real settlement total of $13,568, which
+// included load #4200.
 // Driver D's load #4230 (Mcallen TX - Lanham MD) had a 522mi empty leg —
 // nearly double any other single load's deadhead this week and the main
 // driver of an unusually high Avg Weekly Deadhead figure (415mi, +84.5% vs
@@ -1194,13 +1213,13 @@ const TRAILER_META = {
 // No settlement was found this week for Driver E, Driver F, or Driver I —
 // gap flagged to Roman, not assumed to be zero.
 const trucks = [
-  {id:"A", trailer:"reefer",   miles:3262, rpm:2.98, gross:9730,  includeGross:true,  includeRpm:true,  empty:251, days:7},  // Driver A (7 active days, approved); load #4229's 365mi empty leg (TX-PA) excluded as an outlier deadhead leg per Roman's request, see METHODOLOGY
-  {id:"B", trailer:"dryvan",   miles:4124, rpm:2.21, gross:9114,  includeGross:true,  includeRpm:true,  empty:247, days:11}, // Driver B (11 active days; gross/rpm adjusted for the load #4200 window-straddling exception, see METHODOLOGY — real settlement total is $13,568)
-  {id:"C", trailer:"reefer",   miles:2938, rpm:3.74, gross:11000, includeGross:true,  includeRpm:true,  empty:284, days:8},  // Driver C (8 active days, approved)
-  {id:"D", trailer:"reefer",   miles:2992, rpm:3.08, gross:9200,  includeGross:true,  includeRpm:true,  empty:239, days:7},  // Driver D (7 active days; load #4186's miles excluded from RPM/days per Roman's file note, $ kept in gross; load #4230's 522mi empty leg (Mcallen TX-Lanham MD) also excluded as an outlier deadhead leg, same precedent as prior weeks — see METHODOLOGY)
-  {id:"G", trailer:"reefer",   miles:2362, rpm:3.79, gross:8950,  includeGross:true,  includeRpm:true,  empty:356, days:6},  // Driver G (6 active days, approved)
-  {id:"H", trailer:"dryvan",   miles:2550, rpm:3.38, gross:8625,  includeGross:true,  includeRpm:true,  empty:257, days:6},  // Driver H (6 active days; gross recovered from settlement #1890, $3,018.75 / 0.35 pay rate = $8,625; back in Gross/RPM this week, see METHODOLOGY)
-  {id:"J", trailer:"dryvan",   miles:2283, rpm:3.90, gross:8900,  includeGross:true,  includeRpm:true,  empty:384, days:8},  // Driver J (8 active days; load #4208's 185mi deadhead excluded per Roman's file note, see METHODOLOGY)
+  {id:"A", trailer:"reefer",   miles:3262, rpm:2.98, gross:9730,  includeGross:true,  includeRpm:true,  empty:251, days:5},  // Driver A (5 active days per the new per-load days formula, see METHODOLOGY); load #4229's 365mi empty leg (TX-PA) excluded as an outlier deadhead leg per Roman's request
+  {id:"B", trailer:"dryvan",   miles:2272, rpm:3.52, gross:8000,  includeGross:true,  includeRpm:true,  empty:247, days:6},  // Driver B (6 active days per the new per-load days formula, see METHODOLOGY); load #4200 (ID-TN) moved to the Jul 14-20 report IN FULL per Roman's decision (see METHODOLOGY) — these are now real, un-prorated figures from the remaining 4 loads
+  {id:"C", trailer:"reefer",   miles:2938, rpm:3.74, gross:11000, includeGross:true,  includeRpm:true,  empty:284, days:7},  // Driver C (7 active days per the new per-load days formula, see METHODOLOGY)
+  {id:"D", trailer:"reefer",   miles:2992, rpm:3.08, gross:9200,  includeGross:true,  includeRpm:true,  empty:239, days:5},  // Driver D (5 active days per the new per-load days formula, see METHODOLOGY); load #4186's miles/days excluded per Roman's file note, $ kept in gross; load #4230's 522mi empty leg (Mcallen TX-Lanham MD) excluded as an outlier deadhead leg)
+  {id:"G", trailer:"reefer",   miles:2362, rpm:3.79, gross:8950,  includeGross:true,  includeRpm:true,  empty:356, days:5},  // Driver G (5 active days per the new per-load days formula, see METHODOLOGY)
+  {id:"H", trailer:"dryvan",   miles:2550, rpm:3.38, gross:8625,  includeGross:true,  includeRpm:true,  empty:257, days:5},  // Driver H (5 active days per the new per-load days formula, see METHODOLOGY); gross recovered from settlement #1890, $3,018.75 / 0.35 pay rate = $8,625)
+  {id:"J", trailer:"dryvan",   miles:2283, rpm:3.90, gross:8900,  includeGross:true,  includeRpm:true,  empty:384, days:8},  // Driver J (8 active days per the new per-load days formula — coincidentally unchanged from the old union method, see METHODOLOGY); load #4208's 185mi deadhead excluded per Roman's file note)
 ];
 // No entries for Driver E, Driver F, Driver I this week — no settlement was
 // found for them in this week's folder (see METHODOLOGY note above); they
@@ -1212,11 +1231,8 @@ const trucks = [
 // reefer = Driver C, settlement #1887 (4 loads, sums exactly to trucks miles
 // 2938 / empty 284 / gross 11000). dryvan = Driver J, settlement #1885 (same
 // 6 loads already used for bestRpmLoadDetail.dryvan below — J is Dry Van's
-// natural RPM winner AND, per the FORCED_GROSS_WINNER override above
-// renderComputedRecords(), this week's displayed Gross winner too, even
-// though Driver B's trucks[].gross ($9,114, itself a hard-to-verify prorated
-// figure — see METHODOLOGY) is still numerically higher. Driver B's real,
-// un-prorated settlement total is $13,568.
+// natural Gross AND RPM winner this week, no override needed, see the note
+// above renderComputedRecords()).
 const bestGrossLoadDetail = {
   reefer: {
     driverId: "C",
@@ -1313,7 +1329,7 @@ const TRAILER_HEX = { reefer:"#2a78d6", dryvan:"#1baf7a" };
 // as the "1wk ago" point in the 5-Week Trends chart's `trailerTrends.gross`
 // array — kept in sync manually since this card and that chart don't share
 // scope. If that array's "1 week ago" values ever change, update these too.
-const TRAILER_LAST_WEEK_GROSS = { reefer:11333, dryvan:3050 };
+const TRAILER_LAST_WEEK_GROSS = { reefer:11333, dryvan:5059 };
 
 function renderTrailerTable(){
   const {rpmGroups, grossGroups} = trailerGroups();
@@ -1421,19 +1437,12 @@ function wireDetailsToggle(cardEl, toggleEl, panelEl){
 // markets (see National Market Snapshot / Trailer Type Comparison below), so a
 // single cross-type winner always favored whichever type pays more nationally
 // rather than who actually did best relative to their own market.
-// MANUAL GROSS-WINNER OVERRIDE (one-off exception, this week's report only,
-// 2026-07-28): Driver B's trucks[].gross ($9,114) is still numerically the
-// highest in the Dry Van pool, but that figure is itself a hard-to-verify
-// prorated estimate for load #4200's window-straddling problem (see
-// METHODOLOGY) — Roman decided it's too uncertain a number to hang a public
-// "Best Weekly Gross" recognition on, and asked to hand the award to the
-// actual runner-up (Driver J, real $8,900) instead, without attempting a
-// cleaner proration for B. This does NOT change trucks[B].gross itself
-// (still feeds Dry Van's averages/trends as-is) — only which driver is
-// selected/displayed as this type's Gross winner. Remove this override once
-// a general rule for window-straddling loads is settled.
-const FORCED_GROSS_WINNER = { dryvan: "J" };
-
+// NOTE (2026-07-28): Driver B's load #4200 (the window-straddling problem
+// that originally motivated a forced Gross-winner override here) has since
+// been moved to the Jul 14-20 report in full — see METHODOLOGY. Driver B's
+// gross is now a real, un-prorated $8,000, naturally below Driver J's real
+// $8,900, so no override is needed: J wins Best Weekly Gross for Dry Van
+// through the normal sort, same as he already does for RPM.
 function renderComputedRecords(){
   const grossEligible = trucks.filter(t=>t.includeGross);
   const rpmEligible = trucks.filter(t=>t.includeRpm);
@@ -1445,9 +1454,7 @@ function renderComputedRecords(){
 
     const grossPool = grossEligible.filter(t=>t.trailer===type);
     const rpmPool = rpmEligible.filter(t=>t.trailer===type);
-    const byGross = FORCED_GROSS_WINNER[type]
-      ? grossPool.find(t=>t.id===FORCED_GROSS_WINNER[type])
-      : [...grossPool].sort((a,b)=>b.gross-a.gross)[0];
+    const byGross = [...grossPool].sort((a,b)=>b.gross-a.gross)[0];
     const byRpm   = [...rpmPool].sort((a,b)=>b.rpm-a.rpm)[0];
 
     const grossValueEl = document.getElementById("rec-gross-value-" + suffix);
@@ -1890,7 +1897,7 @@ function renderTrend(){
   const grossWeeks = ["4wk ago","3wk ago","2wk ago","1wk ago","Current"];
   const trailerTrends = [
     { key:"reefer", color:"#2a78d6", rpm:[3.84,5.41,4.08,3.80,3.40], gross:[7786,10133,9900,11333,9720] },
-    { key:"dryvan", color:"#1baf7a", rpm:[3.07,4.90,3.75,2.61,3.16], gross:[9200,8900,5875,3050,8880] },
+    { key:"dryvan", color:"#1baf7a", rpm:[3.07,4.90,3.75,3.21,3.60], gross:[9200,8900,5875,5059,8508] },
   ];
   trailerTrends.forEach(t=>{
     const meta = TRAILER_META[t.key];

@@ -1160,9 +1160,21 @@ const TRAILER_META = {
 // Driver D's remaining load #4203 (1024mi empty vs 597 loaded) had its empty
 // miles excluded as an outlier leg. Driver H's raw empty (636mi, his only
 // load this week) was excluded the same way as an outlier leg.
+// RETROACTIVE EXCEPTION (added 2026-07-28, after this report first
+// published): Driver B's load #4200 (ID-TN, pickup 07/17, delivery 07/21)
+// was originally attributed entirely to the Jul 20-27 report/settlement,
+// but its window-straddling problem was hard to prorate fairly across the
+// two reports. Roman decided to move it here IN FULL instead (his separate
+// $1,500 partial/relay-leg money, no miles, stays too) — see the trucks[B]
+// comment and DAYS section below for the exact numbers. This was done
+// specifically to smooth the By Trailer Type averages and 5-Week Avg Trends
+// between the two reports, WITHOUT changing this report's displayed "Best
+// Weekly Gross/RPM" winner for Dry Van (still Driver H, via a forced
+// override — see FORCED_GROSS_WINNER/FORCED_RPM_WINNER above
+// renderComputedRecords()).
 const trucks = [
   {id:"A", trailer:"reefer",   miles:2915, rpm:3.47, gross:10100, includeGross:true,  includeRpm:true,  empty:256, days:6}, // Driver A (6 active days, approved)
-  {id:"B", trailer:"dryvan",   miles:1232, rpm:1.22, gross:1500,  includeGross:false, includeRpm:false, empty:0,   days:0}, // Driver B (partial/relay load)
+  {id:"B", trailer:"dryvan",   miles:1852, rpm:3.82, gross:7068,  includeGross:true,  includeRpm:true,  empty:0,   days:4}, // Driver B (4 active days; EXCEPTION added 2026-07-28 — load #4200 (ID-TN, pickup 07/17, delivery 07/21), originally captured in the Jul 20-27 settlement/report, was moved here in FULL because its window-straddling problem was hard to prorate fairly, per Roman's decision; his separate $1,500 partial/relay-leg money (no miles) is kept too. Now included in Gross/RPM for the first time — see METHODOLOGY. Best Weekly Gross/RPM winners for Dry Van are deliberately left unchanged (still Driver H) via a forced override, per Roman's explicit scope for this exception.
   {id:"C", trailer:"reefer",   miles:3650, rpm:4.08, gross:14900, includeGross:true,  includeRpm:true,  empty:338, days:8}, // Driver C (8 active days — first load's pickup 07/13 is a day before the report window, but its full amount counts toward this week's gross, so its pickup day counts too; corrected 2026-07-27, see METHODOLOGY)
   {id:"D", trailer:"reefer",   miles:1505, rpm:3.16, gross:4750,  includeGross:false, includeRpm:true,  empty:114, days:5}, // Driver D (5 active days, not approved for Gross; load #4202 was cancelled: its $150 payout counts, its 911 loaded/219 empty miles don't; load #4203's 1024mi empty leg also excluded as an outlier)
   {id:"E", trailer:"reefer",   miles:2398, rpm:3.75, gross:9000,  includeGross:true,  includeRpm:true,  empty:254, days:5}, // Driver E (5 active days — same 07/13-pickup situation as Driver C; corrected 2026-07-27, see METHODOLOGY)
@@ -1370,6 +1382,18 @@ function wireDetailsToggle(cardEl, toggleEl, panelEl){
 // markets (see National Market Snapshot / Trailer Type Comparison below), so a
 // single cross-type winner always favored whichever type pays more nationally
 // rather than who actually did best relative to their own market.
+// MANUAL WINNER OVERRIDE (one-off exception, added 2026-07-28 retroactively
+// to this already-published report): Driver B's trucks[] entry now includes
+// load #4200 (moved here in full from the Jul 20-27 report, see METHODOLOGY
+// and the trucks[B] comment), which makes his Gross ($7,068) and RPM
+// ($3.82/mi) both numerically higher than Driver H's. Roman asked to smooth
+// the By Trailer Type averages / 5-Week Trends using this real data WITHOUT
+// changing which driver is shown as this report's "Best Weekly Gross/RPM"
+// winner for Dry Van — Driver H stays the displayed winner, matching what
+// was already live before this retroactive adjustment.
+const FORCED_GROSS_WINNER = { dryvan: "H" };
+const FORCED_RPM_WINNER = { dryvan: "H" };
+
 function renderComputedRecords(){
   const grossEligible = trucks.filter(t=>t.includeGross);
   const rpmEligible = trucks.filter(t=>t.includeRpm);
@@ -1381,8 +1405,12 @@ function renderComputedRecords(){
 
     const grossPool = grossEligible.filter(t=>t.trailer===type);
     const rpmPool = rpmEligible.filter(t=>t.trailer===type);
-    const byGross = [...grossPool].sort((a,b)=>b.gross-a.gross)[0];
-    const byRpm   = [...rpmPool].sort((a,b)=>b.rpm-a.rpm)[0];
+    const byGross = FORCED_GROSS_WINNER[type]
+      ? grossPool.find(t=>t.id===FORCED_GROSS_WINNER[type])
+      : [...grossPool].sort((a,b)=>b.gross-a.gross)[0];
+    const byRpm = FORCED_RPM_WINNER[type]
+      ? rpmPool.find(t=>t.id===FORCED_RPM_WINNER[type])
+      : [...rpmPool].sort((a,b)=>b.rpm-a.rpm)[0];
 
     const grossValueEl = document.getElementById("rec-gross-value-" + suffix);
     const grossToggle = document.getElementById("gross-details-toggle-" + suffix);
@@ -1825,7 +1853,7 @@ function renderTrend(){
   const grossWeeks = ["4wk ago","3wk ago","2wk ago","1wk ago","Current"];
   const trailerTrends = [
     { key:"reefer", color:"#2a78d6", rpm:[3.84,3.84,5.41,4.08,3.80], gross:[9769,7786,10133,9900,11333] },
-    { key:"dryvan", color:"#1baf7a", rpm:[3.95,3.07,4.90,3.75,2.61], gross:[8675,9200,8900,5875,3050] },
+    { key:"dryvan", color:"#1baf7a", rpm:[3.95,3.07,4.90,3.75,3.21], gross:[8675,9200,8900,5875,5059] },
   ];
   trailerTrends.forEach(t=>{
     const meta = TRAILER_META[t.key];
