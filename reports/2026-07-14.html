@@ -839,7 +839,7 @@ document.documentElement.classList.add("js-anim-ready");
     <div class="hero-card hero-card--fuel hero-rv" id="best-fuel-card">
       <div class="hero-top">
         <div class="hero-icon fuel"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 4 0v-6.998a2 2 0 0 0-.59-1.42L18 5"/><path d="M14 21V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v16"/><path d="M2 21h13"/><path d="M3 9h11"/></svg></div>
-        <div class="hero-label">Best Fuel Discount</div>
+        <div class="hero-label">Best Weekly Fuel Discount</div>
       </div>
       <div class="hero-value">$0.66<span style="font-size:var(--fs-body);font-weight:600;">/gal saved</span></div>
       <div class="hero-tag">TA Rogers &mdash; Rogers, MN</div>
@@ -874,7 +874,7 @@ document.documentElement.classList.add("js-anim-ready");
     <div class="hero-card hero-card--deadhead hero-rv">
       <div class="hero-top">
         <div class="hero-icon deadhead"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg></div>
-        <div class="hero-label">Avg Deadhead</div>
+        <div class="hero-label">Avg Weekly Deadhead</div>
       </div>
       <div class="hero-value" id="deadhead-value">&mdash;</div>
       <div class="market-delta" id="deadhead-delta"></div>
@@ -1751,7 +1751,7 @@ function renderTrend(){
           <div class="trend-stat-delta"><span class="arrow" style="color:${dGross.arrowColor};">${dGross.arrowChar}</span> ${dGross.pct.toFixed(1)}%<span class="sub">vs last week</span></div>
         </div>
       </div>
-      <div class="trend-chart-title">RPM Trend (5 Weeks)</div>
+      <div class="trend-chart-title">Avg RPM Trend (5 Weeks)</div>
       <div class="chart-wrap"></div>
     `;
     grid.appendChild(div);
@@ -1783,7 +1783,7 @@ function renderTrend(){
 
       setTimeout(()=>{
         if (metric === "rpm") {
-          titleEl.textContent = "RPM Trend (5 Weeks)";
+          titleEl.textContent = "Avg RPM Trend (5 Weeks)";
           chartWrap.innerHTML = trendChart(t.rpm, rpmWeeks, fmtRpm, t.color, rpmTooltipWeeks, chartWrap.getBoundingClientRect().width);
           attachChartTooltip(chartWrap, t.rpm, rpmTooltipWeeks, fmtRpm);
           // Draw the line in on switch, same spirit as the Gross bars growing —
@@ -1801,7 +1801,7 @@ function renderTrend(){
             });
           }
         } else {
-          titleEl.textContent = "Gross Trend (5 Weeks)";
+          titleEl.textContent = "Avg Gross Trend (5 Weeks)";
           chartWrap.innerHTML = grossBarChart(t.gross, grossWeeks, fmtGrossK, fmtGross, t.color, chartWrap.getBoundingClientRect().width);
           attachGrossBarTooltip(chartWrap, t.gross, grossWeeks, fmtGross);
           const bars = chartWrap.querySelectorAll(".gbar-grow");
