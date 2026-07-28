@@ -253,7 +253,25 @@
      photographed/exported at high-res and trimmed with a transparent
      background so it drops straight onto the card tint with no white box
      around it. Sized to read as a signature, not a logo. */
-  .owner-signature{display:block;height:64px;width:auto;margin:2px 0;}
+  /* "Written live" reveal: the signature is a raster capture (screenshot of
+     a signing-app canvas), not a vector path, so a true stroke-by-stroke
+     draw (stroke-dasharray) isn't possible without re-tracing it and
+     risking the natural pressure-varied line weight. A left-to-right
+     clip-path wipe gets a very close effect on the existing image with no
+     re-processing — it reads as "being signed" since this signature already
+     flows left-to-right. Piggybacks on the owner-note's own .rv-visible
+     reveal (no separate JS) with an extra delay so the letter settles
+     first, then the signature appears a beat later. */
+  .owner-signature{
+    display:block;height:64px;width:auto;margin:2px 0;
+    clip-path:inset(0 100% 0 0);
+    transition:clip-path 1.1s cubic-bezier(.22,1,.36,1);
+    transition-delay:.5s;
+  }
+  .owner-note.rv-visible .owner-signature{clip-path:inset(0 0% 0 0);}
+  @media (prefers-reduced-motion:reduce){
+    .owner-signature{clip-path:none;transition:none;}
+  }
   .owner-name{font-size:var(--fs-subtitle);font-weight:800;color:var(--ink);}
   .owner-title{font-size:var(--fs-label);color:var(--muted);margin-top:2px;}
   @media (max-width:640px){
