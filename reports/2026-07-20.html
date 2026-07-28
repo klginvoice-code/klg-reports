@@ -1186,12 +1186,14 @@ const TRAILER_META = {
 // last week). Roman confirmed (2026-07-28) to exclude it as an outlier, same
 // precedent as prior weeks' single abnormal deadhead legs — Driver D's empty
 // drops 761 -> 239 (loaded miles/gross/RPM unaffected, deadhead-only
-// exclusion). This brings Avg Weekly Deadhead down to 340mi (+51.4% vs last
-// week) — still elevated, but no longer dominated by one leg.
+// exclusion). Driver A's load #4229 (TX-PA) had a 365mi empty leg, the next-
+// largest single-load deadhead this week — Roman also asked to exclude it,
+// same treatment — Driver A's empty drops 616 -> 251. Combined, these two
+// exclusions bring Avg Weekly Deadhead down to 288mi (+28.2% vs last week).
 // No settlement was found this week for Driver E, Driver F, or Driver I —
 // gap flagged to Roman, not assumed to be zero.
 const trucks = [
-  {id:"A", trailer:"reefer",   miles:3262, rpm:2.98, gross:9730,  includeGross:true,  includeRpm:true,  empty:616, days:7},  // Driver A (7 active days, approved)
+  {id:"A", trailer:"reefer",   miles:3262, rpm:2.98, gross:9730,  includeGross:true,  includeRpm:true,  empty:251, days:7},  // Driver A (7 active days, approved); load #4229's 365mi empty leg (TX-PA) excluded as an outlier deadhead leg per Roman's request, see METHODOLOGY
   {id:"B", trailer:"dryvan",   miles:4124, rpm:2.21, gross:9114,  includeGross:true,  includeRpm:true,  empty:247, days:11}, // Driver B (11 active days; gross/rpm adjusted for the load #4200 window-straddling exception, see METHODOLOGY — real settlement total is $13,568)
   {id:"C", trailer:"reefer",   miles:2938, rpm:3.74, gross:11000, includeGross:true,  includeRpm:true,  empty:284, days:8},  // Driver C (8 active days, approved)
   {id:"D", trailer:"reefer",   miles:2992, rpm:3.08, gross:9200,  includeGross:true,  includeRpm:true,  empty:239, days:7},  // Driver D (7 active days; load #4186's miles excluded from RPM/days per Roman's file note, $ kept in gross; load #4230's 522mi empty leg (Mcallen TX-Lanham MD) also excluded as an outlier deadhead leg, same precedent as prior weeks — see METHODOLOGY)
