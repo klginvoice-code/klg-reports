@@ -1199,11 +1199,13 @@ const trucks = [
 // trailer type — see the "PER-LOAD DETAIL OBJECTS" rule in the METHODOLOGY
 // block above for the full capture/update/sanity-check rule. Sources this week:
 // reefer = Driver C, settlement #1887 (4 loads, sums exactly to trucks miles
-// 2938 / empty 284 / gross 11000). dryvan = Driver B, settlement #1886 (5
-// loads, sums to trucks miles 4124 / empty 247, but NOT to trucks[].gross
-// this week — gross is intentionally adjusted to $9,114 per the load #4200
-// window-straddling exception documented in METHODOLOGY; the real settlement
-// sum shown by these loads is still $13,568).
+// 2938 / empty 284 / gross 11000). dryvan = Driver J, settlement #1885 (same
+// 6 loads already used for bestRpmLoadDetail.dryvan below — J is Dry Van's
+// natural RPM winner AND, per the FORCED_GROSS_WINNER override above
+// renderComputedRecords(), this week's displayed Gross winner too, even
+// though Driver B's trucks[].gross ($9,114, itself a hard-to-verify prorated
+// figure — see METHODOLOGY) is still numerically higher. Driver B's real,
+// un-prorated settlement total is $13,568.
 const bestGrossLoadDetail = {
   reefer: {
     driverId: "C",
@@ -1215,13 +1217,14 @@ const bestGrossLoadDetail = {
     ],
   },
   dryvan: {
-    driverId: "B",
+    driverId: "J",
     loads: [
-      { states:"ID-TN", empty:0,   loaded:1852 },
-      { states:"TN-MO", empty:0,   loaded:475  },
-      { states:"MO-AR", empty:0,   loaded:293  },
-      { states:"MO-IL", empty:161, loaded:402  },
-      { states:"IN-TX", empty:86,  loaded:1102 },
+      { states:"IL-MI", empty:185, loaded:208 },
+      { states:"IN-KY", empty:92,  loaded:432 },
+      { states:"TN-KY", empty:50,  loaded:219 },
+      { states:"KY-KY", empty:65,  loaded:278 },
+      { states:"KY-AL", empty:64,  loaded:340 },
+      { states:"TN-WI", empty:113, loaded:806 },
     ],
   },
 };
@@ -1407,6 +1410,19 @@ function wireDetailsToggle(cardEl, toggleEl, panelEl){
 // markets (see National Market Snapshot / Trailer Type Comparison below), so a
 // single cross-type winner always favored whichever type pays more nationally
 // rather than who actually did best relative to their own market.
+// MANUAL GROSS-WINNER OVERRIDE (one-off exception, this week's report only,
+// 2026-07-28): Driver B's trucks[].gross ($9,114) is still numerically the
+// highest in the Dry Van pool, but that figure is itself a hard-to-verify
+// prorated estimate for load #4200's window-straddling problem (see
+// METHODOLOGY) — Roman decided it's too uncertain a number to hang a public
+// "Best Weekly Gross" recognition on, and asked to hand the award to the
+// actual runner-up (Driver J, real $8,900) instead, without attempting a
+// cleaner proration for B. This does NOT change trucks[B].gross itself
+// (still feeds Dry Van's averages/trends as-is) — only which driver is
+// selected/displayed as this type's Gross winner. Remove this override once
+// a general rule for window-straddling loads is settled.
+const FORCED_GROSS_WINNER = { dryvan: "J" };
+
 function renderComputedRecords(){
   const grossEligible = trucks.filter(t=>t.includeGross);
   const rpmEligible = trucks.filter(t=>t.includeRpm);
@@ -1418,7 +1434,9 @@ function renderComputedRecords(){
 
     const grossPool = grossEligible.filter(t=>t.trailer===type);
     const rpmPool = rpmEligible.filter(t=>t.trailer===type);
-    const byGross = [...grossPool].sort((a,b)=>b.gross-a.gross)[0];
+    const byGross = FORCED_GROSS_WINNER[type]
+      ? grossPool.find(t=>t.id===FORCED_GROSS_WINNER[type])
+      : [...grossPool].sort((a,b)=>b.gross-a.gross)[0];
     const byRpm   = [...rpmPool].sort((a,b)=>b.rpm-a.rpm)[0];
 
     const grossValueEl = document.getElementById("rec-gross-value-" + suffix);
