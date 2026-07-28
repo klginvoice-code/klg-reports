@@ -1207,6 +1207,7 @@ const bestGrossLoadDetail = {
   },
   dryvan: {
     driverId: "B",
+    loadsNote: "partial load",
     loads: [
       { states:"ID-TN", empty:0, loaded:1852 },
     ],
@@ -1239,6 +1240,7 @@ const bestRpmLoadDetail = {
   },
   dryvan: {
     driverId: "B",
+    loadsNote: "partial load",
     loads: [
       { states:"ID-TN", empty:0, loaded:1852 },
     ],
@@ -1425,8 +1427,9 @@ function renderComputedRecords(){
       const detail = bestGrossLoadDetail[type];
       if (detail && detail.driverId === byGross.id) {
         const totalRpm = byGross.gross / (byGross.miles + byGross.empty);
+        const grossLoadsText = detail.loadsNote ? detail.loads.length + " (+ " + detail.loadsNote + ")" : detail.loads.length;
         document.getElementById("gd-stats-" + suffix).innerHTML = [
-          ["Loads", detail.loads.length, true],
+          ["Loads", grossLoadsText, true],
           ["Loaded mi", byGross.miles.toLocaleString('en-US')],
           ["Deadhead mi", byGross.empty.toLocaleString('en-US')],
           ["RPM (loaded)", "$" + byGross.rpm.toFixed(2)],
@@ -1459,6 +1462,7 @@ function renderComputedRecords(){
       // RPM winner.
       const rDetail = bestRpmLoadDetail[type];
       if (rDetail && rDetail.driverId === byRpm.id) {
+        const rpmLoadsText = rDetail.loadsNote ? rDetail.loads.length + " (+ " + rDetail.loadsNote + ")" : rDetail.loads.length;
         // Gross $ is deliberately never shown here, for two reasons: (1) the
         // RPM winner is often a different driver than the Gross winner (e.g.
         // reefer this week), and their own weekly earnings aren't shown
@@ -1468,7 +1472,7 @@ function renderComputedRecords(){
         // Deadhead mi/RPM loaded) across both trailer types, matching how the
         // Gross Details panel is also identical in structure across types.
         const rpmStatRows = [
-          ["Loads", rDetail.loads.length, true],
+          ["Loads", rpmLoadsText, true],
           ["Loaded mi", byRpm.miles.toLocaleString('en-US')],
           ["Deadhead mi", byRpm.empty.toLocaleString('en-US')],
           ["RPM (loaded)", "$" + byRpm.rpm.toFixed(2), true],
