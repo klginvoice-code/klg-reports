@@ -1212,12 +1212,19 @@ const TRAILER_META = {
 // exclusions bring Avg Weekly Deadhead down to 288mi (+28.2% vs last week).
 // No settlement was found this week for Driver E, Driver F, or Driver I —
 // gap flagged to Roman, not assumed to be zero.
+// REPRICE (2026-07-30): Driver G's load #4216 (TX-IL) was repriced by the
+// broker after this report was first published — $4,950 -> $5,200 (+$250).
+// Driver G's subtotal/gross updated 8950 -> 9200, rpm recomputed 3.79 ->
+// 3.90/mi (miles/empty/days unaffected — only the dollar amount changed).
+// This cascades into the Reefer By Trailer Type averages, the 5-Week Trends
+// "Current" point, and the archive's fleet-wide report-card stats — all
+// updated in sync, see their own comments/edits from the same date.
 const trucks = [
   {id:"A", trailer:"reefer",   miles:3262, rpm:2.98, gross:9730,  includeGross:true,  includeRpm:true,  empty:251, days:5},  // Driver A (5 active days per the new per-load days formula, see METHODOLOGY); load #4229's 365mi empty leg (TX-PA) excluded as an outlier deadhead leg per Roman's request
   {id:"B", trailer:"dryvan",   miles:2272, rpm:3.52, gross:8000,  includeGross:true,  includeRpm:true,  empty:247, days:6},  // Driver B (6 active days per the new per-load days formula, see METHODOLOGY); load #4200 (ID-TN) moved to the Jul 14-20 report IN FULL per Roman's decision (see METHODOLOGY) — these are now real, un-prorated figures from the remaining 4 loads
   {id:"C", trailer:"reefer",   miles:2938, rpm:3.74, gross:11000, includeGross:true,  includeRpm:true,  empty:284, days:7},  // Driver C (7 active days per the new per-load days formula, see METHODOLOGY)
   {id:"D", trailer:"reefer",   miles:2992, rpm:3.08, gross:9200,  includeGross:true,  includeRpm:true,  empty:239, days:5},  // Driver D (5 active days per the new per-load days formula, see METHODOLOGY); load #4186's miles/days excluded per Roman's file note, $ kept in gross; load #4230's 522mi empty leg (Mcallen TX-Lanham MD) excluded as an outlier deadhead leg)
-  {id:"G", trailer:"reefer",   miles:2362, rpm:3.79, gross:8950,  includeGross:true,  includeRpm:true,  empty:356, days:5},  // Driver G (5 active days per the new per-load days formula, see METHODOLOGY)
+  {id:"G", trailer:"reefer",   miles:2362, rpm:3.90, gross:9200,  includeGross:true,  includeRpm:true,  empty:356, days:5},  // Driver G (5 active days per the new per-load days formula, see METHODOLOGY); load #4216 (TX-IL) repriced 2026-07-30 — broker added $250, $4,950 -> $5,200 — subtotal/gross updated 8950 -> 9200, rpm recomputed 3.79 -> 3.90/mi
   {id:"H", trailer:"dryvan",   miles:2550, rpm:3.38, gross:8625,  includeGross:true,  includeRpm:true,  empty:257, days:5},  // Driver H (5 active days per the new per-load days formula, see METHODOLOGY); gross recovered from settlement #1890, $3,018.75 / 0.35 pay rate = $8,625)
   {id:"J", trailer:"dryvan",   miles:2283, rpm:3.90, gross:8900,  includeGross:true,  includeRpm:true,  empty:384, days:8},  // Driver J (8 active days per the new per-load days formula — coincidentally unchanged from the old union method, see METHODOLOGY); load #4208's 185mi deadhead excluded per Roman's file note)
 ];
@@ -1259,7 +1266,8 @@ const bestGrossLoadDetail = {
 // Same as bestGrossLoadDetail above, but for whichever driver wins Best Weekly
 // RPM per trailer type (see METHODOLOGY block for the capture/sanity-check
 // rule). Sources this week: reefer = Driver G, settlement #1889 (3 loads,
-// sums exactly to trucks miles:2362/empty:356/gross:8950). dryvan = Driver J,
+// sums exactly to trucks miles:2362/empty:356/gross:9200 (repriced 2026-07-30,
+// was 8950; see METHODOLOGY). dryvan = Driver J,
 // settlement #1885 (6 loads; raw empty here sums to 569mi, higher than
 // trucks[].empty:384 for Driver J — that's expected, not an error: load
 // #4208's 185mi deadhead leg was excluded from his aggregate per Roman's
@@ -1896,7 +1904,7 @@ function renderTrend(){
   const fmtGrossK = v=>"$"+(v/1000).toFixed(1)+"k";
   const grossWeeks = ["4wk ago","3wk ago","2wk ago","1wk ago","Current"];
   const trailerTrends = [
-    { key:"reefer", color:"#2a78d6", rpm:[3.84,5.41,4.08,3.80,3.40], gross:[7786,10133,9900,11333,9720] },
+    { key:"reefer", color:"#2a78d6", rpm:[3.84,5.41,4.08,3.80,3.43], gross:[7786,10133,9900,11333,9783] },
     { key:"dryvan", color:"#1baf7a", rpm:[3.07,4.90,3.75,3.21,3.60], gross:[9200,8900,5875,5059,8508] },
   ];
   trailerTrends.forEach(t=>{
