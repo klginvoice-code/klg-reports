@@ -735,7 +735,7 @@
   }
   .legal-note{
     text-align:center;
-    font-size:var(--fs-micro);
+    font-size:9px;
     font-weight:500;
     line-height:1.6;
     color:var(--text-muted);
@@ -746,7 +746,13 @@
   .legal-note .last-updated{
     display:block;
     margin-top:6px;
+    font-size:var(--fs-micro);
     font-weight:600;
+  }
+  .archive-back-bottom{
+    display:flex;
+    justify-content:center;
+    margin:16px 0 0;
   }
 
   /* ---------- Entrance motion (respects prefers-reduced-motion) ----------
@@ -1069,6 +1075,11 @@ document.documentElement.classList.add("js-anim-ready");
     </div>
   </div>
   <div class="legal-note">This report is for internal informational purposes only and does not constitute a binding commitment regarding individual driver compensation &mdash; actual payment is governed solely by each driver's own settlement statement. Figures may be corrected or updated after initial publication as new data becomes available. This report contains confidential business information belonging to Karo Lara Group and is not intended for redistribution.<span class="last-updated">Last updated: July 30, 2026</span></div>
+
+  <a class="archive-back archive-back-bottom" href="../index.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Fleet Reports Archive
+  </a>
   </div>
 
 
