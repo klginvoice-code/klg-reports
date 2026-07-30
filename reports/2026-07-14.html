@@ -295,12 +295,13 @@
   .hero-card--gross.details-open{transform:translateY(-3px);box-shadow:0 10px 28px rgba(47,111,78,0.14);}
   .hero-card--rpm.details-open{transform:translateY(-3px);box-shadow:0 10px 28px rgba(61,90,153,0.16);}
   .hero-card--fuel.details-open{transform:translateY(-3px);box-shadow:0 10px 28px rgba(183,122,42,0.16);}
+  .hero-card--deadhead.details-open{transform:translateY(-3px);box-shadow:0 10px 28px rgba(115,87,166,0.16);}
   /* These cards toggle their Details panel from a tap anywhere in the card
      header (see wireDetailsToggle in JS) — cursor:pointer signals that. The
      toggle button itself still gets extra padding so it also works as a
      comfortably-sized standalone target (keyboard/screen-reader users, or
      anyone tapping precisely on it). */
-  .hero-card--gross, .hero-card--rpm, .hero-card--fuel{cursor:pointer;}
+  .hero-card--gross, .hero-card--rpm, .hero-card--fuel, .hero-card--deadhead{cursor:pointer;}
   .hero-details-panel{cursor:default;}
   .hero-details-toggle{
     margin:6px -8px -6px;
@@ -312,6 +313,15 @@
   .hero-details-toggle:hover{color:var(--good);}
   .hero-details-toggle .chevron{transition:transform .35s cubic-bezier(.22,1,.36,1);}
   .hero-details-toggle[aria-expanded="true"] .chevron{transform:rotate(180deg);}
+  /* Gentle idle invitation to click "Details" — small vertical bob, only
+     while the panel is closed (once open, the chevron just stays rotated,
+     no need to keep drawing the eye). Slow and soft on purpose, not a
+     bouncy/attention-grabbing motion. */
+  @keyframes chevron-bob{0%,100%{transform:translateY(0);}50%{transform:translateY(2px);}}
+  .hero-details-toggle:not([aria-expanded="true"]) .chevron{animation:chevron-bob 2.6s ease-in-out infinite;}
+  @media (prefers-reduced-motion: reduce){
+    .hero-details-toggle .chevron{animation:none;}
+  }
   /* grid-template-rows 0fr->1fr is the smooth-height-to-auto trick — no JS
      measuring needed, and it works regardless of how much content the panel
      ends up holding. */
@@ -942,15 +952,23 @@ document.documentElement.classList.add("js-anim-ready");
         </div>
       </div>
     </div>
-    <div class="hero-card hero-card--deadhead hero-rv">
+    <div class="hero-card hero-card--deadhead hero-rv" id="best-deadhead-card">
       <div class="hero-top">
         <div class="hero-icon deadhead"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg></div>
-        <div class="hero-label">Avg Weekly Deadhead</div>
+        <div class="hero-label">Avg Weekly Deadhead (Total)</div>
       </div>
       <div class="hero-value" id="deadhead-value">&mdash;</div>
       <div class="market-delta" id="deadhead-delta"></div>
       <div class="hero-tag">Across all reefer + dry van</div>
-      <div class="hero-tag" style="font-size:var(--fs-micro);color:var(--text-muted);font-weight:500;margin-top:2px;">Average of each driver's total empty (deadhead) miles this week</div>
+      <button class="hero-details-toggle" id="deadhead-details-toggle" aria-expanded="false" aria-controls="deadhead-details-panel" type="button">
+        <span>Details</span>
+        <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="hero-details-panel" id="deadhead-details-panel">
+        <div class="hero-details-inner">
+          <div class="hero-tag" style="font-size:var(--fs-micro);color:var(--text-muted);font-weight:500;">This is one company-wide average: every driver's empty (deadhead) miles this week, added together across BOTH Reefer and Dry Van trucks, then divided by the number of drivers &mdash; a single total, not a separate number per trailer type.</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -2184,6 +2202,13 @@ wireDetailsToggle(
   document.getElementById("best-fuel-card"),
   document.getElementById("fuel-details-toggle"),
   document.getElementById("fuel-details-panel")
+);
+// Avg Weekly Deadhead's Details toggle is likewise static content (a short
+// explainer, not per-trailer-type computed data), wired directly here too.
+wireDetailsToggle(
+  document.getElementById("best-deadhead-card"),
+  document.getElementById("deadhead-details-toggle"),
+  document.getElementById("deadhead-details-panel")
 );
 renderTrend();
 renderFuelTrend();
