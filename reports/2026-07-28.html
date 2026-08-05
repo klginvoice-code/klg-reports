@@ -1278,6 +1278,7 @@ const bestGrossLoadDetail = {
       { states:"TN-TN", empty:117, loaded:234  },
       { states:"KY-OR", empty:151, loaded:2290 },
     ],
+    note: "Real calendar span this week: 8 days (Jul 27 – Aug 3). The 7 active days used elsewhere reflects the elapsed-time formula (delivery minus pickup per load), not a calendar-day count.",
   },
 };
 
@@ -1509,6 +1510,20 @@ function renderComputedRecords(){
         document.getElementById("gd-lanes-" + suffix).innerHTML = detail.loads.map(l =>
           `<span class="gd-lane">${l.states}</span>`
         ).join("");
+        // Optional free-text note (not every winner has one) — used for
+        // context that doesn't belong in the Loads/Miles/RPM stat grid, e.g.
+        // clarifying a driver's real calendar span when the "active days"
+        // formula's elapsed-time result reads lower than the calendar range
+        // a driver would recognize at a glance.
+        const existingNote = grossPanel.querySelector(".gd-note");
+        if (existingNote) existingNote.remove();
+        if (detail.note) {
+          const noteEl = document.createElement("div");
+          noteEl.className = "gd-note";
+          noteEl.style.cssText = "margin-top:10px;font-size:var(--fs-micro);color:var(--text-muted);font-weight:500;";
+          noteEl.textContent = detail.note;
+          document.getElementById("gd-lanes-" + suffix).insertAdjacentElement("afterend", noteEl);
+        }
         wireDetailsToggle(grossCard, grossToggle, grossPanel);
       } else {
         grossToggle.style.display = "none";
