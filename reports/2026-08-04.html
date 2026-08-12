@@ -1832,6 +1832,35 @@ function grossBarChart(values, weeks, fmt, tooltipFmt, color, renderWidth){
   </svg>`;
 }
 
+// ---------- Hover tooltip for the gross bar chart ----------
+function attachGrossBarTooltip(container, values, weeks, tooltipFmt){
+  const svg = container.querySelector(".gross-bar-svg");
+  if (!svg) return;
+  const hits = svg.querySelectorAll(".gbar-hit");
+  const bars = svg.querySelectorAll(".gbar-grow");
+  const tooltip = document.createElement("div");
+  tooltip.className = "chart-tooltip";
+  container.style.position = "relative";
+  container.appendChild(tooltip);
+  function show(i){
+    const bar = bars[i];
+    const box = bar.getBBox();
+    tooltip.textContent = `${weeks[i]}: ${tooltipFmt(values[i])}`;
+    tooltip.style.display = "block";
+    const viewBox = svg.viewBox.baseVal;
+    let leftPct = ((box.x + box.width/2) / viewBox.width) * 100;
+    leftPct = Math.min(Math.max(leftPct, 10), 90);
+    tooltip.style.left = leftPct + "%";
+    tooltip.style.top = ((box.y / viewBox.height) * 100) + "%";
+  }
+  function hide(){ tooltip.style.display = "none"; }
+  hits.forEach((hit,i)=>{
+    hit.addEventListener("mouseenter", ()=>show(i));
+    hit.addEventListener("mouseleave", hide);
+    hit.addEventListener("pointerdown", ()=>show(i));
+  });
+}
+
 // ---------- RPM line + total-RPM bars underneath (deadhead gap view) ----------
 // PROTOTYPE v2 (2026-08-12) — replaces the earlier "segmented single bar"
 // attempt, which read poorly on real data (the loaded-vs-total gap is often
