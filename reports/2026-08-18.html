@@ -1222,13 +1222,13 @@ const TRAILER_META = {
 // Details toggle entirely rather than ever show stale/mismatched loads.
 //
 // This week (Aug 18 - Aug 24, 2026) — driver-specific exceptions to the rules above:
-// Driver B's settlement (#1924) opened with a load, #4304 (Connell WA -
+// Driver B's settlement opened with a load, #4304 (Connell WA -
 // Carthage MO, $4,000, 208 empty / 1816 loaded mi, 08/13-08/18), that is a
 // GENUINE DUPLICATE of the same-numbered load already fully counted in last
-// week's report (settlement #1913, Aug 11-17) — identical load #, dates, $
+// week's report (settlement, Aug 11-17) — identical load #, dates, $
 // amount, and miles. Roman confirmed: exclude it from this week's totals
 // entirely rather than double-count it. Driver B's trucks entry below
-// reflects only the 3 remaining loads on #1924 (empty 108 / loaded 2029 /
+// reflects only the 3 remaining loads on that settlement (empty 108 / loaded 2029 /
 // gross $5,799 / days 3).
 // Driver F's load #4327 (MO-MN) showed 460mi empty on the settlement, but
 // Roman confirmed the real empty mileage for that leg is 120mi (a system/TMS
@@ -1259,13 +1259,13 @@ const TRAILER_META = {
 // rpmBestEligible comment in renderComputedRecords() below).
 const trucks = [
   {id:"A", trailer:"reefer",   miles:2089, rpm:3.83, gross:8000,  includeGross:true,  includeRpm:true,  empty:220, days:4}, // Driver A (4 active days)
-  {id:"B", trailer:"dryvan",   miles:2029, rpm:2.86, gross:5799,  includeGross:true,  includeRpm:true,  empty:108, days:3}, // Driver B (3 active days; load #4304 excluded as a duplicate of last week's settlement #1913, see exception note above)
+  {id:"B", trailer:"dryvan",   miles:2029, rpm:2.86, gross:5799,  includeGross:true,  includeRpm:true,  empty:108, days:3}, // Driver B (3 active days; load #4304 excluded as a duplicate of last week's settlement, see exception note above)
   {id:"C", trailer:"reefer",   miles:3180, rpm:3.22, gross:10250, includeGross:true,  includeRpm:true,  empty:261, days:5}, // Driver C (5 active days)
   {id:"D", trailer:"reefer",   miles:2792, rpm:4.48, gross:12500, includeGross:true,  includeRpm:true,  empty:410, days:6}, // Driver D (6 active days)
-  {id:"E", trailer:"reefer",   miles:2237, rpm:3.35, gross:7500,  includeGross:true,  includeRpm:true,  empty:144, days:4}, // Driver E (4 active days; percentage-only 30% — gross recovered from settlement #1928, $2,250 / 0.30 = $7,500; single-load week, IN Gross per Roman, see exception note above)
+  {id:"E", trailer:"reefer",   miles:2237, rpm:3.35, gross:7500,  includeGross:true,  includeRpm:true,  empty:144, days:4}, // Driver E (4 active days; percentage-only 30% — gross recovered from settlement, $2,250 / 0.30 = $7,500; single-load week, IN Gross per Roman, see exception note above)
   {id:"F", trailer:"reefer",   miles:2353, rpm:4.55, gross:10700, includeGross:true,  includeRpm:true,  empty:372, days:7}, // Driver F (7 active days; load #4327's empty corrected 460->120mi per Roman, see exception note above)
   {id:"G", trailer:"reefer",   miles:703,  rpm:4.98, gross:3500,  includeGross:false, includeRpm:true,  rpmBestEligible:false, empty:189, days:1}, // Driver G (1 active day; single-load week, RPM-only per Roman; excluded from winning Best Weekly RPM specifically — single-load week, see exception note above — but still counted in the Reefer RPM average)
-  {id:"H", trailer:"dryvan",   miles:2966, rpm:2.11, gross:6250,  includeGross:false, includeRpm:false, empty:196, days:7}, // Driver H (7 active days; percentage-only 35% — gross recovered from settlement #1931, $2,187.50 / 0.35 = $6,250; excluded from BOTH Gross and RPM this week per Roman — second weak-rate week running, see exception note above)
+  {id:"H", trailer:"dryvan",   miles:2966, rpm:2.11, gross:6250,  includeGross:false, includeRpm:false, empty:196, days:7}, // Driver H (7 active days; percentage-only 35% — gross recovered from settlement, $2,187.50 / 0.35 = $6,250; excluded from BOTH Gross and RPM this week per Roman — second weak-rate week running, see exception note above)
   {id:"I", trailer:"reefer",   miles:1608, rpm:4.29, gross:6900,  includeGross:true,  includeRpm:true,  empty:175, days:5}, // Driver I (5 active days)
   {id:"J", trailer:"dryvan",   miles:888,  rpm:3.27, gross:2900,  includeGross:false, includeRpm:true,  rpmBestEligible:false, empty:47,  days:3}, // Driver J (3 active days; single-load week, RPM-only per Roman; excluded from winning Best Weekly RPM specifically — single-load week, see exception note above — but still counted in the Dry Van RPM average)
 ];
@@ -1276,9 +1276,9 @@ const trucks = [
 // Per-load lane detail for the Best Weekly Gross Details panel, one entry per
 // trailer type — see the "PER-LOAD DETAIL OBJECTS" rule in the METHODOLOGY
 // block above for the full capture/update/sanity-check rule. Sources this week:
-// reefer = Driver D, settlement #1927 (4 loads, sums exactly to trucks
+// reefer = Driver D, settlement (4 loads, sums exactly to trucks
 // empty 410 / loaded 2792 / gross 12500). dryvan = Driver B, settlement
-// #1924 (3 loads, excluding the duplicate #4304 leg, sums exactly to
+// (3 loads, excluding the duplicate #4304 leg, sums exactly to
 // trucks empty 108 / loaded 2029 / gross 5799).
 const bestGrossLoadDetail = {
   reefer: {
@@ -1297,7 +1297,7 @@ const bestGrossLoadDetail = {
       { states:"LA-GA", empty:36, loaded:498 },
       { states:"GA-TX", empty:62, loaded:815 },
     ],
-    note: "Settlement #1924's first load, #4304 (WA-MO, $4,000, 208/1816mi), is excluded here — a genuine duplicate of the same load already counted in last week's settlement #1913.",
+    note: "This driver's first load that week, a WA-MO run ($4,000, 208/1816mi), is excluded here — a genuine duplicate of the same load already fully counted in the prior week's settlement.",
   },
 };
 
@@ -1307,9 +1307,9 @@ const bestGrossLoadDetail = {
 // this week but are both single-load weeks flagged rpmBestEligible:false
 // per Roman (see trucks[] comment above) — so the actual winners are the
 // next-highest RPM-eligible truck in each type. Sources this week: reefer =
-// Driver F, settlement #1929 (7 loads, sums exactly to trucks
+// Driver F, settlement (7 loads, sums exactly to trucks
 // empty 372 / loaded 2353 — includes the #4327 empty-mile correction).
-// dryvan = Driver B, settlement #1924 (same 3 loads as bestGrossLoadDetail
+// dryvan = Driver B, settlement (same 3 loads as bestGrossLoadDetail
 // above, duplicate #4304 excluded, sums exactly to trucks miles:2029/
 // empty:108).
 //
@@ -2173,9 +2173,9 @@ function attachChartTooltip(container, values, tooltipWeeks, fmt){
 // combining ($537.58 discount / 2802.07+130.20+13.80 gal combined pools).
 // Fleet: $537.58/1958.04gal (only the 19 discount>0 txns) = $0.27/gal.
 // UPDATE 2026-08-26: another single combined TCS report, 7 active cards
-// (0070/0161/0237/0278/0500/0518/0559), 32 transactions, 22 with Disc Amt >
-// 0 (all of 0070/0161/0237/0278/0559's txns, plus 1 of 0500's 9 and 1 of
-// 0518's 4 — the rest were flat $3 network fees with no per-gallon
+// (the active cards), 32 transactions, 22 with Disc Amt >
+// 0 (all of five cards' txns, plus 1 of one card's 9 and 1 of
+// another card's 4 — the rest were flat $3 network fees with no per-gallon
 // discount, dropped from both sides per the standing formula). Every card's
 // own Discount subtotal cross-checked against its page-1 total before
 // combining. Fleet: $577.15 discount / 2058.43 qualifying gal (Fuel+Reefer+

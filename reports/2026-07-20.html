@@ -1270,7 +1270,7 @@ const trucks = [
   {id:"C", trailer:"reefer",   miles:2938, rpm:3.74, gross:11000, includeGross:true,  includeRpm:true,  empty:284, days:7},  // Driver C (7 active days per the new per-load days formula, see METHODOLOGY)
   {id:"D", trailer:"reefer",   miles:2992, rpm:3.08, gross:9200,  includeGross:true,  includeRpm:true,  empty:239, days:5},  // Driver D (5 active days per the new per-load days formula, see METHODOLOGY); load #4186's miles/days excluded per Roman's file note, $ kept in gross; load #4230's 522mi empty leg (Mcallen TX-Lanham MD) excluded as an outlier deadhead leg)
   {id:"G", trailer:"reefer",   miles:2362, rpm:3.90, gross:9200,  includeGross:true,  includeRpm:true,  empty:356, days:5},  // Driver G (5 active days per the new per-load days formula, see METHODOLOGY); load #4216 (TX-IL) repriced 2026-07-30 — broker added $250, $4,950 -> $5,200 — subtotal/gross updated 8950 -> 9200, rpm recomputed 3.79 -> 3.90/mi
-  {id:"H", trailer:"dryvan",   miles:2550, rpm:3.38, gross:8625,  includeGross:true,  includeRpm:true,  empty:257, days:5},  // Driver H (5 active days per the new per-load days formula, see METHODOLOGY); gross recovered from settlement #1890, $3,018.75 / 0.35 pay rate = $8,625)
+  {id:"H", trailer:"dryvan",   miles:2550, rpm:3.38, gross:8625,  includeGross:true,  includeRpm:true,  empty:257, days:5},  // Driver H (5 active days per the new per-load days formula, see METHODOLOGY); gross recovered from settlement, $3,018.75 / 0.35 pay rate = $8,625)
   {id:"J", trailer:"dryvan",   miles:2283, rpm:3.90, gross:8900,  includeGross:true,  includeRpm:true,  empty:384, days:8},  // Driver J (8 active days per the new per-load days formula — coincidentally unchanged from the old union method, see METHODOLOGY); load #4208's 185mi deadhead excluded per Roman's file note)
 ];
 // No entries for Driver E, Driver F, Driver I this week — no settlement was
@@ -1280,8 +1280,8 @@ const trucks = [
 // Per-load lane detail for the Best Weekly Gross Details panel, one entry per
 // trailer type — see the "PER-LOAD DETAIL OBJECTS" rule in the METHODOLOGY
 // block above for the full capture/update/sanity-check rule. Sources this week:
-// reefer = Driver C, settlement #1887 (4 loads, sums exactly to trucks miles
-// 2938 / empty 284 / gross 11000). dryvan = Driver J, settlement #1885 (same
+// reefer = Driver C, settlement (4 loads, sums exactly to trucks miles
+// 2938 / empty 284 / gross 11000). dryvan = Driver J, settlement (same
 // 6 loads already used for bestRpmLoadDetail.dryvan below — J is Dry Van's
 // natural Gross AND RPM winner this week, no override needed, see the note
 // above renderComputedRecords()).
@@ -1310,10 +1310,10 @@ const bestGrossLoadDetail = {
 
 // Same as bestGrossLoadDetail above, but for whichever driver wins Best Weekly
 // RPM per trailer type (see METHODOLOGY block for the capture/sanity-check
-// rule). Sources this week: reefer = Driver G, settlement #1889 (3 loads,
+// rule). Sources this week: reefer = Driver G, settlement (3 loads,
 // sums exactly to trucks miles:2362/empty:356/gross:9200 (repriced 2026-07-30,
 // was 8950; see METHODOLOGY). dryvan = Driver J,
-// settlement #1885 (6 loads; raw empty here sums to 569mi, higher than
+// settlement (6 loads; raw empty here sums to 569mi, higher than
 // trucks[].empty:384 for Driver J — that's expected, not an error: load
 // #4208's 185mi deadhead leg was excluded from his aggregate per Roman's
 // filename instruction, but the Details panel still shows the real per-load

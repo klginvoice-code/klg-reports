@@ -1254,10 +1254,10 @@ const trucks = [
   {id:"A", trailer:"reefer",   miles:2652, rpm:3.22, gross:8550,  includeGross:true,  includeRpm:true,  empty:104, days:4}, // Driver A (4 active days)
   {id:"B", trailer:"dryvan",   miles:2878, rpm:2.61, gross:7500,  includeGross:true,  includeRpm:true,  empty:89,  days:6}, // Driver B (6 active days)
   {id:"D", trailer:"reefer",   miles:2921, rpm:3.15, gross:9200,  includeGross:true,  includeRpm:true,  empty:96,  days:5}, // Driver D (5 active days)
-  {id:"E", trailer:"reefer",   miles:1487, rpm:3.83, gross:5700,  includeGross:false, includeRpm:true,  empty:167, days:4}, // Driver E (4 active days; percentage-only 30% — gross recovered from settlement #1908, $1,710 / 0.30 = $5,700; RPM-only this week per Roman; empty trimmed from raw 458 to 167, see exception note above)
+  {id:"E", trailer:"reefer",   miles:1487, rpm:3.83, gross:5700,  includeGross:false, includeRpm:true,  empty:167, days:4}, // Driver E (4 active days; percentage-only 30% — gross recovered from settlement, $1,710 / 0.30 = $5,700; RPM-only this week per Roman; empty trimmed from raw 458 to 167, see exception note above)
   {id:"F", trailer:"reefer",   miles:1200, rpm:4.17, gross:5000,  includeGross:false, includeRpm:true,  empty:167, days:3}, // Driver F (3 active days; RPM-only this week per Roman, short week not representative for Gross)
   {id:"G", trailer:"reefer",   miles:2978, rpm:3.74, gross:11150, includeGross:true,  includeRpm:true,  empty:321, days:6}, // Driver G (6 active days; load #4271 cancelled stub — day excluded, $150 kept in gross, see exception note above)
-  {id:"H", trailer:"dryvan",   miles:814,  rpm:4.86, gross:3959,  includeGross:false, includeRpm:true,  rpmBestEligible:false, empty:8,   days:2}, // Driver H (2 active days; percentage-only 35% — gross recovered from settlement #1911, $1,385.65 / 0.35 = $3,959.00; RPM-only this week per Roman; excluded from winning Best Weekly RPM specifically — single-load week, see exception note above — but still counted in the Dry Van RPM average)
+  {id:"H", trailer:"dryvan",   miles:814,  rpm:4.86, gross:3959,  includeGross:false, includeRpm:true,  rpmBestEligible:false, empty:8,   days:2}, // Driver H (2 active days; percentage-only 35% — gross recovered from settlement, $1,385.65 / 0.35 = $3,959.00; RPM-only this week per Roman; excluded from winning Best Weekly RPM specifically — single-load week, see exception note above — but still counted in the Dry Van RPM average)
   {id:"I", trailer:"reefer",   miles:1376, rpm:5.52, gross:7600,  includeGross:true,  includeRpm:true,  empty:254, days:5}, // Driver I (5 active days; RPM $5.52/mi confirmed real by Roman, see exception note above)
   {id:"J", trailer:"dryvan",   miles:2175, rpm:4.23, gross:9200,  includeGross:true,  includeRpm:true,  empty:443, days:7}, // Driver J (7 active days)
 ];
@@ -1268,11 +1268,11 @@ const trucks = [
 // Per-load lane detail for the Best Weekly Gross Details panel, one entry per
 // trailer type — see the "PER-LOAD DETAIL OBJECTS" rule in the METHODOLOGY
 // block above for the full capture/update/sanity-check rule. Sources this week:
-// reefer = Driver G, settlement #1910 (4 loads incl. the cancelled #4271
+// reefer = Driver G, settlement (4 loads incl. the cancelled #4271
 // stub; the 3 real lanes below sum exactly to trucks empty 321 / loaded
 // 2978 — the cancelled load's $150 is folded into trucks gross (11150) but
 // has no lane of its own, see METHODOLOGY exception note above). dryvan =
-// Driver J, settlement #1903 (5 loads, sums exactly to trucks miles
+// Driver J, settlement (5 loads, sums exactly to trucks miles
 // 2175 / empty 443 / gross 9200).
 const bestGrossLoadDetail = {
   reefer: {
@@ -1298,9 +1298,9 @@ const bestGrossLoadDetail = {
 
 // Same as bestGrossLoadDetail above, but for whichever driver wins Best Weekly
 // RPM per trailer type (see METHODOLOGY block for the capture/sanity-check
-// rule). Sources this week: reefer = Driver I, settlement #1906 (3 loads,
+// rule). Sources this week: reefer = Driver I, settlement (3 loads,
 // sums exactly to trucks miles:1376/empty:254 — RPM $5.52/mi confirmed real
-// by Roman, see exception note above). dryvan = Driver J, settlement #1903
+// by Roman, see exception note above). dryvan = Driver J, settlement
 // (same 5 loads as bestGrossLoadDetail.dryvan above, sums exactly to trucks
 // miles:2175/empty:443) — Driver H's single-load $4.86/mi was the raw top
 // RPM this week but is marked `rpmBestEligible:false` in trucks[] per

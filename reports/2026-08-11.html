@@ -1259,10 +1259,10 @@ const TRAILER_META = {
 const trucks = [
   {id:"B", trailer:"dryvan",   miles:3825, rpm:3.54, gross:13550, includeGross:true,  includeRpm:true,  empty:289, days:8}, // Driver B (8 active days; #4289+#4290 combo load, see exception note above)
   {id:"C", trailer:"reefer",   miles:2939, rpm:3.54, gross:10400, includeGross:true,  includeRpm:true,  empty:429, days:6}, // Driver C (6 active days)
-  {id:"E", trailer:"reefer",   miles:2714, rpm:4.02, gross:10900, includeGross:true,  includeRpm:true,  empty:535, days:6}, // Driver E (6 active days; percentage-only 30% — gross recovered from settlement #1918, $3,270 / 0.30 = $10,900; IN Gross this week per Roman, full week not short, see exception note above)
+  {id:"E", trailer:"reefer",   miles:2714, rpm:4.02, gross:10900, includeGross:true,  includeRpm:true,  empty:535, days:6}, // Driver E (6 active days; percentage-only 30% — gross recovered from settlement, $3,270 / 0.30 = $10,900; IN Gross this week per Roman, full week not short, see exception note above)
   {id:"F", trailer:"reefer",   miles:2910, rpm:4.12, gross:12000, includeGross:true,  includeRpm:true,  empty:428, days:7}, // Driver F (7 active days)
   {id:"G", trailer:"reefer",   miles:2696, rpm:3.75, gross:10100, includeGross:true,  includeRpm:true,  empty:268, days:6}, // Driver G (6 active days)
-  {id:"H", trailer:"dryvan",   miles:2681, rpm:1.79, gross:4800,  includeGross:false, includeRpm:false, empty:102, days:6}, // Driver H (6 active days; percentage-only 35% — gross recovered from settlement #1921, $1,680 / 0.35 = $4,800; excluded from BOTH Gross and RPM this week per Roman — weak-rate week, see exception note above)
+  {id:"H", trailer:"dryvan",   miles:2681, rpm:1.79, gross:4800,  includeGross:false, includeRpm:false, empty:102, days:6}, // Driver H (6 active days; percentage-only 35% — gross recovered from settlement, $1,680 / 0.35 = $4,800; excluded from BOTH Gross and RPM this week per Roman — weak-rate week, see exception note above)
   {id:"I", trailer:"reefer",   miles:1468, rpm:5.38, gross:7900,  includeGross:true,  includeRpm:true,  empty:233, days:5}, // Driver I (5 active days; RPM $5.38/mi confirmed real by Roman, second week running, see exception note above)
   {id:"J", trailer:"dryvan",   miles:1806, rpm:3.60, gross:6500,  includeGross:true,  includeRpm:true,  empty:373, days:4}, // Driver J (4 active days)
   {id:"L", trailer:"reefer",   miles:3621, rpm:3.19, gross:11550, includeGross:true,  includeRpm:true,  empty:150, days:7}, // Driver L (7 active days; new driver, first week — included fully per Roman, see exception note above)
@@ -1274,9 +1274,9 @@ const trucks = [
 // Per-load lane detail for the Best Weekly Gross Details panel, one entry per
 // trailer type — see the "PER-LOAD DETAIL OBJECTS" rule in the METHODOLOGY
 // block above for the full capture/update/sanity-check rule. Sources this week:
-// reefer = Driver F, settlement #1917 (5 loads, sums exactly to trucks
+// reefer = Driver F, settlement (5 loads, sums exactly to trucks
 // empty 428 / loaded 2910 / gross 12000). dryvan = Driver B, settlement
-// #1913 (3 loads incl. the real-but-0-mile #4290 stop, sums exactly to
+// (3 loads incl. the real-but-0-mile #4290 stop, sums exactly to
 // trucks empty 289 / loaded 3825 / gross 13550).
 const bestGrossLoadDetail = {
   reefer: {
@@ -1302,9 +1302,9 @@ const bestGrossLoadDetail = {
 
 // Same as bestGrossLoadDetail above, but for whichever driver wins Best Weekly
 // RPM per trailer type (see METHODOLOGY block for the capture/sanity-check
-// rule). Sources this week: reefer = Driver I, settlement #1915 (4 loads,
+// rule). Sources this week: reefer = Driver I, settlement (4 loads,
 // sums exactly to trucks miles:1468/empty:233 — RPM $5.38/mi confirmed real
-// by Roman, see exception note above). dryvan = Driver J, settlement #1912
+// by Roman, see exception note above). dryvan = Driver J, settlement
 // (4 loads, sums exactly to trucks miles:1806/empty:373).
 //
 // GROSS-DISCLOSURE RULE (renderComputedRecords()): the RPM Details panel never

@@ -2165,25 +2165,23 @@ function attachChartTooltip(container, values, tooltipWeeks, fmt){
 // cross-checked exactly against the file's own page-1 grand totals before
 // combining ($537.58 discount / 2802.07+130.20+13.80 gal combined pools).
 // Fleet: $537.58/1958.04gal (only the 19 discount>0 txns) = $0.27/gal.
-// UPDATE 2026-08-26: another single combined TCS report, 7 active cards
-// (0070/0161/0237/0278/0500/0518/0559), 32 transactions, 22 with Disc Amt >
-// 0 (all of 0070/0161/0237/0278/0559's txns, plus 1 of 0500's 9 and 1 of
-// 0518's 4 — the rest were flat $3 network fees with no per-gallon
-// discount, dropped from both sides per the standing formula). Every card's
-// own Discount subtotal cross-checked against its page-1 total before
-// combining. Fleet: $577.15 discount / 2058.43 qualifying gal (Fuel+Reefer+
-// DEF on discount>0 txns only) = $0.28/gal.
+// UPDATE 2026-08-26: another single combined TCS report, 7 active cards, 32
+// transactions, 22 with Disc Amt > 0 (the rest were flat $3 network fees
+// with no per-gallon discount, dropped from both sides per the standing
+// formula). Every card's own Discount subtotal cross-checked against its
+// page-1 total before combining. Fleet: $577.15 discount / 2058.43
+// qualifying gal (Fuel+Reefer+DEF on discount>0 txns only) = $0.28/gal.
 // UPDATE 2026-09-02: this week's folder had only 4 of the 7 active drivers'
-// TCS fuel-card statements (cards 0070/0237/0278/0518) — the other 3 drivers
-// filed no fuel card, so this figure covers ~4/7 of the fleet, not all of
-// it. 27 transactions across the 4 cards, 21 with Disc Amt > 0 (6 flat $3
-// network-fee fills with no per-gallon discount dropped from both sides per
-// the standing formula). Each card's Discount subtotal cross-checked against
-// its page-1 total before combining: 0237 $218.61/632.71gal, 0518
-// $289.63/564.15gal, 0278 $170.07/372.25gal, 0070 $204.23/633.59gal. Fleet:
-// $882.54 discount / 2,202.70 qualifying gal = $0.40/gal — higher than the
-// last few weeks partly because the low-discount cards happen to be among
-// the 3 that didn't file this week.
+// TCS fuel-card statements — the other 3 drivers filed no fuel card, so this
+// figure covers ~4/7 of the fleet, not all of it. 27 transactions across the
+// 4 cards, 21 with Disc Amt > 0 (6 flat $3 network-fee fills with no
+// per-gallon discount dropped from both sides per the standing formula).
+// Each card's Discount subtotal cross-checked against its page-1 total
+// before combining (per-card: $218.61/632.71gal, $289.63/564.15gal,
+// $170.07/372.25gal, $204.23/633.59gal). Fleet: $882.54 discount /
+// 2,202.70 qualifying gal = $0.40/gal — higher than the last few weeks
+// partly because the low-discount cards happen to be among the 3 that
+// didn't file this week.
 const FUEL_DISCOUNT_WEEKS = ["Aug 10","Aug 17","Aug 24","This Week"];
 const FUEL_DISCOUNT_VALUES = [0.29,0.27,0.28,0.40];
 
