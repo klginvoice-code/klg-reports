@@ -1,5 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
 <title>KLG Weekly Snapshot</title>
 <style>
   :root{
@@ -1174,18 +1175,18 @@ const TRAILER_META = {
 // gross, its full (delivery-pickup) delta still counts in DAYS too.
 //
 // This week (Jul 20-27, 2026), recomputed under the new formula:
-// Driver A: #4213(21->23)=2 + #4229(24->27)=3 = 5.
-// Driver B: #4200(17->21)=4 + #4211(21->22)=1 + #4218(22->23)=1 +
-//   #4220(23->24)=1 + #4226(24->27)=3 = 10.
-// Driver C: #4207(20->21)=1 + #4217(21->23)=2 + #4222(23->24)=1 +
-//   #4228(24->27)=3 = 7.
-// Driver D: #4212(21->22)=1 + #4219(22->23)=1 + #4230(24->27)=3 = 5
-//   (load #4186 excluded entirely, both miles and days, per the filename-
+// Driver A: #—(21->23)=2 + #—(24->27)=3 = 5.
+// Driver B: #—(17->21)=4 + #—(21->22)=1 + #—(22->23)=1 +
+//   #—(23->24)=1 + #—(24->27)=3 = 10.
+// Driver C: #—(20->21)=1 + #—(21->23)=2 + #—(23->24)=1 +
+//   #—(24->27)=3 = 7.
+// Driver D: #—(21->22)=1 + #—(22->23)=1 + #—(24->27)=3 = 5
+//   (load #— excluded entirely, both miles and days, per the filename-
 //   flagged exception above).
-// Driver G: #4210(21->22)=1 + #4216(21->24)=3 + #4231(25->26)=1 = 5.
-// Driver H: #4206(20->22)=2 + #4221(22->24)=2 + #4227(24->25)=1 = 5.
-// Driver J: #4208(20->21)=1 + #4209(21->22)=1 + #4214(22->22)=1(floor) +
-//   #4215(22->23)=1 + #4224(23->23)=1(floor) + #4225(24->27)=3 = 8 —
+// Driver G: #—(21->22)=1 + #—(21->24)=3 + #—(25->26)=1 = 5.
+// Driver H: #—(20->22)=2 + #—(22->24)=2 + #—(24->25)=1 = 5.
+// Driver J: #—(20->21)=1 + #—(21->22)=1 + #—(22->22)=1(floor) +
+//   #—(22->23)=1 + #—(23->23)=1(floor) + #—(24->27)=3 = 8 —
 //   coincidentally identical to the old union-method total for J only,
 //   because the two same-day loads' floor-bumps (0->1 each) happened to
 //   exactly offset the "one fewer day per multi-day load" effect elsewhere
@@ -1222,33 +1223,33 @@ const TRAILER_META = {
 // Details toggle entirely rather than ever show stale/mismatched loads.
 //
 // This week (Jul 28 - Aug 3, 2026) — driver-specific exceptions to the rules above:
-// Driver J's load #4256 (Asheville NC - Harvard IL, 724 loaded / 73 empty
-// miles, $150) was CANCELLED per Roman — same rule as any cancelled load:
+// Driver J's load #— (Asheville NC - Harvard IL, 724 loaded / 73 empty
+// miles, $150) was CANCELLED per the owner — same rule as any cancelled load:
 // its miles never happened and are excluded from Driver J's totals/RPM, but
 // the $150 payout is real and stays in gross. It shared the exact same
-// 07/31-08/03 date span as his kept load #4255, so excluding it doesn't
+// 07/31-08/03 date span as his kept load #—, so excluding it doesn't
 // change his active-days total either. RPM without the cancelled load's
 // miles: $3.07/mi -> $4.36/mi.
 // New driver — Driver K (Reefer) appears for the first
 // time this week: a single load (Miami FL - Tacoma WA, 3343 loaded miles,
-// $7,800, zero empty miles). Roman asked to exclude him from both Gross AND
+// $7,800, zero empty miles). the owner asked to exclude him from both Gross AND
 // RPM this week — one load is too thin a sample to compare, revisit once he
 // has a normal multi-load week.
-// Driver H (percentage-only, 35%) and Driver E (percentage-only, 30%) both
-// had short weeks (2 loads / 1 load) — Roman confirmed both stay OUT of
+// Driver H (percentage-only) and Driver E (percentage-only) both
+// had short weeks (2 loads / 1 load) — the owner confirmed both stay OUT of
 // Gross (not representative) but IN RPM (a normalized rate is still fair to
 // compare regardless of week length).
 // No settlement was found this week for Driver F or Driver I — gap flagged
-// to Roman, not assumed to be zero.
+// to the owner, not assumed to be zero.
 const trucks = [
   {id:"A", trailer:"reefer",   miles:3260, rpm:3.31, gross:10800, includeGross:true,  includeRpm:true,  empty:283, days:5}, // Driver A (5 active days)
   {id:"B", trailer:"dryvan",   miles:4076, rpm:3.12, gross:12700, includeGross:true,  includeRpm:true,  empty:503, days:7}, // Driver B (7 active days)
   {id:"C", trailer:"reefer",   miles:3576, rpm:3.69, gross:13205, includeGross:true,  includeRpm:true,  empty:168, days:7}, // Driver C (7 active days)
   {id:"D", trailer:"reefer",   miles:3481, rpm:2.90, gross:10100, includeGross:true,  includeRpm:true,  empty:395, days:6}, // Driver D (6 active days)
-  {id:"E", trailer:"reefer",   miles:1462, rpm:4.31, gross:6300,  includeGross:false, includeRpm:true,  empty:171, days:3}, // Driver E (3 active days; percentage-only 30% — gross recovered from settlement, $1,890 / 0.30 = $6,300; RPM-only this week, short 1-load week, see METHODOLOGY)
+  {id:"E", trailer:"reefer",   miles:1462, rpm:4.31, gross:6300,  includeGross:false, includeRpm:true,  empty:171, days:3}, // Driver E (3 active days; percentage-only — gross recovered from the settlement Amount at that driver’s pay rate; RPM-only this week, short 1-load week, see METHODOLOGY)
   {id:"G", trailer:"reefer",   miles:2614, rpm:3.92, gross:10250, includeGross:true,  includeRpm:true,  empty:420, days:7}, // Driver G (7 active days; gross is Subtotal only — the $170.17 lumper reimbursement in Additions is not freight revenue, excluded from gross per METHODOLOGY)
-  {id:"H", trailer:"dryvan",   miles:1189, rpm:4.04, gross:4800,  includeGross:false, includeRpm:true,  empty:215, days:2}, // Driver H (2 active days; percentage-only 35% — gross recovered from settlement, $1,680 / 0.35 = $4,800; RPM-only this week, short 2-load week, see METHODOLOGY)
-  {id:"J", trailer:"dryvan",   miles:1733, rpm:4.36, gross:7550,  includeGross:true,  includeRpm:true,  empty:714, days:7}, // Driver J (7 active days; load #4256 cancelled — miles excluded, $150 kept in gross, see METHODOLOGY)
+  {id:"H", trailer:"dryvan",   miles:1189, rpm:4.04, gross:4800,  includeGross:false, includeRpm:true,  empty:215, days:2}, // Driver H (2 active days; percentage-only — gross recovered from the settlement Amount at that driver’s pay rate; RPM-only this week, short 2-load week, see METHODOLOGY)
+  {id:"J", trailer:"dryvan",   miles:1733, rpm:4.36, gross:7550,  includeGross:true,  includeRpm:true,  empty:714, days:7}, // Driver J (7 active days; load #— cancelled — miles excluded, $150 kept in gross, see METHODOLOGY)
   {id:"K", trailer:"reefer",   miles:3343, rpm:2.33, gross:7800,  includeGross:false, includeRpm:false, empty:0,   days:6}, // Driver K (new driver, first week; single load, excluded from Gross AND RPM this week, see METHODOLOGY)
 ];
 // No entries for Driver F or Driver I this week — no settlement was
@@ -1288,7 +1289,7 @@ const bestGrossLoadDetail = {
 // sums exactly to trucks miles:1462/empty:171 — E is RPM-only this week, see
 // METHODOLOGY, but still eligible to win Best Weekly RPM since RPM is a
 // normalized rate). dryvan = Driver J, settlement (5 loads, sums
-// exactly to trucks miles:1733/empty:714 — load #4256 was cancelled and is
+// exactly to trucks miles:1733/empty:714 — load #— was cancelled and is
 // deliberately NOT included here, see METHODOLOGY).
 //
 // GROSS-DISCLOSURE RULE (renderComputedRecords()): the RPM Details panel never
@@ -1459,7 +1460,7 @@ function wireDetailsToggle(cardEl, toggleEl, panelEl){
 // markets (see National Market Snapshot / Trailer Type Comparison below), so a
 // single cross-type winner always favored whichever type pays more nationally
 // rather than who actually did best relative to their own market.
-// NOTE (2026-07-28): Driver B's load #4200 (the window-straddling problem
+// NOTE (2026-07-28): Driver B's load #— (the window-straddling problem
 // that originally motivated a forced Gross-winner override here) has since
 // been moved to the Jul 14-20 report in full — see METHODOLOGY. Driver B's
 // gross is now a real, un-prorated $8,000, naturally below Driver J's real
