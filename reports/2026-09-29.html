@@ -20,6 +20,7 @@
 
     --reefer:#2a78d6;
     --dryvan:#1baf7a;
+    --stepdeck:#6731c4;
 
     --dark-bg:#0a1420;
     --dark-bg2:#132338;
@@ -833,7 +834,7 @@ document.documentElement.classList.add("js-anim-ready");
       <div class="header-title">
         <h1 class="rv" style="animation-delay:.05s">WEEKLY <span class="accent">SNAPSHOT</span></h1>
         <div class="report-label rv" style="animation-delay:.15s">Fleet Performance Report</div>
-        <div class="dates rv rv-pop" id="header-dates" style="animation-delay:.25s">JULY 28 &ndash; AUGUST 3, 2026</div>
+        <div class="dates rv rv-pop" id="header-dates" style="animation-delay:.25s">SEPTEMBER 29 &ndash; OCTOBER 5, 2026</div>
         <div class="sub rv" style="animation-delay:.35s">All results are anonymous and based on completed company loads.</div>
       </div>
     </div>
@@ -890,7 +891,10 @@ document.documentElement.classList.add("js-anim-ready");
     </div>
   </div>
 
-  <div class="hero-type-label" id="hero-type-label-dryvan" style="color:var(--dryvan);"></div>
+  <!-- This slot's id stays "-dryvan" (it's internal plumbing, see the
+       ACTIVE_TRAILER_TYPES comment near TRAILER_HEX) but its color follows
+       whichever type is actually active here — Step Deck this week. -->
+  <div class="hero-type-label" id="hero-type-label-dryvan" style="color:var(--stepdeck);"></div>
   <div class="hero-row hero-row--type">
     <div class="hero-card hero-card--gross hero-rv" id="best-gross-card-dryvan">
       <div class="hero-top">
@@ -944,8 +948,8 @@ document.documentElement.classList.add("js-anim-ready");
         <div class="hero-icon fuel"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 4 0v-6.998a2 2 0 0 0-.59-1.42L18 5"/><path d="M14 21V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v16"/><path d="M2 21h13"/><path d="M3 9h11"/></svg></div>
         <div class="hero-label">Best Weekly Fuel Discount</div>
       </div>
-      <div class="hero-value">$0.76<span style="font-size:var(--fs-body);font-weight:600;">/gal saved</span></div>
-      <div class="hero-tag">Petro Glade Spring &mdash; Glade Spring, VA</div>
+      <div class="hero-value">$1.14<span style="font-size:var(--fs-body);font-weight:600;">/gal saved</span></div>
+      <div class="hero-tag">TA Youngstown &mdash; Youngstown, OH</div>
       <div class="hero-tag" style="font-size:var(--fs-micro);color:var(--text-muted);font-weight:500;margin-top:2px;">Best discount our fleet received this week &mdash; not the best rate available nationwide</div>
       <button class="hero-details-toggle" id="fuel-details-toggle" aria-expanded="false" aria-controls="fuel-details-panel" type="button">
         <span>Details</span>
@@ -981,14 +985,14 @@ document.documentElement.classList.add("js-anim-ready");
       </div>
       <div class="hero-value" id="deadhead-value">&mdash;</div>
       <div class="market-delta" id="deadhead-delta"></div>
-      <div class="hero-tag">Across all reefer + dry van</div>
+      <div class="hero-tag">Across every active trailer type this week</div>
       <button class="hero-details-toggle" id="deadhead-details-toggle" aria-expanded="false" aria-controls="deadhead-details-panel" type="button">
         <span>Details</span>
         <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
       </button>
       <div class="hero-details-panel" id="deadhead-details-panel">
         <div class="hero-details-inner">
-          <div class="hero-tag" style="font-size:var(--fs-micro);color:var(--text-muted);font-weight:500;">This is one company-wide average: every driver's empty (deadhead) miles this week, added together across BOTH Reefer and Dry Van trucks, then divided by the number of drivers &mdash; a single total, not a separate number per trailer type.</div>
+          <div class="hero-tag" style="font-size:var(--fs-micro);color:var(--text-muted);font-weight:500;">This is one company-wide average: every driver's empty (deadhead) miles this week, added together across every trailer type with a driver this week, then divided by the number of drivers &mdash; a single total, not a separate number per trailer type.</div>
         </div>
       </div>
     </div>
@@ -998,13 +1002,13 @@ document.documentElement.classList.add("js-anim-ready");
   <div class="section" style="margin-top:12px;">
     <div class="section-title">By Trailer Type <span class="own-data-flag">KLG Fleet Data</span></div>
     <div class="section-body">
-      <div class="market-subtitle" id="trailer-period-subtitle">Reporting period: July 28 &ndash; August 3, 2026.</div>
+      <div class="market-subtitle" id="trailer-period-subtitle">Reporting period: September 29 &ndash; October 5, 2026.</div>
       <div class="trailer-insight" id="trailer-insight"></div>
       <div class="trailer-compare-grid" id="trailer-compare-grid"></div>
     </div>
   </div>
 
-  <div class="methodology-note">Avg Revenue/Day = total gross &divide; total active driver-days (pickup-to-delivery days, not calendar days).</div>
+  <div class="methodology-note">Avg Revenue/Day = how much was earned per day actually hauling a load — not per calendar day of the week.</div>
 
   <!-- 6-WEEK RPM TRENDS -->
   <div class="section">
@@ -1041,7 +1045,7 @@ document.documentElement.classList.add("js-anim-ready");
     <div class="section-body">
       <div class="market-subtitle">National spot rates per mile and diesel price, % change vs last week. This is industry-wide market data, not KLG's own contracted rates &mdash; useful as directional context only, not a like-for-like comparison to our RPM.</div>
       <div class="market-grid" id="market-grid"></div>
-      <div class="market-source">Spot rates: DAT Freight &amp; Analytics (dat.com/trendlines), week of Jul 27&ndash;Aug 2, 2026 &middot; Diesel price: U.S. Energy Information Administration (eia.gov), week of Aug 3, 2026</div>
+      <div class="market-source">Spot rates: DAT Freight &amp; Analytics (dat.com/trendlines), week of Sept 28&ndash;Oct 4, 2026 &middot; Diesel price: U.S. Energy Information Administration (eia.gov), week of Oct 5, 2026</div>
     </div>
   </div>
 
@@ -1075,7 +1079,7 @@ document.documentElement.classList.add("js-anim-ready");
       </div>
     </div>
   </div>
-  <div class="legal-note">This report is for internal informational purposes only and does not constitute a binding commitment regarding individual driver compensation &mdash; actual payment is governed solely by each driver's own settlement statement. Figures may be corrected or updated after initial publication as new data becomes available. This report contains confidential business information belonging to Karo Lara Group and is not intended for redistribution.<span class="last-updated">Last updated: August 5, 2026</span></div>
+  <div class="legal-note">This report is for internal informational purposes only and does not constitute a binding commitment regarding individual driver compensation &mdash; actual payment is governed solely by each driver's own settlement statement. Figures may be corrected or updated after initial publication as new data becomes available. This report contains confidential business information belonging to Karo Lara Group and is not intended for redistribution.<span class="last-updated">Last updated: October 9, 2026</span></div>
 
   <a class="archive-back archive-back-bottom" href="../index.html">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -1091,6 +1095,14 @@ document.documentElement.classList.add("js-anim-ready");
 const TRAILER_META = {
   reefer:   { label:"Reefer",   color:"var(--reefer)",   icon:"<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;\"><path d=\"m10 20-1.25-2.5L6 18\"/><path d=\"M10 4 8.75 6.5 6 6\"/><path d=\"m14 20 1.25-2.5L18 18\"/><path d=\"m14 4 1.25 2.5L18 6\"/><path d=\"m17 21-3-6h-4\"/><path d=\"m17 3-3 6 1.5 3\"/><path d=\"M2 12h6.5L10 9\"/><path d=\"m20 10-1.5 2 1.5 2\"/><path d=\"M22 12h-6.5L14 15\"/><path d=\"m4 10 1.5 2L4 14\"/><path d=\"m7 21 3-6-1.5-3\"/><path d=\"m7 3 3 6h4\"/></svg>", labelColor:"#ffffff" },
   dryvan:   { label:"Dry Van",  color:"var(--dryvan)",   icon:"<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;\"><path d=\"M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z\"/><path d=\"M12 22V12\"/><polyline points=\"3.29 7 12 12 20.71 7\"/><path d=\"m7.5 4.27 9 5.15\"/></svg>", labelColor:"#0c1420" },
+  // Added 2026-10-09 for Step Deck's debut week — same open-deck icon as the
+  // Flatbed card in National Market Snapshot's MARKET_DATA further down
+  // (that's an external DAT benchmark, separate from this fleet-data
+  // object; kept as its own inline svg copy here rather than a shared
+  // FLATBED_ICON reference since that const is declared later in the file
+  // and TRAILER_META is evaluated first — referencing it here would hit a
+  // temporal-dead-zone ReferenceError).
+  stepdeck: { label:"Step Deck", color:"var(--stepdeck)", icon:"<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-2px;\"><path d=\"M2 16h12\"/><path d=\"M2 16v2\"/><path d=\"M14 8v10\"/><path d=\"M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14\"/><path d=\"M15 18H9\"/><circle cx=\"17\" cy=\"18\" r=\"2\"/><circle cx=\"7\" cy=\"18\" r=\"2\"/></svg>", labelColor:"#ffffff" },
 };
 
 // ============================================================================
@@ -1123,9 +1135,9 @@ const TRAILER_META = {
 // their settlement — meaning the settlement's own Amount is already their
 // post-cut pay, not the freight value). For percentage-only drivers:
 //     gross = Amount / pay_rate   (recovers the true pre-cut load value)
-// Currently percentage-only: Driver H and Driver E. Everyone else has an
-// explicit "Deduction X%" line further down their settlement, so their
-// Subtotal Amount IS the gross already — use it directly, do not divide.
+// Percentage-only this week: Driver D only. Everyone else has an explicit
+// "Deduction X%" line further down their settlement, so their Subtotal
+// Amount IS the gross already — use it directly, do not divide.
 //
 // RPM (loaded) = gross / miles(loaded). This is a BLENDED weekly average rate
 // across every one of that driver's loads that week — never any single
@@ -1222,101 +1234,138 @@ const TRAILER_META = {
 // updated in sync, the driverId guard in renderComputedRecords() hides the
 // Details toggle entirely rather than ever show stale/mismatched loads.
 //
-// This week (Jul 28 - Aug 3, 2026) — driver-specific exceptions to the rules above:
-// Driver J's load #— (Asheville NC - Harvard IL, 724 loaded / 73 empty
-// miles, $150) was CANCELLED per the owner — same rule as any cancelled load:
-// its miles never happened and are excluded from Driver J's totals/RPM, but
-// the $150 payout is real and stays in gross. It shared the exact same
-// 07/31-08/03 date span as his kept load #—, so excluding it doesn't
-// change his active-days total either. RPM without the cancelled load's
-// miles: $3.07/mi -> $4.36/mi.
-// New driver — Driver K (Reefer) appears for the first
-// time this week: a single load (Miami FL - Tacoma WA, 3343 loaded miles,
-// $7,800, zero empty miles). the owner asked to exclude him from both Gross AND
-// RPM this week — one load is too thin a sample to compare, revisit once he
-// has a normal multi-load week.
-// Driver H (percentage-only) and Driver E (percentage-only) both
-// had short weeks (2 loads / 1 load) — the owner confirmed both stay OUT of
-// Gross (not representative) but IN RPM (a normalized rate is still fair to
-// compare regardless of week length).
-// No settlement was found this week for Driver F or Driver I — gap flagged
-// to the owner, not assumed to be zero.
+// This week (Sept 29 - Oct 5, 2026) — driver-specific exceptions to the rules above:
+// Driver G (step deck) has his first COUNTABLE week — a real 4-load week,
+// $15,750 gross, the highest gross of any driver this week (reefer
+// included). Step Deck is now a fully supported trailer type: its own
+// TRAILER_META entry/color/icon, Best-of-Week cards (reusing the hero-row
+// slot that Dry Van isn't using this week, see below), a By Trailer Type
+// card, and a 5-Week Trend card — but since this is its first tracked
+// week, the trend card shows this week's real numbers with NO history/
+// chart yet (nothing to plot), see the trailerTrends comment further down.
+// His settlement has two presentation quirks worth knowing but NOT
+// affecting any figure here: fuel is deducted under an "Other -$2,937.72"
+// line instead of "Fuel" (the dollar amount ties out exactly to his fuel
+// card's total, so it IS fuel, just mislabeled), and "Insurance" appears
+// to have been mislabeled "Logbook" (-$350, alongside a second real
+// Logbook -$50) — both look like ezLoads label quirks on his settlement
+// specifically, not math errors; worth a look next time his settlement is
+// generated.
+// Driver B (dry van) filed only a reimbursement (detention for last week's
+// already-counted CO-FL load) plus ONE new load this week — a real
+// single-load week. Per the standing single-load rule, RPM-only and out of
+// the Avg RPM pool / Best RPM race (rpmBestEligible:false). With no other
+// dry-van driver filing this week, Dry Van ends up with NO eligible truck
+// at all — so by design (the By Trailer Type / Best-of-Week / 5-Week Trend
+// sections only loop over trailer types with an eligible truck) Dry Van
+// simply doesn't appear anywhere in this report. Its hero-row HTML slot
+// and trend-card data key are reused for Step Deck this week instead of
+// adding a third slot — see the TRAILER_META/TRAILER_HEX comments and the
+// renderComputedRecords/trailerGroups loop arrays below. Dry Van's own
+// series is preserved in last week's file and will resume its own slot
+// once it and Step Deck both have data in the same week.
+// Driver A (reefer) had only a single load this week ($2,500, 680 loaded
+// mi, $3.68/mi — not a bad rate on its own), though his fuel-card activity
+// this week spans four states well outside a direct NJ-KY run (raised with
+// the owner as a possible sign of missing load data). The owner's call:
+// keep this driver RPM-only (standard single-load handling —
+// includeGross:false, rpmBestEligible:false, out of the Avg RPM pool and
+// Best RPM race, same as always applied to a single-load week) and count
+// his real fuel-card transactions normally in the fleet-wide fuel-discount
+// figures regardless — no deeper investigation into the mileage mismatch.
+// His fuel cost ($3,619.91) exceeded his whole load's net pay and his
+// settlement went NEGATIVE (-$1,779.91, second time this has happened to
+// this driver in the last several weeks) — carried forward as a pure
+// accounting line on Driver C's settlement below; no effect on Driver C's
+// own gross/RPM here.
+// Drivers C, D, E, F (reefer) had normal full multi-load weeks with no
+// exceptions. Per the owner, Drivers D and E are RPM-only this week
+// (includeGross:false) — both are real multi-load weeks (not single-load),
+// so both KEEP rpmBestEligible and stay in the Best RPM race; Driver E's
+// $4.61/mi is in fact the highest of any eligible reefer driver this week
+// and wins Best Weekly RPM for reefer. With D and E out of the Gross pool
+// and A excluded entirely, only C and F remain in Reefer's Avg Gross pool
+// this week (n=2, thinner than usual) — F wins Best Weekly Gross for
+// reefer at $13,800. Driver F's first load (#1, NE-PA) was picked up 09/26
+// — three days before this week's 09/29 header start — but delivered
+// 09/30, inside the window, so per the WEEK DEFINITION / "do NOT clip a
+// load's span" rule it's counted here in full (not a duplicate of last
+// week's settlement, confirmed); see the Gross Details note for the exact
+// dates.
 const trucks = [
-  {id:"A", trailer:"reefer",   miles:3260, rpm:3.31, gross:10800, includeGross:true,  includeRpm:true,  empty:283, days:5}, // Driver A (5 active days)
-  {id:"B", trailer:"dryvan",   miles:4076, rpm:3.12, gross:12700, includeGross:true,  includeRpm:true,  empty:503, days:7}, // Driver B (7 active days)
-  {id:"C", trailer:"reefer",   miles:3576, rpm:3.69, gross:13205, includeGross:true,  includeRpm:true,  empty:168, days:7}, // Driver C (7 active days)
-  {id:"D", trailer:"reefer",   miles:3481, rpm:2.90, gross:10100, includeGross:true,  includeRpm:true,  empty:395, days:6}, // Driver D (6 active days)
-  {id:"E", trailer:"reefer",   miles:1462, rpm:4.31, gross:6300,  includeGross:false, includeRpm:true,  empty:171, days:3}, // Driver E (3 active days; percentage-only — gross recovered from the settlement Amount at that driver’s pay rate; RPM-only this week, short 1-load week, see METHODOLOGY)
-  {id:"G", trailer:"reefer",   miles:2614, rpm:3.92, gross:10250, includeGross:true,  includeRpm:true,  empty:420, days:7}, // Driver G (7 active days; gross is Subtotal only — the $170.17 lumper reimbursement in Additions is not freight revenue, excluded from gross per METHODOLOGY)
-  {id:"H", trailer:"dryvan",   miles:1189, rpm:4.04, gross:4800,  includeGross:false, includeRpm:true,  empty:215, days:2}, // Driver H (2 active days; percentage-only — gross recovered from the settlement Amount at that driver’s pay rate; RPM-only this week, short 2-load week, see METHODOLOGY)
-  {id:"J", trailer:"dryvan",   miles:1733, rpm:4.36, gross:7550,  includeGross:true,  includeRpm:true,  empty:714, days:7}, // Driver J (7 active days; load #— cancelled — miles excluded, $150 kept in gross, see METHODOLOGY)
-  {id:"K", trailer:"reefer",   miles:3343, rpm:2.33, gross:7800,  includeGross:false, includeRpm:false, empty:0,   days:6}, // Driver K (new driver, first week; single load, excluded from Gross AND RPM this week, see METHODOLOGY)
+  {id:"A", trailer:"reefer",   miles:680,  rpm:3.68, gross:2500,  includeGross:false, includeRpm:true,  rpmBestEligible:false, empty:30,  days:1}, // Driver A (1 active day; single-load week — standard treatment per the owner; fuel-card activity didn't match this one load's geography but the owner opted not to investigate further, see exception note above; settlement went negative, carried to Driver C's statement as a pure accounting line)
+  {id:"B", trailer:"dryvan",   miles:387,  rpm:3.10, gross:1200,  includeGross:false, includeRpm:true,  rpmBestEligible:false, empty:9,   days:1}, // Driver B (1 active day; single-load week — standard treatment; Dry Van has no eligible truck this week as a result, see exception note above)
+  {id:"C", trailer:"reefer",   miles:2306, rpm:4.27, gross:9850,  includeGross:true,  includeRpm:true,  empty:376, days:4}, // Driver C (4 active days; normal full week)
+  {id:"D", trailer:"reefer",   miles:1639, rpm:4.00, gross:6550,  includeGross:false, includeRpm:true,  empty:194, days:3}, // Driver D (3 active days; percentage-only — gross recovered from the settlement Amount at that driver's pay rate; RPM-only per the owner (out of Avg Gross); real 2-load week, keeps rpmBestEligible)
+  {id:"E", trailer:"reefer",   miles:1129, rpm:4.61, gross:5200,  includeGross:false, includeRpm:true,  empty:262, days:3}, // Driver E (3 active days; RPM-only per the owner (out of Avg Gross); real 3-load week, keeps rpmBestEligible; wins Best Weekly RPM for reefer)
+  {id:"F", trailer:"reefer",   miles:3054, rpm:4.52, gross:13800, includeGross:true,  includeRpm:true,  empty:534, days:8}, // Driver F (8 active days; first load picked up 09/26, delivered 09/30 inside the week, counted in full per the week-boundary rule; wins Best Weekly Gross for reefer; $187.55 Lumper reimbursement on the settlement is not freight and is excluded from gross)
+  {id:"G", trailer:"stepdeck", miles:3472, rpm:4.54, gross:15750, includeGross:true,  includeRpm:true,  empty:774, days:5}, // Driver G (5 active days; first countable week for Step Deck — see exception note above; wins both Best Weekly Gross and Best Weekly RPM for Step Deck trivially, being the only driver of this type so far)
 ];
-// No entries for Driver F or Driver I this week — no settlement was
-// found for them in this week's folder (see METHODOLOGY note above); they
-// simply have no truck record rather than a fabricated zero.
+// 7 drivers filed settlements this week (A-G) — every driver who filed last
+// week filed again, plus Driver G's debut.
 
 // Per-load lane detail for the Best Weekly Gross Details panel, one entry per
 // trailer type — see the "PER-LOAD DETAIL OBJECTS" rule in the METHODOLOGY
 // block above for the full capture/update/sanity-check rule. Sources this week:
-// reefer = Driver C, settlement (3 loads, sums exactly to trucks miles
-// 3576 / empty 168 / gross 13205). dryvan = Driver B, settlement (4
-// loads, sums exactly to trucks miles 4076 / empty 503 / gross 12700).
+// reefer = Driver F, settlement (4 loads, sums exactly to trucks
+// empty 534 / loaded 3054 / gross 13800 — the $187.55 Lumper addition on
+// the settlement is a reimbursement, not freight, and is not in gross).
+// stepdeck = Driver G, settlement (4 loads, sums exactly to trucks
+// empty 774 / loaded 3472 / gross 15750).
 const bestGrossLoadDetail = {
   reefer: {
-    driverId: "C",
+    driverId: "F",
     loads: [
-      { states:"MD-OH", empty:65, loaded:356  },
-      { states:"OH-TX", empty:24, loaded:1529 },
-      { states:"TX-PA", empty:79, loaded:1691 },
+      { states:"NE-PA", empty:274, loaded:1219 },
+      { states:"PA-IN", empty:19,  loaded:572  },
+      { states:"IN-IA", empty:56,  loaded:619  },
+      { states:"IA-KY", empty:185, loaded:644  },
     ],
+    note: "The first load (NE-PA) picked up Saturday 09/26 — three days before this week's window — but delivered Wednesday 09/30, inside it, so it's counted here in full (not a duplicate of the prior week's settlement).",
   },
-  dryvan: {
-    driverId: "B",
+  stepdeck: {
+    driverId: "G",
     loads: [
-      { states:"TX-NE", empty:41,  loaded:554  },
-      { states:"IA-NC", empty:194, loaded:998  },
-      { states:"TN-TN", empty:117, loaded:234  },
-      { states:"KY-OR", empty:151, loaded:2290 },
+      { states:"NY-IL", empty:133, loaded:736  },
+      { states:"WI-MN", empty:180, loaded:258  },
+      { states:"WI-WI", empty:126, loaded:187  },
+      { states:"MI-NV", empty:335, loaded:2291 },
     ],
-    note: "Real calendar span this week: 8 days (Jul 27 – Aug 3). The 7 active days used elsewhere reflects the elapsed-time formula (delivery minus pickup per load), not a calendar-day count.",
   },
 };
 
 // Same as bestGrossLoadDetail above, but for whichever driver wins Best Weekly
 // RPM per trailer type (see METHODOLOGY block for the capture/sanity-check
-// rule). Sources this week: reefer = Driver E, settlement (single load,
-// sums exactly to trucks miles:1462/empty:171 — E is RPM-only this week, see
-// METHODOLOGY, but still eligible to win Best Weekly RPM since RPM is a
-// normalized rate). dryvan = Driver J, settlement (5 loads, sums
-// exactly to trucks miles:1733/empty:714 — load #— was cancelled and is
-// deliberately NOT included here, see METHODOLOGY).
+// rule). Sources this week: reefer = Driver E (3 loads, sums exactly to
+// trucks empty 262 / loaded 1129). stepdeck = Driver G (same 4 loads as
+// bestGrossLoadDetail.stepdeck — G is the only step-deck driver so far, so
+// G wins both Gross and RPM trivially).
 //
 // GROSS-DISCLOSURE RULE (renderComputedRecords()): the RPM Details panel never
 // shows $ gross, for both trailer types, even when the RPM winner happens to
 // be the same driver as the Gross winner — the RPM and Gross Details panels
-// each have one fixed stat structure across both trailer types (Reefer and
-// Dry Van look identical to each other within their own panel type), and the
-// RPM winner is often a different driver than the Gross winner, whose weekly
+// each have one fixed stat structure across both trailer types, and the RPM
+// winner is often a different driver than the Gross winner, whose weekly
 // earnings aren't shown anywhere else in the report and shouldn't be newly
-// disclosed just to illustrate the RPM math. This week neither trailer type
-// has a same-driver Gross/RPM winner (reefer: C vs E; dryvan: B vs J), so
-// this rule doesn't visibly trigger for either card this time.
+// disclosed just to illustrate the RPM math. Reefer does not overlap this
+// week (F vs E); Step Deck does (G for both), so the rule keeps $ gross out
+// of the Step Deck RPM Details panel regardless.
 const bestRpmLoadDetail = {
   reefer: {
     driverId: "E",
     loads: [
-      { states:"KS-FL", empty:171, loaded:1462 },
+      { states:"WI-IL", empty:70, loaded:293 },
+      { states:"IL-IA", empty:78, loaded:372 },
+      { states:"MN-IL", empty:114, loaded:464 },
     ],
   },
-  dryvan: {
-    driverId: "J",
+  stepdeck: {
+    driverId: "G",
     loads: [
-      { states:"WI-KY", empty:83,  loaded:763 },
-      { states:"KY-AL", empty:2,   loaded:181 },
-      { states:"TN-AL", empty:95,  loaded:153 },
-      { states:"AL-TN", empty:103, loaded:344 },
-      { states:"IN-WI", empty:431, loaded:292 },
+      { states:"NY-IL", empty:133, loaded:736  },
+      { states:"WI-MN", empty:180, loaded:258  },
+      { states:"WI-WI", empty:126, loaded:187  },
+      { states:"MI-NV", empty:335, loaded:2291 },
     ],
   },
 };
@@ -1325,7 +1374,14 @@ function trailerGroups(){
   const rpmGroups = {};
   const grossGroups = {};
   trucks.forEach(t=>{
-    if(t.includeRpm){
+    // rpmBestEligible:false also excludes a truck from the Avg RPM pool here
+    // (added 2026-08-26, per the owner), not just from winning "Best Weekly RPM"
+    // (renderComputedRecords() already filtered that separately) — a
+    // single-load week's RPM isn't reliable enough to call the fleet
+    // "average" either, and with a thin roster (e.g. Dry Van at n=2) letting
+    // it stay in the average while excluded from winning produced a visibly
+    // contradictory "Avg RPM higher than Best RPM" result.
+    if(t.includeRpm && t.rpmBestEligible !== false){
       rpmGroups[t.trailer] = rpmGroups[t.trailer] || {n:0, miles:0, rpm:0};
       rpmGroups[t.trailer].n++;
       rpmGroups[t.trailer].miles += t.miles;
@@ -1346,18 +1402,40 @@ function trailerGroups(){
 // dot/icon elsewhere, just lightened for the card surface (lightenHex, defined
 // further down, isn't hoisted-usable here since it needs the raw hex, not the
 // CSS var string TRAILER_META.color holds).
-const TRAILER_HEX = { reefer:"#2a78d6", dryvan:"#1baf7a" };
+const TRAILER_HEX = { reefer:"#2a78d6", dryvan:"#1baf7a", stepdeck:"#6731c4" };
 
 // Last week's (1-week-ago) real avg Gross per trailer type — same source numbers
 // as the "1wk ago" point in the 5-Week Trends chart's `trailerTrends.gross`
 // array — kept in sync manually since this card and that chart don't share
 // scope. If that array's "1 week ago" values ever change, update these too.
-const TRAILER_LAST_WEEK_GROSS = { reefer:9783, dryvan:8508 };
+// No stepdeck entry — it's a debut this week, no "last week" to compare
+// against; renderTrailerTable()'s grossDelta guards for this below.
+const TRAILER_LAST_WEEK_GROSS = { reefer:9927, dryvan:10750 };
+
+// Suppresses the automatic "Based on 1 driver this week" small-sample badge
+// on the By Trailer Type card for the named type(s) — see its 2026-09-23
+// origin comment in the previous report for why this exists. Reset to {}
+// this week: Step Deck's n=1 badge is left ON (true and useful — it really
+// is just one driver so far), so no suppression needed.
+const SUPPRESS_SMALL_SAMPLE_BADGE = {};
+
+// ACTIVE TRAILER TYPES THIS WEEK — the single list controlling which types
+// get a Best-of-Week row, a By Trailer Type card, and a 5-Week Trend card.
+// This week: Dry Van has no eligible truck (its one driver was a single
+// load, see METHODOLOGY), so Step Deck takes its usual HTML slot instead of
+// a third slot being added — see the dryvan hero-row's id comments. Update
+// this one array each week to match whichever 2 types actually have data;
+// the Best-of-Week HTML currently only has two hero-row--type slots built
+// (labelled "...-reefer" and "...-dryvan" in the markup), so whichever
+// second type is active this week must use the "-dryvan" ids regardless of
+// its real name until a third slot is added to the HTML (needed the day
+// Dry Van and a third type both have data in the same week).
+const ACTIVE_TRAILER_TYPES = ["reefer","stepdeck"];
 
 function renderTrailerTable(){
   const {rpmGroups, grossGroups} = trailerGroups();
   const grid = document.getElementById("trailer-compare-grid");
-  const entries = ["reefer","dryvan"]
+  const entries = ACTIVE_TRAILER_TYPES
     .filter(k=>rpmGroups[k])
     .map(k=>{
       const rg = rpmGroups[k], gg = grossGroups[k];
@@ -1366,6 +1444,7 @@ function renderTrailerTable(){
         avgRpm: rg.rpm/rg.n,
         avgMiles: gg ? gg.miles/gg.n : null,
         avgGross: gg ? gg.gross/gg.n : null,
+        grossN: gg ? gg.n : 0,
         // Total gross ÷ total active driver-days (not an average of each
         // driver's own rate) — see METHODOLOGY for why this pooled form is
         // the correct one: dividing by mean(days) instead of sum(days) would
@@ -1400,8 +1479,10 @@ function renderTrailerTable(){
       ? `$${Math.round(e.avgGross).toLocaleString('en-US')}`
       : `<span class="muted">&mdash;</span>`;
     const grossDelta = hasGross
-      ? (()=>{ const d = deltaInfo([TRAILER_LAST_WEEK_GROSS[e.key], e.avgGross], "up");
-          return `<span class="arrow" style="color:${d.arrowColor};">${d.arrowChar}</span> ${d.pct.toFixed(1)}%<span class="sub">vs last week</span>`; })()
+      ? (TRAILER_LAST_WEEK_GROSS[e.key] != null
+          ? (()=>{ const d = deltaInfo([TRAILER_LAST_WEEK_GROSS[e.key], e.avgGross], "up");
+              return `<span class="arrow" style="color:${d.arrowColor};">${d.arrowChar}</span> ${d.pct.toFixed(1)}%<span class="sub">vs last week</span>`; })()
+          : `<span class="sub">First week tracked — no prior week to compare</span>`)
       : `<span style="color:var(--warning);font-weight:700;">⚠ No approved Gross data this week</span>`;
     const card = document.createElement("div");
     card.className = "trailer-compare-card";
@@ -1432,6 +1513,8 @@ function renderTrailerTable(){
           <div class="m-label">Avg Revenue/Day</div>
         </div>
       </div>
+      <div style="font-size:var(--fs-micro);color:var(--text-muted);font-weight:500;margin-top:8px;">RPM and Miles shown are loaded miles only</div>
+      ${hasGross && e.grossN === 1 && !SUPPRESS_SMALL_SAMPLE_BADGE[e.key] ? `<div style="font-size:var(--fs-micro);color:var(--warning);font-weight:600;margin-top:4px;">⚠ Based on 1 driver this week — small sample, not a fleet-wide trend</div>` : ""}
     `;
     grid.appendChild(card);
   });
@@ -1470,7 +1553,10 @@ function renderComputedRecords(){
   const grossEligible = trucks.filter(t=>t.includeGross);
   const rpmEligible = trucks.filter(t=>t.includeRpm);
 
-  ["reefer","dryvan"].forEach(type => {
+  // suffix = type, EXCEPT the active second type always renders into the
+  // "-dryvan" HTML ids (see the ACTIVE_TRAILER_TYPES comment above) until a
+  // third hero-row slot exists. Reefer always keeps its own "-reefer" ids.
+  ACTIVE_TRAILER_TYPES.forEach(type => {
     const suffix = type === "reefer" ? "reefer" : "dryvan";
     const meta = TRAILER_META[type];
     document.getElementById("hero-type-label-" + suffix).innerHTML = meta.icon + " " + meta.label;
@@ -1478,7 +1564,12 @@ function renderComputedRecords(){
     const grossPool = grossEligible.filter(t=>t.trailer===type);
     const rpmPool = rpmEligible.filter(t=>t.trailer===type);
     const byGross = [...grossPool].sort((a,b)=>b.gross-a.gross)[0];
-    const byRpm   = [...rpmPool].sort((a,b)=>b.rpm-a.rpm)[0];
+    // rpmBestEligible:false keeps a truck IN the RPM average (rpmPool /
+    // trailerGroups() below both stay based on includeRpm alone) but out of
+    // the running for the individual "Best Weekly RPM" card — for a truck
+    // whose top RPM this week came from too thin a sample (e.g. a single
+    // load) to fairly call it "best", see the trucks[] exception notes above.
+    const byRpm   = [...rpmPool].filter(t=>t.rpmBestEligible !== false).sort((a,b)=>b.rpm-a.rpm)[0];
 
     const grossValueEl = document.getElementById("rec-gross-value-" + suffix);
     const grossToggle = document.getElementById("gross-details-toggle-" + suffix);
@@ -1553,13 +1644,25 @@ function renderComputedRecords(){
         // anywhere else in the report — winning a rate-based award was never
         // their opt-in to have pay disclosed; (2) structural consistency —
         // the RPM Details panel has the same stat set (Loads/Loaded mi/
-        // Deadhead mi/RPM loaded) across both trailer types, matching how the
-        // Gross Details panel is also identical in structure across types.
+        // Deadhead mi/RPM loaded/RPM total) across both trailer types,
+        // matching how the Gross Details panel is also identical in
+        // structure across types.
+        // RPM (total) added 2026-08-12 (standing rule going forward, not a
+        // one-off): the hero card's headline number and its own caption are
+        // loaded-miles-only, same as the "RPM (loaded)" field here — RPM
+        // (total) divides the same gross by loaded+empty miles combined, so
+        // a reader can see how much the loaded-only rate is being flattered
+        // by low deadhead, without having to compute it themselves. Mirrors
+        // the Gross Details panel, which has shown both figures side by side
+        // since the panel was first built — this just closes the gap where
+        // the RPM Details panel hadn't gotten the same treatment yet.
+        const rpmTotal = byRpm.gross / (byRpm.miles + byRpm.empty);
         const rpmStatRows = [
           ["Loads", rDetail.loads.length, true],
           ["Loaded mi", byRpm.miles.toLocaleString('en-US')],
           ["Deadhead mi", byRpm.empty.toLocaleString('en-US')],
-          ["RPM (loaded)", "$" + byRpm.rpm.toFixed(2), true],
+          ["RPM (loaded)", "$" + byRpm.rpm.toFixed(2)],
+          ["RPM (total)", "$" + rpmTotal.toFixed(2)],
         ];
         document.getElementById("rd-stats-" + suffix).innerHTML = rpmStatRows.map(([label, value, full]) =>
           `<div class="gd-stat"${full ? ' style="grid-column:1/-1;"' : ''}><span class="gd-label">${label}</span><span class="gd-value">${value}</span></div>`
@@ -1567,6 +1670,19 @@ function renderComputedRecords(){
         document.getElementById("rd-lanes-" + suffix).innerHTML = rDetail.loads.map(l =>
           `<span class="gd-lane">${l.states}</span>`
         ).join("");
+        // Optional free-text note — same pattern as the Gross Details panel's
+        // gd-note (added here 2026-09-16, first use: explaining a short/
+        // outlier-driven RPM week right where the reader is looking, instead
+        // of only in the 5-Week Trends section below).
+        const existingRNote = rpmPanel.querySelector(".gd-note");
+        if (existingRNote) existingRNote.remove();
+        if (rDetail.note) {
+          const rNoteEl = document.createElement("div");
+          rNoteEl.className = "gd-note";
+          rNoteEl.style.cssText = "margin-top:10px;font-size:var(--fs-micro);color:var(--text-muted);font-weight:500;";
+          rNoteEl.textContent = rDetail.note;
+          document.getElementById("rd-lanes-" + suffix).insertAdjacentElement("afterend", rNoteEl);
+        }
         wireDetailsToggle(rpmCard, rpmToggle, rpmPanel);
       } else {
         rpmToggle.style.display = "none";
@@ -1585,13 +1701,12 @@ function renderComputedRecords(){
   const avgDeadheadMiles = totalEmpty / rpmEligible.length;
   document.getElementById("deadhead-value").textContent = Math.round(avgDeadheadMiles) + " miles";
 
-  // Last week's (Jul 14-20) avg deadhead miles, recomputed from that week's
-  // full 8-driver includeRpm set (A:256, C:338, D:114, E:254, F:206, G:230,
-  // H:0, I:401 — sum 1799 / 8 = 224.9). This week's real figure (415.0mi) is
-  // a genuine, honest increase — driven mainly by Driver D's 761mi adjusted
-  // empty and a light week for Driver B (247mi) pulling the 7-driver set in
-  // different directions — not a data-quality artifact.
-  const lastWeekAvgDeadheadMiles = 288;
+  // Last week's (Sept 22 - Sept 28) avg deadhead miles, from that week's
+  // 6-driver includeRpm set (sum 2,296 / 6 = 382.7). This week's figure
+  // (~311mi) is a real drop: the 7-driver includeRpm set this week (A-G,
+  // every truck with includeRpm:true regardless of rpmBestEligible — single-
+  // load weeks still count toward deadhead) sums to 2,179mi / 7 = 311.3.
+  const lastWeekAvgDeadheadMiles = 382.7;
   const dDead = deltaInfo([lastWeekAvgDeadheadMiles, avgDeadheadMiles], "down");
   document.getElementById("deadhead-delta").innerHTML =
     `<span class="arrow" style="color:${dDead.arrowColor};">${dDead.arrowChar}</span> ${dDead.pct.toFixed(1)}%<span class="sub">vs last week</span>`;
@@ -1825,6 +1940,202 @@ function attachGrossBarTooltip(container, values, weeks, tooltipFmt){
   });
 }
 
+// ---------- RPM line + total-RPM bars underneath (deadhead gap view) ----------
+// PROTOTYPE v2 (2026-08-12) — replaces the earlier "segmented single bar"
+// attempt, which read poorly on real data (the loaded-vs-total gap is often
+// small relative to a 0-based bar, so the split was a barely-visible sliver).
+// This version keeps the existing loaded-RPM LINE untouched (same trendChart
+// geometry/labels/hover) and adds short neutral-gray BARS underneath it, one
+// per week that has real total-RPM data (this week + the 3 most recently
+// archived weeks — not the oldest "4 weeks ago" point, whose source PDFs are
+// scattered/incomplete, see project memory). Since total RPM is always ≤
+// loaded RPM, the bar top never reaches the line — that visible gap between
+// bar-top and line IS the "deadhead tax" on the rate, without needing any
+// color-coding trick. Bar's own numeric label sits just under its top edge
+// (inside the bar), the line's own labels are unchanged (above each point,
+// as before). Bars share the line chart's y-scale (recomputed to include
+// both loaded and total values so no bar clips below the plot), not a
+// separate 0-baseline scale — the chart's bottom edge is the bars' visual
+// floor, not a literal $0, same convention grossBarChart's own y-axis avoids
+// needing (min()-padded range, not zero-anchored).
+function rpmLineWithTotalBars(loadedValues, totalValues, weeks, fmt, color, tooltipWeeks, renderWidth){
+  tooltipWeeks = tooltipWeeks || weeks;
+  const w = 560, h = 170;
+  const scale = renderWidth ? renderWidth / w : 1;
+  const axisFs = (11 / scale).toFixed(2);
+  const dataFs = (13 / scale).toFixed(2);
+  const totalFs = (10.5 / scale).toFixed(2);
+  const padL = 44, padR = 14, padT = 22, padB = 24;
+  const plotW = w - padL - padR, plotH = h - padT - padB;
+
+  const realTotals = totalValues.filter(v => v != null);
+  const allVals = loadedValues.concat(realTotals);
+  const min = Math.min(...allVals), max = Math.max(...allVals);
+  const range = (max - min) || (max * 0.1) || 1;
+  const yPad = range * 0.15;
+  const lo = min - yPad, hi = max + yPad;
+  const stepX = plotW / (loadedValues.length - 1);
+  const yOf = v => padT + plotH - ((v - lo) / (hi - lo)) * plotH;
+  const baseline = padT + plotH;
+  const pts = loadedValues.map((v,i)=>[padL + i*stepX, yOf(v)]);
+
+  const path = pts.map((p,i)=> (i===0?"M":"L") + p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
+  const areaPath = `M${pts[0][0].toFixed(1)},${baseline.toFixed(1)} ` +
+    pts.map(p=>`L${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" ") +
+    ` L${pts[pts.length-1][0].toFixed(1)},${baseline.toFixed(1)} Z`;
+
+  const gridVals = [hi, (hi+lo)/2, lo];
+  const gridlines = gridVals.map(v=>{
+    const y = yOf(v);
+    return `<line x1="${padL}" y1="${y.toFixed(1)}" x2="${w-padR}" y2="${y.toFixed(1)}" stroke="#e4e8ec" stroke-width="1"/>
+      <text x="${padL-8}" y="${(y+3).toFixed(1)}" text-anchor="end" font-size="${axisFs}" fill="#5c636f">${fmt(v)}</text>`;
+  }).join("");
+
+  const weekLabels = weeks.map((wk,i)=>{
+    const anchor = i===0 ? "start" : (i===weeks.length-1 ? "end" : "middle");
+    return `<text x="${pts[i][0].toFixed(1)}" y="${h-6}" text-anchor="${anchor}" font-size="${axisFs}" fill="#5c636f">${wk}</text>`;
+  }).join("");
+
+  // Bars drawn first (underneath), same rounded-top-only path shape used by
+  // grossBarChart, reusing its .gbar-grow class for the free grow-from-bottom
+  // entrance animation (transform-box:fill-box; transform-origin:bottom;
+  // already defined in CSS for that class).
+  const barW = 22;
+  const barColor = "#9aa4b1";
+  const bars = totalValues.map((tv,i) => {
+    if (tv == null) return null;
+    // Clamped so the first/last bar (centered exactly on the line's edge
+    // points, at padL/padL+plotW) never pushes its rounded corner past the
+    // SVG's own edge. The total-value label handles its own edge case
+    // separately below (anchor start/end instead of middle at the ends).
+    const bx = Math.max(2, Math.min(pts[i][0] - barW/2, w - barW - 2));
+    const barTop = yOf(tv);
+    const r = Math.min(6, barW/2, baseline - barTop);
+    return { bx, barTop, r, x: pts[i][0], tv, isFirst: i===0, isLast: i===totalValues.length-1 };
+  });
+  const barEls = bars.filter(Boolean).map(b => {
+    const bpath = `M${b.bx.toFixed(1)},${baseline.toFixed(1)} `+
+      `L${b.bx.toFixed(1)},${(b.barTop+b.r).toFixed(1)} `+
+      `Q${b.bx.toFixed(1)},${b.barTop.toFixed(1)} ${(b.bx+b.r).toFixed(1)},${b.barTop.toFixed(1)} `+
+      `L${(b.bx+barW-b.r).toFixed(1)},${b.barTop.toFixed(1)} `+
+      `Q${(b.bx+barW).toFixed(1)},${b.barTop.toFixed(1)} ${(b.bx+barW).toFixed(1)},${(b.barTop+b.r).toFixed(1)} `+
+      `L${(b.bx+barW).toFixed(1)},${baseline.toFixed(1)} Z`;
+    return `<path class="gbar-grow rpm-total-bar" d="${bpath}" fill="${barColor}" fill-opacity="0.55" style="transform:scaleY(0);"/>`;
+  }).join("");
+  // Same edge-anchor pattern as weekLabels/firstLabel/lastLabel above — a
+  // centered label on the first/last bar runs off the SVG's own edge (the
+  // bar sits flush against padL/padR there), so those two ends anchor to
+  // their inner edge instead of their center.
+  const totalLabels = bars.filter(Boolean).map(b => {
+    const anchor = b.isFirst ? "start" : (b.isLast ? "end" : "middle");
+    const lx = b.isFirst ? b.bx + 2 : (b.isLast ? b.bx + barW - 2 : b.bx + barW/2);
+    return `<text class="gbar-label rpm-total-label" style="opacity:0;transform:translateY(4px);transform-box:fill-box;transform-origin:center;" x="${lx.toFixed(1)}" y="${(b.barTop+14).toFixed(1)}" text-anchor="${anchor}" font-size="${totalFs}" font-weight="700" fill="#5c636f">${fmt(b.tv)}</text>`;
+  }).join("");
+
+  const dots = pts.map((p,i)=>{
+    const isEnd = i===0 || i===pts.length-1;
+    const r = isEnd ? 4.5 : 2.5;
+    const fill = i===pts.length-1 ? color : (i===0? "#9fb3c8" : "#c3ccd6");
+    return `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="${r}" fill="${fill}" stroke="#ffffff" stroke-width="2"/>`;
+  }).join("");
+
+  const firstLabel = `<text x="${pts[0][0].toFixed(1)}" y="${(pts[0][1]-10).toFixed(1)}" text-anchor="start" font-size="${dataFs}" font-weight="800" fill="#3d4552">${fmt(loadedValues[0])}</text>`;
+  const lastLabel  = `<text x="${pts[pts.length-1][0].toFixed(1)}" y="${(pts[pts.length-1][1]-10).toFixed(1)}" text-anchor="end" font-size="${dataFs}" font-weight="800" fill="${color}">${fmt(loadedValues[loadedValues.length-1])}</text>`;
+  const midLabels = pts.slice(1,-1).map((p,idx)=>{
+    const i = idx+1;
+    return `<text x="${p[0].toFixed(1)}" y="${(p[1]-9).toFixed(1)}" text-anchor="middle" font-size="${dataFs}" font-weight="800" fill="#3d4552">${fmt(loadedValues[i])}</text>`;
+  }).join("");
+  const gradId = "area-" + Math.random().toString(36).slice(2,9);
+
+  return `<svg class="trend-svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet" data-pts='${JSON.stringify(pts.map(p=>[+p[0].toFixed(1), +p[1].toFixed(1)]))}' data-plot="${padT.toFixed(1)},${baseline.toFixed(1)}">
+    <defs>
+      <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${color}" stop-opacity="0.18"/>
+        <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    ${gridlines}
+    ${barEls}
+    <path d="${areaPath}" fill="url(#${gradId})"/>
+    <path class="line-draw" d="${path}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    ${dots}
+    ${firstLabel}
+    ${lastLabel}
+    ${midLabels}
+    ${totalLabels}
+    ${weekLabels}
+    <line class="hover-crosshair" x1="0" y1="0" x2="0" y2="0" stroke="#5c636f" stroke-width="1" stroke-dasharray="3,3" style="display:none;pointer-events:none;"/>
+    <circle class="hover-dot" r="5" fill="${color}" stroke="#ffffff" stroke-width="2" style="display:none;pointer-events:none;"/>
+    <rect class="hover-capture" x="0" y="0" width="${w}" height="${h}" fill="transparent"/>
+  </svg>`;
+}
+
+// ---------- Hover crosshair + tooltip for rpmLineWithTotalBars ----------
+// Same nearestIndex-by-mouseX mechanics as attachChartTooltip below, just a
+// combined tooltip line ("loaded / total") instead of a single value.
+function attachRpmComboTooltip(container, loadedValues, totalValues, tooltipWeeks, fmt){
+  const svg = container.querySelector(".trend-svg");
+  if(!svg) return;
+  const pts = JSON.parse(svg.dataset.pts);
+  const [plotTop, plotBottom] = svg.dataset.plot.split(",").map(Number);
+  const viewBox = svg.viewBox.baseVal;
+  const crosshair = svg.querySelector(".hover-crosshair");
+  const hoverDot = svg.querySelector(".hover-dot");
+  const capture = svg.querySelector(".hover-capture");
+
+  const tooltip = document.createElement("div");
+  tooltip.className = "chart-tooltip";
+  container.style.position = "relative";
+  container.appendChild(tooltip);
+
+  function show(i){
+    const p = pts[i];
+    crosshair.setAttribute("x1", p[0]); crosshair.setAttribute("x2", p[0]);
+    crosshair.setAttribute("y1", plotTop); crosshair.setAttribute("y2", plotBottom);
+    crosshair.style.display = "block";
+    hoverDot.setAttribute("cx", p[0]); hoverDot.setAttribute("cy", p[1]);
+    hoverDot.style.display = "block";
+    const tv = totalValues[i];
+    tooltip.textContent = tv != null
+      ? `${tooltipWeeks[i]}: ${fmt(loadedValues[i])} loaded / ${fmt(tv)} total`
+      : `${tooltipWeeks[i]}: ${fmt(loadedValues[i])} loaded (total not tracked yet)`;
+    tooltip.style.display = "block";
+    let leftPct = (p[0] / viewBox.width) * 100;
+    leftPct = Math.min(Math.max(leftPct, 12), 88);
+    tooltip.style.left = leftPct + "%";
+    tooltip.style.top = ((p[1] / viewBox.height) * 100) + "%";
+  }
+  function hide(){
+    crosshair.style.display = "none";
+    hoverDot.style.display = "none";
+    tooltip.style.display = "none";
+  }
+  function nearestIndex(clientX){
+    const rect = svg.getBoundingClientRect();
+    const mx = (clientX - rect.left) / rect.width * viewBox.width;
+    let nearest = 0, minDist = Infinity;
+    pts.forEach((p,i)=>{ const d = Math.abs(p[0]-mx); if(d<minDist){minDist=d; nearest=i;} });
+    return nearest;
+  }
+  let hideTimer = null;
+  function hideSoon(){
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(hide, 2500);
+  }
+  capture.addEventListener("pointerdown", e=>{
+    capture.setPointerCapture(e.pointerId);
+    clearTimeout(hideTimer);
+    show(nearestIndex(e.clientX));
+  });
+  capture.addEventListener("pointermove", e=>{
+    if (e.pointerType === "mouse") show(nearestIndex(e.clientX));
+  });
+  capture.addEventListener("pointerup", e=>{
+    if (e.pointerType !== "mouse") hideSoon();
+  });
+  capture.addEventListener("mouseleave", ()=>{ if(!('ontouchstart' in window)) hide(); });
+}
+
 // ---------- Hover crosshair + tooltip layer for a rendered trendChart SVG ----------
 function attachChartTooltip(container, values, tooltipWeeks, fmt){
   const svg = container.querySelector(".trend-svg");
@@ -1899,8 +2210,95 @@ function attachChartTooltip(container, values, tooltipWeeks, fmt){
 // Zero-discount transactions (fill-ups outside the card's discount network) are EXCLUDED from
 // both the gallons and $ discount sums — only fill-ups within the card's coverage area count.
 // Last point = the "Jul 13-19" bucket, used as the current tracked settlement week (Jul 14-20).
-const FUEL_DISCOUNT_WEEKS = ["Jul 6","Jul 13","Jul 20","This Week"];
-const FUEL_DISCOUNT_VALUES = [0.44,0.41,0.38,0.47];
+// UPDATE 2026-08-12: recomputed from real per-transaction TCS fuel-card data
+// (all 5 of this week's fuel-card PDFs have a page-2+ transaction table, not
+// just the page-1 driver summary) — per the formula in project memory:
+// Σ(Disc Amt) / Σ(Fuel+Reefer+DEF Qty), counting only transactions where
+// Disc Amt > 0 (zero-discount fill-ups dropped from both sides, not just the
+// numerator). Driver I had 5/5 transactions at $0.00 discount
+// — dropped entirely, matching his page-1 total. Per-driver: A $91.89/486.27gal
+// ($0.19), D $117.68/303.99gal ($0.39), F $151.32/295.40gal ($0.51), G
+// $90.55/456.38gal ($0.20) — each sum verified against that driver's own
+// page-1 Discount total before combining. Fleet: $451.44/1542.04gal = $0.29/gal.
+// UPDATE 2026-08-19: this week's fuel-card PDF was a single combined report
+// covering all 6 active cards with full per-transaction detail (nicer than
+// the 5 separate single-card files last time) — 32 transactions total, 19
+// with Disc Amt > 0. Every subtotal (qty by fuel/reefer/DEF, total discount)
+// cross-checked exactly against the file's own page-1 grand totals before
+// combining ($537.58 discount / 2802.07+130.20+13.80 gal combined pools).
+// Fleet: $537.58/1958.04gal (only the 19 discount>0 txns) = $0.27/gal.
+// UPDATE 2026-08-26: another single combined TCS report, 7 active cards, 32
+// transactions, 22 with Disc Amt > 0 (the rest were flat $3 network fees
+// with no per-gallon discount, dropped from both sides per the standing
+// formula). Every card's own Discount subtotal cross-checked against its
+// page-1 total before combining. Fleet: $577.15 discount / 2058.43
+// qualifying gal (Fuel+Reefer+DEF on discount>0 txns only) = $0.28/gal.
+// UPDATE 2026-09-02: this week's folder had only 4 of the 7 active drivers'
+// TCS fuel-card statements — the other 3 drivers filed no fuel card, so this
+// figure covers ~4/7 of the fleet, not all of it. 27 transactions across the
+// 4 cards, 21 with Disc Amt > 0 (6 flat $3 network-fee fills with no
+// per-gallon discount dropped from both sides per the standing formula).
+// Each card's Discount subtotal cross-checked against its page-1 total
+// before combining (per-card: $218.61/632.71gal, $289.63/564.15gal,
+// $170.07/372.25gal, $204.23/633.59gal). Fleet: $882.54 discount /
+// 2,202.70 qualifying gal = $0.40/gal — higher than the last few weeks
+// partly because the low-discount cards happen to be among the 3 that
+// didn't file this week.
+// UPDATE 2026-09-09: 4 cards filed this week; the other 3 active drivers
+// filed no fuel card. 30 transactions across the 4 cards, 10 with Disc Amt
+// > 0 (the rest were $0-discount fills or flat $3 network fees, dropped from
+// both sides per the standing formula). Each card's Discount subtotal
+// cross-checked against its page-1 total before combining (per-card
+// discount>0 pools: $143.30/400.45gal, $31.04/230.92gal, $74.37/117.29gal,
+// $2.57/13.41gal). Fleet: $251.28 discount / 762.07 qualifying gal =
+// $0.33/gal.
+// UPDATE 2026-09-16: only 3 fuel cards filed this week (2 active drivers
+// filed no fuel card). 10 transactions across the 3 cards, 9 with Disc Amt >
+// 0 (1 flat $3 network fee dropped from both sides). Each card's Discount
+// subtotal cross-checked against its page-1 total before combining
+// (per-card discount>0 pools: $84.76/145.90gal, $150.92/588.92gal,
+// $51.41/211.48gal). Fleet: $287.09 discount / 946.30 qualifying gal =
+// $0.30/gal.
+// UPDATE 2026-09-23: 3 fuel cards filed this week (1 active driver, the
+// dry-van one, filed no fuel card). 9 transactions across the 3 cards, 8
+// with Disc Amt > 0 (1 flat $3 network fee dropped from both sides). Each
+// card's Discount subtotal cross-checked against its page-1 total before
+// combining (per-card discount>0 pools: $148.31/398.77gal, $18.03/112.03gal,
+// $105.98/315.62gal). Fleet: $272.32 discount / 826.42 qualifying gal =
+// $0.33/gal.
+// UPDATE 2026-09-30: 5 fuel cards this week (1 active driver, the dry-van
+// one, filed no fuel card) — including, per the owner, the new flatbed
+// driver's card even though his freight isn't counted this week (see
+// METHODOLOGY). One card (the returning reefer driver's) arrived as a
+// single combined TCS report spanning Sept 1-28 (he hadn't settled fuel in
+// weeks) — only its 5 transactions dated 09/22-09/28 were used here, not
+// the full month, so this figure stays a genuine one-week snapshot. 18
+// transactions across the 5 cards (13 from the 4 week-scoped cards + 5
+// in-window from the wide one), all 18 with Disc Amt > 0. Each card's
+// Discount subtotal cross-checked against its own page-1 total (for the
+// wide card, against the sum of its in-window rows) before combining
+// (per-card discount>0 pools: $91.83/486.37gal, $47.56/71.53gal,
+// $383.81/357.95gal, $145.19/273.38gal, $317.80/465.47gal). Fleet: $986.19
+// discount / 1,654.70 qualifying gal = $0.60/gal — the highest yet, driven
+// mostly by the new flatbed driver's card running $0.93-$1.03/gal discounts
+// on all three of its fill-ups (confirmed real by the owner, incl. the
+// single highest fill-up on record — see Best Weekly Fuel Discount).
+// UPDATE 2026-10-09: 5 fuel cards this week (the dry-van driver's single-
+// load week ran no fuel card). 15 transactions across the 5 cards, 12 with
+// Disc Amt > 0 (3 flat $0-discount DEF/fee rows dropped from both sides per
+// the standing formula). Each card's Discount subtotal cross-checked
+// against its own page-1 total before combining (per-card discount>0
+// pools: $269.78/367.92gal [reefer, 4/4 txns], $0.00/0gal [reefer, 0/3 —
+// this card had zero discounted fills this week, dropped entirely],
+// $428.64/511.14gal [step deck, 5/6], $203.76/217.94gal [reefer, 2/2],
+// $430.89/629.10gal [reefer, 4/4]). Fleet: $1,333.07 discount / 1,726.10
+// qualifying gal = $0.77/gal — another new high, this time spread across
+// several cards rather than one outlier (the step-deck driver's card alone
+// is $428.64/511.14gal = $0.84/gal, but the two highest-volume reefer
+// cards ran $0.68-$0.70/gal too) — consistent with diesel having spent
+// several straight weeks near $6.20-6.50/gal, not a data error.
+const FUEL_DISCOUNT_WEEKS = ["Sept 14","Sept 21","Sept 28","This Week"];
+const FUEL_DISCOUNT_VALUES = [0.30,0.33,0.60,0.77];
 
 const sparseLabels = n => [`${n-1} weeks ago`, ...Array(n-2).fill(""), "Current"];
 
@@ -1932,14 +2330,35 @@ function renderTrend(){
   const fmtGross = v=>"$"+Math.round(v).toLocaleString('en-US');
   const fmtGrossK = v=>"$"+(v/1000).toFixed(1)+"k";
   const grossWeeks = ["4wk ago","3wk ago","2wk ago","1wk ago","Current"];
+  // rpmTotal = same weeks' RPM using loaded+empty miles (deadhead included),
+  // added 2026-08-12 as a PROTOTYPE for the RPM tab's line+bars view — see the
+  // long comment above rpmLineWithTotalBars(). null for "4 weeks ago" (that
+  // week's source PDFs are scattered/incomplete, see project memory) — the
+  // other 3 history points were pulled from the already-archived trucks[]
+  // arrays in reports/2026-07-14.html, -20.html, -28.html (average of each
+  // included truck's own gross/(miles+empty), same convention as `rpm`'s own
+  // gross/miles average).
+  // Dry Van has no entry this week — no eligible dry-van driver (see
+  // METHODOLOGY), so its trend card is simply omitted rather than show a
+  // misleading/empty "—" card. Its series through last week (ending
+  // 5799/5700/14000/8450/10750/10250) is preserved in reports/2026-09-22.html
+  // — resume appending to it from there once Dry Van has a countable week
+  // again, don't restart the series from scratch.
   const trailerTrends = [
-    { key:"reefer", color:"#2a78d6", rpm:[5.41,4.08,3.80,3.43,3.63], gross:[10133,9900,11333,9783,11089] },
-    { key:"dryvan", color:"#1baf7a", rpm:[4.90,3.75,3.21,3.60,3.84], gross:[8900,5875,5059,8508,10125] },
+    { key:"reefer", color:"#2a78d6", rpm:[4.51,5.05,4.34,4.56,4.35], rpmTotal:[3.92,4.20,3.68,3.81,3.71], gross:[12275,12025,11500,9927,11825], note:"Avg Gross this week reflects only 2 of 5 reefer drivers — the other 3 were RPM-only (see METHODOLOGY), a thinner pool than usual." },
+    { key:"stepdeck", color:"#6731c4", rpm:[4.54], rpmTotal:[3.71], gross:[15750], firstWeek:true, note:"First week tracked for Step Deck — see METHODOLOGY for how this new trailer type is being introduced." },
   ];
   trailerTrends.forEach(t=>{
     const meta = TRAILER_META[t.key];
-    const dRpm = deltaInfo([t.rpm[t.rpm.length-2], t.rpm[t.rpm.length-1]], "up");
-    const dGross = deltaInfo([t.gross[t.gross.length-2], t.gross[t.gross.length-1]], "up");
+    // A trailer type's debut week (e.g. Step Deck's first tracked week, added
+    // 2026-10-09) has only one real data point — no prior week to diff
+    // against and not enough points to feed the 5-point chart helpers below.
+    // hasHistory gates both: with < 2 points we skip deltaInfo (which would
+    // otherwise diff against undefined) and skip the chart entirely further
+    // down, showing a plain "first week" placeholder instead.
+    const hasHistory = t.rpm.length >= 2;
+    const dRpm = hasHistory ? deltaInfo([t.rpm[t.rpm.length-2], t.rpm[t.rpm.length-1]], "up") : null;
+    const dGross = hasHistory ? deltaInfo([t.gross[t.gross.length-2], t.gross[t.gross.length-1]], "up") : null;
     const div = document.createElement("div");
     div.className = "trend-card";
     div.style.setProperty("--trend-accent", t.color);
@@ -1952,27 +2371,64 @@ function renderTrend(){
         <div class="trend-stat-mini active" data-metric="rpm" role="tab" aria-selected="true" tabindex="0">
           <div class="trend-stat-mini-head"><span class="mini-icon" style="background:${t.color}">${ICONS.rpm}</span><span class="trend-stat-label">Avg RPM</span></div>
           <div class="trend-stat-value">${fmtRpm(t.rpm[t.rpm.length-1])}</div>
-          <div class="trend-stat-delta"><span class="arrow" style="color:${dRpm.arrowColor};">${dRpm.arrowChar}</span> ${dRpm.pct.toFixed(1)}%<span class="sub">vs last week</span></div>
+          <div class="trend-stat-delta">${dRpm ? `<span class="arrow" style="color:${dRpm.arrowColor};">${dRpm.arrowChar}</span> ${dRpm.pct.toFixed(1)}%<span class="sub">vs last week</span>` : `<span class="sub">First week tracked</span>`}</div>
+          <div style="font-size:var(--fs-micro);color:var(--text-muted);font-weight:500;margin-top:2px;">Loaded miles only</div>
         </div>
         <div class="trend-stat-mini" data-metric="gross" role="tab" aria-selected="false" tabindex="0">
           <div class="trend-stat-mini-head"><span class="mini-icon" style="background:${t.color}">${ICONS.gross}</span><span class="trend-stat-label">Avg Gross</span></div>
           <div class="trend-stat-value">${fmtGross(t.gross[t.gross.length-1])}</div>
-          <div class="trend-stat-delta"><span class="arrow" style="color:${dGross.arrowColor};">${dGross.arrowChar}</span> ${dGross.pct.toFixed(1)}%<span class="sub">vs last week</span></div>
+          <div class="trend-stat-delta">${dGross ? `<span class="arrow" style="color:${dGross.arrowColor};">${dGross.arrowChar}</span> ${dGross.pct.toFixed(1)}%<span class="sub">vs last week</span>` : `<span class="sub">First week tracked</span>`}</div>
         </div>
       </div>
-      <div class="trend-chart-title">Avg RPM Trend (5 Weeks)</div>
+      ${t.note ? `<div style="font-size:var(--fs-micro);color:var(--warning);font-weight:600;margin:-4px 0 8px;">⚠ ${t.note}</div>` : ""}
+      <div class="trend-chart-title">${hasHistory ? "Avg RPM Trend (5 Weeks)" : "5-Week Trend"}</div>
       <div class="chart-wrap"></div>
     `;
     grid.appendChild(div);
     const chartWrap = div.querySelector(".chart-wrap");
-    // Filled in after appendChild (not inline above) so the chart's real on-screen
-    // width is measurable — needed for trendChart()'s font-size math, see its
-    // own comment above.
-    chartWrap.innerHTML = trendChart(t.rpm, rpmWeeks, fmtRpm, t.color, rpmTooltipWeeks, chartWrap.getBoundingClientRect().width);
     const titleEl = div.querySelector(".trend-chart-title");
     const tabRpm = div.querySelector('.trend-stat-mini[data-metric="rpm"]');
     const tabGross = div.querySelector('.trend-stat-mini[data-metric="gross"]');
-    attachChartTooltip(chartWrap, t.rpm, rpmTooltipWeeks, fmtRpm);
+
+    if (!hasHistory) {
+      // Debut week: no chart yet (see hasHistory comment above) — the two
+      // stat tiles above already carry this week's real numbers, so this is
+      // just a placeholder marking where the line chart picks up next report.
+      chartWrap.style.cssText = "padding:22px 4px;color:var(--text-muted);font-size:var(--fs-label);font-weight:500;text-align:center;";
+      chartWrap.textContent = "First week tracked — the 5-week trend starts building from the next report.";
+      return;
+    }
+
+    // Filled in after appendChild (not inline above) so the chart's real on-screen
+    // width is measurable — needed for trendChart()'s font-size math, see its
+    // own comment above.
+    // PROTOTYPE 2026-08-12: RPM tab now renders via rpmLineWithTotalBars
+    // (loaded-RPM line, unchanged, + gray total-RPM bars underneath) instead
+    // of plain trendChart — see the comment above that function for why.
+    // Same chart-wrap/title/tooltip wiring pattern as before, with both the
+    // line-draw entrance (for the line) and the bar-grow entrance (for the
+    // new bars) running together.
+    chartWrap.innerHTML = rpmLineWithTotalBars(t.rpm, t.rpmTotal, rpmWeeks, fmtRpm, t.color, rpmTooltipWeeks, chartWrap.getBoundingClientRect().width);
+    attachRpmComboTooltip(chartWrap, t.rpm, t.rpmTotal, rpmTooltipWeeks, fmtRpm);
+    (function(){
+      const initPath = chartWrap.querySelector(".line-draw");
+      if (initPath) {
+        const len = initPath.getTotalLength();
+        initPath.style.transition = "none";
+        initPath.style.strokeDasharray = len;
+        initPath.style.strokeDashoffset = len;
+        requestAnimationFrame(()=>{
+          initPath.style.transition = "stroke-dashoffset .8s cubic-bezier(.16,1,.3,1)";
+          initPath.style.strokeDashoffset = 0;
+        });
+      }
+    })();
+    chartWrap.querySelectorAll(".gbar-grow").forEach((b,i)=>{
+      setTimeout(()=>{ b.style.transform = "scaleY(1)"; }, i*60);
+    });
+    chartWrap.querySelectorAll(".gbar-label").forEach((l,i)=>{
+      setTimeout(()=>{ l.style.opacity = "1"; l.style.transform = "translateY(0)"; }, i*60 + 320);
+    });
 
     let current = "rpm";
     function switchTo(metric){
@@ -1993,11 +2449,8 @@ function renderTrend(){
       setTimeout(()=>{
         if (metric === "rpm") {
           titleEl.textContent = "Avg RPM Trend (5 Weeks)";
-          chartWrap.innerHTML = trendChart(t.rpm, rpmWeeks, fmtRpm, t.color, rpmTooltipWeeks, chartWrap.getBoundingClientRect().width);
-          attachChartTooltip(chartWrap, t.rpm, rpmTooltipWeeks, fmtRpm);
-          // Draw the line in on switch, same spirit as the Gross bars growing —
-          // otherwise this direction just pops in fully-formed while the other
-          // direction gets a whole entrance sequence.
+          chartWrap.innerHTML = rpmLineWithTotalBars(t.rpm, t.rpmTotal, rpmWeeks, fmtRpm, t.color, rpmTooltipWeeks, chartWrap.getBoundingClientRect().width);
+          attachRpmComboTooltip(chartWrap, t.rpm, t.rpmTotal, rpmTooltipWeeks, fmtRpm);
           const path = chartWrap.querySelector(".line-draw");
           if (path) {
             const len = path.getTotalLength();
@@ -2009,6 +2462,14 @@ function renderTrend(){
               path.style.strokeDashoffset = 0;
             });
           }
+          const rBars = chartWrap.querySelectorAll(".gbar-grow");
+          const rLabels = chartWrap.querySelectorAll(".gbar-label");
+          rBars.forEach((b,i)=>{
+            setTimeout(()=>{ b.style.transform = "scaleY(1)"; }, i*60);
+          });
+          rLabels.forEach((l,i)=>{
+            setTimeout(()=>{ l.style.opacity = "1"; l.style.transform = "translateY(0)"; }, i*60 + 320);
+          });
         } else {
           titleEl.textContent = "Avg Gross Trend (5 Weeks)";
           chartWrap.innerHTML = grossBarChart(t.gross, grossWeeks, fmtGrossK, fmtGross, t.color, chartWrap.getBoundingClientRect().width);
@@ -2051,7 +2512,7 @@ function renderFuelTrend(){
     "$" + FUEL_DISCOUNT_VALUES[FUEL_DISCOUNT_VALUES.length-1].toFixed(2) + "<span>/gal</span>";
   document.getElementById("fuel-trend-delta").innerHTML =
     `<span class="arrow" style="color:${d.arrowColor};">${d.arrowChar}</span> ${d.label}
-     <span class="sub">vs last week (Jul 20&rarr;This Week)</span>`;
+     <span class="sub">vs last week (Sept 28&rarr;This Week)</span>`;
 }
 
 // ---------- National Market Snapshot: real external benchmark data ----------
@@ -2080,7 +2541,114 @@ function renderFuelTrend(){
 // weekly spot-rate figure returned numbers explicitly labeled "minus fuel"
 // (a different basis than this chart's existing all-in monthly figures), so
 // they were NOT used to avoid mixing two incompatible rate definitions in
-// the same history array. Revisit DAT's monthly figures once August closes.
+// the same history array.
+// UPDATE 2026-08-12: full refresh, both sources re-verified by browser render
+// (per the owner’s standing instruction: refresh this section from source every
+// report, not just the fuel row). eia.gov diesel weekly table now shows
+// 08/10/26: $5.257 (was $5.348 the week before, change -0.091 -> -1.7%).
+// dat.com/trendlines "Weekly snapshot by the numbers" table (week AUG 03 -
+// AUG 09 vs JUL 27 - AUG 02): Van Spot Rates -0.8%, Flatbed Spot Rates -7.1%,
+// Reefer Spot Rates +11.6%, Fuel Prices -1.7% (this last one independently
+// cross-confirms the eia.gov figure above — both -1.7%, same as the
+// cross-check done on 2026-07-25). The "National Spot Rates" monthly bar
+// chart now shows an "AUG" bucket for the first time (hatched = in-progress
+// month, same visual convention DAT used for "Jul" until it closed) —
+// May/Jun/Jul values also came back slightly revised from what was captured
+// 2026-07-25 (e.g. dry van Jul: $3.03 then, $3.00 now) since DAT keeps
+// revising a month's average as more loads settle before it closes; this
+// report uses the freshly-read numbers, not the old snapshot. New readings:
+// dry van May/Jun/Jul/Aug = 2.89/3.00/3.00/2.93, flatbed = 3.66/3.70/3.64/3.57,
+// reefer = 3.36/3.40/3.41/3.34.
+// UPDATE 2026-08-19: full refresh again, same two sources. eia.gov diesel
+// weekly table: 08/17/26 = $5.454 (was $5.257 the week before, "week ago"
+// column shows +0.197 -> +3.7%). dat.com/trendlines weekly snapshot (week
+// AUG 10 - AUG 16 vs AUG 03 - AUG 09): Van Spot Rates -0.4%, Flatbed Spot
+// Rates -2.6%, Reefer Spot Rates +5.2%, Fuel Prices +3.6% — independently
+// cross-confirms the eia.gov +3.7% figure (both same direction/magnitude).
+// National Spot Rates monthly bar chart, Aug bucket still hatched
+// (in-progress, same as last week) but revised down slightly across all
+// three types vs last week's reading: dry van May/Jun/Jul/Aug =
+// 2.89/3.00/3.00/2.90 (Aug was 2.93 last week), flatbed = 3.66/3.70/3.64/3.56
+// (was 3.57), reefer = 3.36/3.40/3.41/3.34 (unchanged).
+// UPDATE 2026-08-26: full refresh again, same two sources (browser render).
+// eia.gov diesel weekly table: 08/24/26 = $5.652 (was $5.454 the week
+// before, +0.198 -> +3.6%). dat.com/trendlines weekly snapshot (week AUG 17
+// - AUG 23 vs AUG 10 - AUG 16): Van Spot Rates +4.8%, Flatbed Spot Rates
+// +3.3%, Reefer Spot Rates +3.4%, Fuel Prices +3.7% — independently
+// cross-confirms the eia.gov +3.6% figure (same direction/magnitude).
+// National Spot Rates monthly bar chart, Aug bucket still hatched
+// (in-progress): dry van May/Jun/Jul/Aug = 2.89/3.00/3.00/2.90 (unchanged),
+// flatbed = 3.66/3.70/3.64/3.55 (was 3.56), reefer = 3.36/3.40/3.41/3.35
+// (was 3.34).
+// UPDATE 2026-09-02: full refresh again, same two sources (browser render).
+// eia.gov diesel weekly table: 08/31/26 = $5.599 (was $5.652 the week
+// before, -0.053 -> -0.9%). dat.com/trendlines weekly snapshot (week AUG 24
+// - AUG 30 vs AUG 17 - AUG 23): Van Spot Rates +1.0%, Flatbed Spot Rates
+// +0.0%, Reefer Spot Rates -0.6%, Fuel Prices +0.0%. NOTE: DAT's own fuel
+// figure (+0.0%) does NOT match eia.gov's -0.9% this week (in prior weeks
+// the two agreed within rounding). The Fuel Prices card is sourced from the
+// eia.gov weekly figure, so -0.9% is what it shows. National Spot Rates
+// monthly bar chart rolled its window forward one month: buckets are now
+// JUN/JUL/AUG/SEP (SEP hatched = in-progress), MAY dropped off. New
+// readings: dry van Jun/Jul/Aug/Sep = 3.00/3.00/2.89/3.00, flatbed =
+// 3.70/3.64/3.54/3.56, reefer = 3.40/3.41/3.38/3.43.
+// UPDATE 2026-09-09: diesel-only refresh. eia.gov diesel weekly table (both
+// the WebFetch read and a direct browser render agree): 09/07/26 = $5.967,
+// up $0.368 from $5.599 the week before -> +6.6% (a real national spike; the
+// gasoline row jumped the same week too). DAT's public dat.com/trendlines
+// feed served no data on Sept 9 — the Industry Trends table was all "--" and
+// the National Spot Rates chart rendered no bars across several reloads — so
+// the Dry Van / Reefer / Flatbed spot-rate cards below are CARRIED FORWARD
+// UNCHANGED from the 2026-09-02 report (same current value, same week %, same
+// monthly history). Re-check DAT and refresh those three next report.
+// UPDATE 2026-09-16: full refresh, both sources back and working (DAT
+// relaunched its trendlines tool with a new UI since last week — a "Back to
+// Legacy Trendlines" link is now on the page, but the redesigned numbers
+// match the legacy figures where they overlap). eia.gov diesel weekly table:
+// 09/14/26 = $6.285 (was $5.967 the week before, +$0.318 -> +5.3%) — a
+// second consecutive real national spike, confirmed by direct browser
+// render. DAT's Industry Trends panel (week Sept 7-13 vs Aug 31-Sep 6): Van
+// Spot Rates -1.3%, Reefer Spot Rates 0.0%, Flatbed Spot Rates +0.6%, its own
+// Average Fuel Percent Change +5.36% — independently cross-confirms the
+// eia.gov +5.3% figure (same direction/magnitude). Monthly National Spot
+// Rates (read per-equipment-type from DAT's Jun/Jul/Aug/Sep tabs, replacing
+// last week's carried-forward figures): dry van (Van) Jun/Jul/Aug/Sep =
+// 3.00/3.00/2.89/2.99, flatbed = 3.70/3.64/3.54/3.59, reefer =
+// 3.40/3.42/3.39/3.61 — all three revised slightly from the last live read
+// (2026-09-02), consistent with DAT's own note that a month's average keeps
+// revising until it closes.
+// UPDATE 2026-09-23: full refresh, both sources live and working. eia.gov
+// diesel weekly table: 09/21/26 = $6.529 (was $6.285 the week before,
+// +$0.244 -> +3.9%) — a THIRD consecutive weekly spike, confirmed by direct
+// browser render. DAT's Industry Trends panel (week Sept 14-20 vs Sept
+// 7-13): Van Spot Rates -0.33%, Reefer Spot Rates -1.01%, Flatbed Spot Rates
+// -0.56%, its own Average Fuel Percent Change +3.82% — independently
+// cross-confirms the eia.gov +3.9% figure (same direction/magnitude).
+// Monthly National Spot Rates (read per-equipment-type from DAT's
+// Jun/Jul/Aug/Sep tabs): dry van (Van) Jun/Jul/Aug/Sep = 3.01/3.00/2.89/3.00,
+// flatbed = 3.70/3.64/3.54/3.60, reefer = 3.40/3.42/3.39/3.62 — Jun and Sep
+// both revised slightly from last week's live read, same ongoing-revision
+// pattern DAT documents for an in-progress/recently-closed month.
+// UPDATE 2026-09-30: full refresh, both sources live. eia.gov diesel weekly
+// table: 09/28/26 = $6.382 (was $6.529 the week before, -$0.147 -> -2.3%) —
+// the first weekly DECREASE after three straight spikes, confirmed by
+// direct browser render. DAT's Industry Trends panel (week Sept 21-27 vs
+// Sept 14-20): Van Spot Rates +0.33%, Reefer Spot Rates -1.37%, Flatbed
+// Spot Rates +0.84%, its own Average Fuel Percent Change -2.30% —
+// independently cross-confirms the eia.gov -2.3% figure almost exactly.
+// Monthly National Spot Rates (Jun/Jul/Aug/Sep tabs): dry van unchanged at
+// 3.01/3.00/2.89/3.00; flatbed 3.70/3.64/3.54/3.61 (Sep revised up from
+// 3.60); reefer unchanged at 3.40/3.42/3.39/3.62.
+// UPDATE 2026-10-09: full refresh, both sources live. eia.gov diesel weekly
+// table: 10/05/26 = $6.199 (was $6.382 the week before, -$0.183 -> -2.9%) —
+// a second straight weekly decrease, confirmed by direct browser render.
+// DAT's Industry Trends panel (week Sept 28-Oct 4 vs Sept 21-27): Van Spot
+// Rates +0.32%, Flatbed Spot Rates -0.82%, Reefer Spot Rates +0.27%, its own
+// Average Fuel Percent Change -2.82% — independently cross-confirms the
+// eia.gov -2.9% figure (same direction/magnitude). Monthly National Spot
+// Rates rolled forward one month (Jul/Aug/Sep/Oct tabs, Oct hatched = in-
+// progress, Jun dropped off): dry van Jul/Aug/Sep/Oct = 3.00/2.89/3.01/3.09,
+// flatbed = 3.64/3.54/3.62/3.62, reefer = 3.41/3.39/3.62/3.63.
 // Mini bar chart for the market cards. Redesigned taller/bolder (2026-07-25)
 // after the user pointed at DAT's own "National Spot Rates" truck-illustration
 // chart as a reference for confidence/scale — adopted its two real ideas
@@ -2228,10 +2796,10 @@ const FUEL_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" s
 // and flatbed's original #8b5cf6 sat too close to reefer's blue under
 // deuteranopia simulation (13.3 dE, under the 8-12 unsafe floor).
 const MARKET_DATA = [
-  { key:"dryvan",  label:"Dry Van",     icon:TRAILER_META.dryvan.icon, color:"var(--dryvan)", textColor:"#14835c", pillTextColor:"#ffffff", unit:"/mi", current:3.03, weekPct:4.8,  goodDirection:"up",   history:[2.67,2.89,3.00,3.03], historyLabels:["Apr","May","Jun","Jul"] },
-  { key:"reefer",  label:"Reefer",      icon:TRAILER_META.reefer.icon, color:"var(--reefer)", textColor:"#2872cb", pillTextColor:"#ffffff", unit:"/mi", current:3.44, weekPct:-8.4, goodDirection:"up",   history:[3.12,3.36,3.40,3.44], historyLabels:["Apr","May","Jun","Jul"] },
-  { key:"flatbed", label:"Flatbed",     icon:FLATBED_ICON,             color:"#6731c4",       textColor:"#6731c4", pillTextColor:"#ffffff", unit:"/mi", current:3.65, weekPct:1.9,  goodDirection:"up",   history:[3.43,3.66,3.70,3.65], historyLabels:["Apr","May","Jun","Jul"] },
-  { key:"fuel",    label:"Fuel Prices", icon:FUEL_ICON,                 color:"#a87824",       textColor:"#7e5a1b", pillTextColor:"#ffffff", unit:"/gal", current:5.348, weekPct:0.7, goodDirection:"down", history:[4.796,5.134,5.313,5.348],   historyLabels:["7/13","7/20","7/27","8/3"] },
+  { key:"dryvan",  label:"Dry Van",     icon:TRAILER_META.dryvan.icon, color:"var(--dryvan)", textColor:"#14835c", pillTextColor:"#ffffff", unit:"/mi", current:3.09, weekPct:0.32, goodDirection:"up",   history:[3.00,2.89,3.01,3.09], historyLabels:["Jul","Aug","Sep","Oct"] },
+  { key:"reefer",  label:"Reefer",      icon:TRAILER_META.reefer.icon, color:"var(--reefer)", textColor:"#2872cb", pillTextColor:"#ffffff", unit:"/mi", current:3.63, weekPct:0.27, goodDirection:"up",   history:[3.41,3.39,3.62,3.63], historyLabels:["Jul","Aug","Sep","Oct"] },
+  { key:"flatbed", label:"Flatbed",     icon:FLATBED_ICON,             color:"#6731c4",       textColor:"#6731c4", pillTextColor:"#ffffff", unit:"/mi", current:3.62, weekPct:-0.82,goodDirection:"up",   history:[3.64,3.54,3.62,3.62], historyLabels:["Jul","Aug","Sep","Oct"] },
+  { key:"fuel",    label:"Fuel Prices", icon:FUEL_ICON,                 color:"#a87824",       textColor:"#7e5a1b", pillTextColor:"#ffffff", unit:"/gal", current:6.199, weekPct:-2.9, goodDirection:"down", history:[6.285,6.529,6.382,6.199],   historyLabels:["9/14","9/21","9/28","10/5"] },
 ];
 
 function renderMarketSnapshot(){
@@ -2266,7 +2834,7 @@ function renderMarketSnapshot(){
 // must never disappear — see the entrance-animation architecture notes below),
 // but this line re-asserts REPORT_PERIOD into both so the two spots can never
 // silently drift out of sync with each other if only one gets hand-edited.
-const REPORT_PERIOD = "July 28 – August 3, 2026";
+const REPORT_PERIOD = "September 29 – October 5, 2026";
 try {
   document.getElementById("header-dates").textContent = REPORT_PERIOD.toUpperCase();
   document.getElementById("trailer-period-subtitle").textContent = "Reporting period: " + REPORT_PERIOD + ".";
