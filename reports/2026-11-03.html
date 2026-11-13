@@ -1256,8 +1256,8 @@ const TRAILER_META = {
 // entirely (includeGross:false AND includeRpm:false — row kept below for
 // audit only), so Step Deck has no Best-of-Week row, no By Trailer Type
 // card and no 5-Week Trend card this week, and C's empty miles are out of
-// the fleet deadhead average. His fuel-card fills stay in the fleet fuel-
-// discount pool (fleet card data, not trailer-specific).
+// the fleet deadhead average. His fuel-card fills are also out of the
+// fleet fuel-discount pool (per the owner).
 // SHORT WEEKS, per the owner: the 3-active-day weeks (F, H) are
 // RPM-only this week (includeGross:false) — back to the standing short-week
 // precedent (last week's "all in Gross" was a one-off). All three are real
@@ -2351,7 +2351,8 @@ function attachChartTooltip(container, values, tooltipWeeks, fmt){
 // $499.95 / 914.50 qualifying gal = $0.55/gal. Best single fill-up:
 // $129.05 / 141.36 gal = $0.91/gal (TA, Porter, IN, step deck card).
 // UPDATE 2026-11-13 (Nov 3 - 9 report): 4 fuel cards this week (step deck
-// C, reefer A, E, F; B, D, G, H filed none). Driver E's card arrived as a
+// C, reefer A, E, F; B, D, G, H filed none) — step-deck card later
+// removed from the pool, see the end of this note. Driver E's card arrived as a
 // wide TCS report (Oct 6 - Nov 9), but all 5 of its transactions are dated
 // 11/01-11/09, inside his own settlement week — all used. 19 transactions
 // total, 14 with Disc Amt > 0 (zero-discount reefer/DEF-only and
@@ -2360,11 +2361,14 @@ function attachChartTooltip(container, values, tooltipWeeks, fmt){
 // page-1 Discount total): $70.73/176.71gal [step deck, 2/3], $97.18/
 // 252.34gal [reefer F, 3/3], $473.07/512.06gal [reefer A, 5/8],
 // $273.84/404.38gal [reefer E, 4/5]. Fleet: $914.82 / 1,345.49 qualifying
-// gal = $0.68/gal. (Step deck card kept in the pool even though Step Deck
-// is removed from the trailer sections this week — it's fleet fuel data.) Best single fill-up: $112.19 / 97.05 gal = $1.16/gal
+// gal = $0.68/gal — SUPERSEDED same day: per the owner, the step-deck
+// card is removed from the pool too (Step Deck fully out of this report).
+// Final fleet: $844.09 / 1,168.78 qualifying gal = $0.72/gal (3 reefer
+// cards A, E, F; 12 of 16 transactions with Disc Amt > 0). Best single
+// fill-up unchanged (reefer E card). Best single fill-up: $112.19 / 97.05 gal = $1.16/gal
 // (TA Madison, DeForest, WI, reefer E card).
 const FUEL_DISCOUNT_WEEKS = ["Oct 19","Oct 26","Nov 2","This Week"];
-const FUEL_DISCOUNT_VALUES = [0.19,0.31,0.55,0.68];
+const FUEL_DISCOUNT_VALUES = [0.19,0.31,0.55,0.72];
 
 const sparseLabels = n => [`${n-1} weeks ago`, ...Array(n-2).fill(""), "Current"];
 
