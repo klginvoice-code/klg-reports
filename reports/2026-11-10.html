@@ -1254,7 +1254,7 @@ const TRAILER_META = {
 // dry-van settlement this week (the step-deck driver did not file).
 // Per the owner: B's 3-active-day week IS in Gross (a full week's volume —
 // $11,200, one long cross-country load); C's 3-active-day week is RPM-only.
-// E and F are single-load weeks: RPM-only + rpmBestEligible:false (standard
+// E is a single-load week: RPM-only + rpmBestEligible:false (standard
 // precedent — out of the Avg RPM pool and the Best RPM race).
 // Driver A (reefer) — 8 rows on the settlement, 6 counted:
 //   * one row is a load from April (04/15 -> 04/16, WI-NE, 111 empty /
@@ -1281,17 +1281,18 @@ const TRAILER_META = {
 //   0 empty / 765 loaded, $2,400, 11/13 -> 11/16) -> RPM-only, not eligible
 //   for Best RPM. Settlement went negative (fuel/insurance > pay) — an
 //   accounting matter, no effect on these figures.
-// Driver F (reefer) — single load (TX-UT, 245 empty / 903 loaded, $3,900)
-//   -> RPM-only, not eligible for Best RPM. Settlement went negative too.
+// Driver F (reefer) — 2 loads: TX-UT (245 empty / 903 loaded, $3,900) +
+//   ID-FL (150 empty / 2,465 loaded, $11,400, 11/12 -> 11/17) added per the
+//   owner. In Gross and RPM; grossBestEligible:false per the owner.
 //   His settlement again carries an insurance line for a second truck.
-// Reefer's Avg Gross pool: 9,963 + 11,200 + 13,400 = 34,563 / 3 = $11,521.
+// Reefer's Avg Gross pool: 9,963 + 11,200 + 13,400 + 15,300 = 49,863 / 4 = $12,466.
 const trucks = [
   {id:"A", trailer:"reefer", miles:1817, rpm:5.48, gross:9963,  includeGross:true,  includeRpm:true, empty:772, days:6}, // Driver A (6 active days: 1+1+1+1(floor)+1+1; April row excluded, TONU miles out / $150 in)
   {id:"B", trailer:"reefer", miles:2749, rpm:4.07, gross:11200, includeGross:true,  includeRpm:true, empty:149, days:3}, // Driver B (3 active days: 2+1; in Gross per the owner)
   {id:"C", trailer:"reefer", miles:1643, rpm:4.61, gross:7575,  includeGross:false, includeRpm:true, empty:351, days:3}, // Driver C (3 active days: 1+1+1; percentage-only; RPM-only per the owner)
   {id:"D", trailer:"reefer", miles:2848, rpm:4.71, gross:13400, includeGross:true,  includeRpm:true, empty:379, days:5}, // Driver D (5 active days: 2+3; wins Best Weekly Gross)
   {id:"E", trailer:"reefer", miles:765,  rpm:3.14, gross:2400,  includeGross:false, includeRpm:true, rpmBestEligible:false, empty:0,   days:3}, // Driver E (single load; new driver)
-  {id:"F", trailer:"reefer", miles:903,  rpm:4.32, gross:3900,  includeGross:false, includeRpm:true, rpmBestEligible:false, empty:245, days:2}, // Driver F (single load)
+  {id:"F", trailer:"reefer", miles:3368, rpm:4.54, gross:15300, includeGross:true,  includeRpm:true, grossBestEligible:false, empty:395, days:7}, // Driver F (2 loads: TX-UT + ID-FL delivered 11/17; 7 active days: 2+5)
 ];
 // 6 drivers filed settlements this week (A-F), all reefer.
 
@@ -1391,7 +1392,7 @@ const TRAILER_PREV_WEEK_LABEL = {};
 // Suppresses the automatic "Based on 1 driver this week" small-sample badge
 // on the By Trailer Type card for the named type(s) — see its 2026-09-23
 // origin comment in an earlier report for why this exists. Kept at {} this
-// week: reefer's Avg Gross pool has 3 drivers.
+// week: reefer's Avg Gross pool has 4 drivers.
 const SUPPRESS_SMALL_SAMPLE_BADGE = {};
 
 // ACTIVE TRAILER TYPES THIS WEEK — the single list controlling which types
@@ -1562,7 +1563,7 @@ function renderComputedRecords(){
     const grossPool = grossEligible.filter(t=>t.trailer===type);
     const rpmPool = rpmEligible.filter(t=>t.trailer===type);
     // Ranked on week-normalized gross (see WEEK-NORMALIZED GROSS), displayed as real gross.
-    const byGross = [...grossPool].sort((a,b)=>b.gross*(b.weekFactor||1)-a.gross*(a.weekFactor||1))[0];
+    const byGross = [...grossPool].filter(t=>t.grossBestEligible !== false).sort((a,b)=>b.gross*(b.weekFactor||1)-a.gross*(a.weekFactor||1))[0];
     // rpmBestEligible:false keeps a truck IN the RPM average (rpmPool /
     // trailerGroups() below both stay based on includeRpm alone) but out of
     // the running for the individual "Best Weekly RPM" card — for a truck
@@ -2429,11 +2430,11 @@ function renderTrend(){
   // added 2026-11-13) is still supported by the code below but unused.
   // Nov 10-16: Step Deck again has no counted week (no settlement), so the
   // note above still applies — resume from reports/2026-10-27.html.
-  // Reefer this week: avg rpm over the RPM pool (A, B, C, D; single-load E,
-  // F excluded) = (5.48+4.07+4.61+4.71)/4 = 4.72; rpmTotal = mean of
-  // gross/(loaded+empty) over the same 4 = 3.92; Avg Gross = 11521.
+  // Reefer this week: avg rpm over the RPM pool (A, B, C, D, F; single-load E
+  // excluded) = (5.48+4.07+4.61+4.71+4.54)/5 = 4.68; rpmTotal = mean of
+  // gross/(loaded+empty) over the same 5 = 3.95; Avg Gross = 12466.
   const trailerTrends = [
-    { key:"reefer", color:"#2a78d6", rpm:[3.84,4.57,4.07,4.28,4.72], rpmTotal:[3.32,3.84,3.60,3.76,3.92], gross:[13300,12117,10128,9688,11521] },
+    { key:"reefer", color:"#2a78d6", rpm:[3.84,4.57,4.07,4.28,4.68], rpmTotal:[3.32,3.84,3.60,3.76,3.95], gross:[13300,12117,10128,9688,12466] },
   ];
   trailerTrends.forEach(t=>{
     // Per-type week labels (added 2026-10-22): a type with < 5 weeks of
