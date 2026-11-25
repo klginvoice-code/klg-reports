@@ -1275,38 +1275,38 @@ const TRAILER_META = {
 // Driver C (reefer) — PERCENTAGE-ONLY (30%, no Deduction line): gross =
 //   Amount / 0.30 = $7,575. 3 loads (first is a multi-stop IL-GA-AL,
 //   recorded as IL-AL), 3 active days. RPM-only per the owner.
-// Driver D (reefer) — 2 loads, 5 active days, 5-day span. Wins Best Weekly
-//   Gross ($13,400).
+// Driver D (reefer) — 2 loads, 5 active days, 5-day span. Gross $13,400
+//   (runner-up to Driver F for Best Weekly Gross).
 // Driver E (reefer) — NEW driver, first settlement. Single load (GA-MD,
 //   0 empty / 765 loaded, $2,400, 11/13 -> 11/16) -> RPM-only, not eligible
 //   for Best RPM. Settlement went negative (fuel/insurance > pay) — an
 //   accounting matter, no effect on these figures.
 // Driver F (reefer) — 2 loads: TX-UT (245 empty / 903 loaded, $3,900) +
 //   ID-FL (150 empty / 2,465 loaded, $11,400, 11/12 -> 11/17) added per the
-//   owner. In Gross and RPM; grossBestEligible:false per the owner.
+//   owner. In Gross and RPM; wins Best Weekly Gross (returned to the race per the owner).
 //   His settlement again carries an insurance line for a second truck.
 // Reefer's Avg Gross pool: 9,963 + 11,200 + 13,400 + 15,300 = 49,863 / 4 = $12,466.
 const trucks = [
   {id:"A", trailer:"reefer", miles:1817, rpm:5.48, gross:9963,  includeGross:true,  includeRpm:true, empty:772, days:6}, // Driver A (6 active days: 1+1+1+1(floor)+1+1; April row excluded, TONU miles out / $150 in)
   {id:"B", trailer:"reefer", miles:2749, rpm:4.07, gross:11200, includeGross:true,  includeRpm:true, empty:149, days:3}, // Driver B (3 active days: 2+1; in Gross per the owner)
   {id:"C", trailer:"reefer", miles:1643, rpm:4.61, gross:7575,  includeGross:false, includeRpm:true, empty:351, days:3}, // Driver C (3 active days: 1+1+1; percentage-only; RPM-only per the owner)
-  {id:"D", trailer:"reefer", miles:2848, rpm:4.71, gross:13400, includeGross:true,  includeRpm:true, empty:379, days:5}, // Driver D (5 active days: 2+3; wins Best Weekly Gross)
+  {id:"D", trailer:"reefer", miles:2848, rpm:4.71, gross:13400, includeGross:true,  includeRpm:true, empty:379, days:5}, // Driver D (5 active days: 2+3)
   {id:"E", trailer:"reefer", miles:765,  rpm:3.14, gross:2400,  includeGross:false, includeRpm:true, rpmBestEligible:false, empty:0,   days:3}, // Driver E (single load; new driver)
-  {id:"F", trailer:"reefer", miles:3368, rpm:4.54, gross:15300, includeGross:true,  includeRpm:true, grossBestEligible:false, empty:395, days:7}, // Driver F (2 loads: TX-UT + ID-FL delivered 11/17; 7 active days: 2+5)
+  {id:"F", trailer:"reefer", miles:3368, rpm:4.54, gross:15300, includeGross:true,  includeRpm:true, empty:395, days:7}, // Driver F (2 loads: TX-UT + ID-FL delivered 11/17; 7 active days: 2+5)
 ];
 // 6 drivers filed settlements this week (A-F), all reefer.
 
 // Per-load lane detail for the Best Weekly Gross Details panel, one entry per
 // trailer type — see the "PER-LOAD DETAIL OBJECTS" rule in the METHODOLOGY
 // block above for the full capture/update/sanity-check rule. Sources this week:
-// reefer Gross winner = Driver D, settlement (2 loads, sums exactly to
-// trucks empty 379 / loaded 2848 / gross 13400).
+// reefer Gross winner = Driver F (2 loads, sums exactly to
+// trucks empty 395 / loaded 3368 / gross 15300).
 const bestGrossLoadDetail = {
   reefer: {
-    driverId: "D",
+    driverId: "F",
     loads: [
-      { states:"IL-UT", empty:175, loaded:1410 },
-      { states:"ID-TX", empty:204, loaded:1438 },
+      { states:"TX-UT", empty:245, loaded:903 },
+      { states:"ID-FL", empty:150, loaded:2465 },
     ],
   },
 };
@@ -1321,7 +1321,7 @@ const bestGrossLoadDetail = {
 // shows $ gross, even when the RPM winner happens to be the same driver as
 // the Gross winner — the RPM and Gross Details panels each have one fixed
 // stat structure, and the RPM winner is often a different driver than the
-// Gross winner (true again this week: A vs D), whose weekly earnings aren't
+// Gross winner (true again this week: A vs F), whose weekly earnings aren't
 // shown anywhere else in the report and shouldn't be newly disclosed just to
 // illustrate the RPM math.
 const bestRpmLoadDetail = {
